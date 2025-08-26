@@ -5,6 +5,7 @@ import 'package:momaspayplus/utils/navigation.dart';
 import 'package:momaspayplus/utils/shared_pref.dart';
 
 import 'package:momaspayplus/utils/theme.dart';
+import 'package:upgrader/upgrader.dart';
 
 import 'bloc/intro_page/intro_page.dart';
 import 'bloc/registeration_bloc/register_bloc.dart';
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Momas Pay',
       theme: ThemeConfig.buildCustomTheme(),
-      home: const MyHomePage(title: 'Momas Pay'),
+      home: UpgradeAlert(child: const MyHomePage(title: 'Momas Pay')),
     );
   }
 }
