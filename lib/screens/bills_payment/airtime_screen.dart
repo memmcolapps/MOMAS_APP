@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_contact_picker/flutter_native_contact_picker.dart';
+import 'package:flutter_native_contact_picker/model/contact.dart';
+// import 'package:flutter_native_contact_picker/flutter_native_contact_picker.dart';
 import 'package:momaspayplus/bloc/payment_bloc/payment_bloc.dart';
 import 'package:momaspayplus/domain/repository/bill_repository.dart';
 import 'package:momaspayplus/utils/colors.dart';
@@ -30,7 +32,8 @@ class _AirtimeScreenState extends State<AirtimeScreen> {
   Network? _selectedNetwork;
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
-  final FlutterContactPicker _contactPicker = FlutterContactPicker();
+  // final FlutterContactPicker _contactPicker = FlutterContactPicker();
+  final FlutterNativeContactPicker _contactPicker = FlutterNativeContactPicker();
   Contact? _contact;
 
   void _selectNetwork(Network network) {

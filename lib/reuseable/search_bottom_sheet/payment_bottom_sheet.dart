@@ -128,6 +128,15 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
                 ),
                 const SizedBox(height: 20),
                 _buildPaymentOption(
+                    context, 'Pay with Test', MoImage.payStack,
+                    onTap: () {
+                      widget.onPayment!("ref");
+                      Navigator.pop(context);
+                      // _onPaymentOptionTap(PaymentType.paystack),
+                    },
+                    additionalInfo: "1.5% + NGN100"),
+                const SizedBox(height: 10),
+                _buildPaymentOption(
                     context, 'Pay with Paystack', MoImage.payStack,
                     onTap: () => _onPaymentOptionTap(PaymentType.paystack),
                     additionalInfo: "1.5% + NGN100"),
@@ -156,6 +165,8 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
             setState(() {
               isLoading = false;
             });
+            // widget.onPayment!("ref");
+            // Navigator.pop(context);
             Navigator.push(
               context,
               MaterialPageRoute(

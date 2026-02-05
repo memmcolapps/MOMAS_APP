@@ -68,187 +68,215 @@ class _CustomerArrearsPageState extends State<CustomerArrearsPage> {
                 final total = unpaidItems.fold(
                     0.0, (sum, item) => sum + item.amount); // unpaid total only
 
-                return Column(
-                  children: [
-                    Expanded(
-                      child: ListView.builder(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 16),
-                        itemCount: items.length,
-                        itemBuilder: (context, index) {
-                          final item = items[index];
-                          final isPaid = item.status == 1;
-
-                          return Container(
-                            margin: const EdgeInsets.symmetric(vertical: 8),
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: isPaid
-                                  ? const Color(0xFFE7F9EF)
-                                  : Colors.white, // light green for paid
-                              borderRadius: BorderRadius.circular(16),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 8,
-                                  offset: Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      item.type
-                                          .replaceAll("_", " ")
-                                          .toUpperCase(),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                        color: isPaid
-                                            ? Colors.green
-                                            : const Color(0xFF0A4DA2),
-                                      ),
-                                    ),
-                                    Text(
-                                      AmountFormatter.formatNaira(item.amount),
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Start: ${item.createdAt.toLocal().toString().split(' ')[0]}",
-                                      style: const TextStyle(
-                                        fontSize: 13,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    Text(
-                                      "Due: ${item.nextDueDate.toLocal().toString().split(' ')[0]}",
-                                      style: const TextStyle(
-                                        fontSize: 13,
-                                        color: Colors.grey,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-                                if (!isPaid)
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: ElevatedButton.icon(
-                                      onPressed: () {
-                                        payment(context, item.amount.toString(),
-                                            item.id, true);
-                                      },
-                                      icon: const Icon(Icons.payment, size: 18),
-                                      label: const Text("Pay Now"),
-                                      style: ElevatedButton.styleFrom(
-                                        elevation: 0,
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 14),
-                                        backgroundColor:
-                                            const Color(0xFF1BA94C),
-                                        foregroundColor: Colors.white,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                else
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8, horizontal: 12),
-                                    decoration: BoxDecoration(
-                                      color: Colors.green.shade100,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: const Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(Icons.check_circle,
-                                            size: 18, color: Colors.green),
-                                        SizedBox(width: 6),
-                                        Text("Paid",
-                                            style: TextStyle(
-                                                color: Colors.green,
-                                                fontWeight: FontWeight.bold)),
-                                      ],
-                                    ),
-                                  )
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    if (unpaidItems.isNotEmpty)
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 8,
-                              offset: Offset(0, -2),
-                            )
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                return items.isEmpty
+                    ? const Center(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  "Total Amount Due:",
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                                Text(
-                                  AmountFormatter.formatNaira(total),
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                payment(context, total.toString(), 0, false);
-                              },
-                              icon: const Icon(Icons.credit_card),
-                              label: const Text("Pay All"),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: MoColors.mainColor,
-                                foregroundColor: Colors.white,
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 14),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
+                            Icon(Icons.history_edu, size: 50, color: Colors.grey,),
+                            Text(
+                              "No available arrears", textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.normal,),
                             ),
                           ],
                         ),
-                      ),
-                  ],
-                );
+                    )
+                    : Column(
+                        children: [
+                          Expanded(
+                            child: ListView.builder(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 12, horizontal: 16),
+                              itemCount: items.length,
+                              itemBuilder: (context, index) {
+                                final item = items[index];
+
+                                final isPaid = item.status == 1;
+
+                                return Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 8),
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: isPaid
+                                        ? const Color(0xFFE7F9EF)
+                                        : Colors.white, // light green for paid
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Colors.black12,
+                                        blurRadius: 8,
+                                        offset: Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            item.type
+                                                .replaceAll("_", " ")
+                                                .toUpperCase(),
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                              color: isPaid
+                                                  ? Colors.green
+                                                  : const Color(0xFF0A4DA2),
+                                            ),
+                                          ),
+                                          Text(
+                                            AmountFormatter.formatNaira(
+                                                item.amount),
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            "Start: ${item.createdAt.toLocal().toString().split(' ')[0]}",
+                                            style: const TextStyle(
+                                              fontSize: 13,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                          const Spacer(),
+                                          Text(
+                                            "Due: ${item.nextDueDate.toLocal().toString().split(' ')[0]}",
+                                            style: const TextStyle(
+                                              fontSize: 13,
+                                              color: Colors.grey,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      const SizedBox(height: 16),
+                                      if (!isPaid)
+                                        SizedBox(
+                                          width: double.infinity,
+                                          child: ElevatedButton.icon(
+                                            onPressed: () {
+                                              payment(
+                                                  context,
+                                                  item.amount.toString(),
+                                                  item.id,
+                                                  true,
+                                                  item.type);
+                                            },
+                                            icon: const Icon(Icons.payment,
+                                                size: 18),
+                                            label: const Text("Pay Now"),
+                                            style: ElevatedButton.styleFrom(
+                                              elevation: 0,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 14),
+                                              backgroundColor:
+                                                  const Color(0xFF1BA94C),
+                                              foregroundColor: Colors.white,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      else
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 8, horizontal: 12),
+                                          decoration: BoxDecoration(
+                                            color: Colors.green.shade100,
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: const Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(Icons.check_circle,
+                                                  size: 18,
+                                                  color: Colors.green),
+                                              SizedBox(width: 6),
+                                              Text("Paid",
+                                                  style: TextStyle(
+                                                      color: Colors.green,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                            ],
+                                          ),
+                                        )
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          // if (unpaidItems.isNotEmpty)
+                          //   Container(
+                          //     padding: const EdgeInsets.all(16),
+                          //     decoration: const BoxDecoration(
+                          //       color: Colors.white,
+                          //       boxShadow: [
+                          //         BoxShadow(
+                          //           color: Colors.black12,
+                          //           blurRadius: 8,
+                          //           offset: Offset(0, -2),
+                          //         )
+                          //       ],
+                          //     ),
+                          //     child: Column(
+                          //       crossAxisAlignment: CrossAxisAlignment.stretch,
+                          //       children: [
+                          //         Row(
+                          //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //           children: [
+                          //             const Text(
+                          //               "Total Amount Due:",
+                          //               style: TextStyle(fontSize: 16),
+                          //             ),
+                          //             Text(
+                          //               AmountFormatter.formatNaira(total),
+                          //               style: const TextStyle(
+                          //                 fontSize: 18,
+                          //                 fontWeight: FontWeight.bold,
+                          //               ),
+                          //             ),
+                          //           ],
+                          //         ),
+                          //         const SizedBox(height: 12),
+                          //         ElevatedButton.icon(
+                          //           onPressed: () {
+                          //             payment(context, total.toString(), 0, false);
+                          //           },
+                          //           icon: const Icon(Icons.credit_card),
+                          //           label: const Text("Pay All"),
+                          //           style: ElevatedButton.styleFrom(
+                          //             backgroundColor: MoColors.mainColor,
+                          //             foregroundColor: Colors.white,
+                          //             padding:
+                          //                 const EdgeInsets.symmetric(vertical: 14),
+                          //             shape: RoundedRectangleBorder(
+                          //               borderRadius: BorderRadius.circular(12),
+                          //             ),
+                          //           ),
+                          //         ),
+                          //       ],
+                          //     ),
+                          //   ),
+                        ],
+                      );
               }
               return const SizedBox.shrink();
             },
@@ -258,12 +286,14 @@ class _CustomerArrearsPageState extends State<CustomerArrearsPage> {
     );
   }
 
-  void payment(
-      BuildContext context, String amount, int arrearsId, bool single) {
+  void payment(BuildContext context, String amount, int arrearsId, bool single,
+      serviceType) {
     MoBottomSheet().payment(context,
         amount: amount,
         showMonthlyFee: false,
-        serviceType: ServiceType.arrears, onPayment: (String ref) {
+        serviceType: serviceType.contains("admin")
+            ? ServiceType.admin_fee
+            : ServiceType.arrears, onPayment: (String ref) {
       if (single) {
         context
             .read<CustomerArrearsBloc>()

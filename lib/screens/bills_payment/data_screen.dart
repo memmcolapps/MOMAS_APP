@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_contact_picker/flutter_native_contact_picker.dart';
+import 'package:flutter_native_contact_picker/model/contact.dart';
 import 'package:momaspayplus/bloc/data_bloc/data_state.dart';
 import 'package:momaspayplus/domain/data/response/data_response.dart';
 import 'package:momaspayplus/domain/repository/bill_repository.dart';
@@ -37,8 +38,8 @@ class _DataScreenState extends State<DataScreen> {
   DataPlan? selectedDataPlan;
 
   Contact? _contact;
-  final FlutterContactPicker _contactPicker = FlutterContactPicker();
-
+  // final FlutterContactPicker _contactPicker = FlutterContactPicker();
+  final FlutterNativeContactPicker _contactPicker = FlutterNativeContactPicker();
   void _selectNetwork(Network network) {
     setState(() {
       _selectedNetwork = network;

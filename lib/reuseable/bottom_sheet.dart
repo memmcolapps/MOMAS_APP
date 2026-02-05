@@ -11,7 +11,8 @@ import '../utils/colors.dart';
 import '../utils/shared_pref.dart';
 
 class MoBottomSheet {
-  Future payment(BuildContext context,
+  Future payment(
+      BuildContext context,
       {required String amount,
       required ServiceType serviceType,
       Function(String ref)? onPayment,
@@ -22,10 +23,12 @@ class MoBottomSheet {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
+        print("monthly ------ fee:");
         return FutureBuilder<IsAdminPaidModel?>(
           future: PaymentRepository().checkAminFeeIsPayed(),
           builder: (BuildContext context, snapshot) {
             if (snapshot.data == null) {
+              print("monthly 11111 fee: ${snapshot.data?.monthlyAdminFee}");
               return Center(
                   child: SpinKitFadingCircle(
                 color: MoColors.mainColor,
@@ -34,18 +37,24 @@ class MoBottomSheet {
             }
 
             if (snapshot.data?.status == false) {
+              print("monthly 33333 fee: ${snapshot.data?.monthlyAdminFee}");
               return const Center(
                   child: Icon(
                 Icons.error,
                 color: Colors.black,
               ));
             }
-            //when it is false it means you haven't pay  -->(0)
+            // when it is false it means you haven't pay  -->(0)
             if (snapshot.data?.monthlyAdminFee == false &&
                 showMonthlyFee == true) {
+              print("monthly fee: ${snapshot.data?.monthlyAdminFee}");
+              print("status11>>> : ${snapshot.data?.status}");
               return AdminChargeUI();
             }
-            return PaymentBottomSheet(
+            print("monthly 222222 fee: ${snapshot.data?.monthlyAdminFee}");
+            print("status>>> : ${snapshot.data?.status}");
+            return
+              PaymentBottomSheet(
               amount: amount,
               onPayment: onPayment,
               service: serviceType,

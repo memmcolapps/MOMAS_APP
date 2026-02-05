@@ -161,7 +161,7 @@ class DashboardBuilder {
           subtitle: "Buy for unpaid utilities",
           onTap: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (builder) => CustomerArrearsPage()));
+                MaterialPageRoute(builder: (builder) => const CustomerArrearsPage()));
           }),
     );
     return value;

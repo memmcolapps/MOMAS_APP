@@ -24,6 +24,7 @@ class VatCalculator {
     required num utilitiesAmount,
     required num? vat,
   }) {
+    print(">>>vat: $vat}");
     double amount = _parseAmount(amountText);
     num vatValue = vat ?? 0;
     num amountReceivable = _calculateAmountReceivable(
@@ -40,6 +41,11 @@ class VatCalculator {
     required num utilitiesAmount,
     required num? vat,
   }) {
+    print("amountText: "+amountText.toString());
+    print("vat: "+vat.toString());
+    print("tariffAmount: "+tariffAmount.toString());
+    print("utilitiesAmount: "+utilitiesAmount.toString());
+
     double amount = _parseAmount(amountText);
     num amountReceivable = _calculateAmountReceivable(
       amount: amount,

@@ -693,6 +693,7 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
         vat: selectedTariff?.vat);
 
     if (receivableAmount < minPurchase || receivableAmount > maxPurchase) {
+      // if(r)
       showErrorBottomSheet(context,
           "Payable amount (NGN${amountFormController.text}) can not be less than minimum  vend.");
       return;
@@ -706,10 +707,13 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
       return;
     }
 
+    print("tariffID>>>>:: "+selectedTariff!.id.toString());
+
     showPaymentModal(context, user!.meterNo!, () {
       MoBottomSheet().payment(context,
           amount: totalPayableAmount.toString(),
-          serviceType: ServiceType.credit_token, onPayment: (String ref) {
+          serviceType: ServiceType.credit_token,
+          onPayment: (String ref) {
         bloc.add(MomasMeterPayment(
             vatAmount: VatCalculator()
                 .calculateVatAmount(
@@ -779,6 +783,7 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
     }
 
     showPaymentModal(context, user!.meterNo!, () {
+      print("meter number" + user!.meterNo!);
       MoBottomSheet().payment(context,
           amount: totalPayableAmount.toString(),
           serviceType: ServiceType.credit_token, onPayment: (String ref) {

@@ -230,10 +230,18 @@ class TransactionCard extends StatelessWidget {
                       Text(
                           isNotEmpty(data.note)
                               ? "${data.note}"
-                              : "|${data.payType}",
+                              : "| ${data.serviceType}",
                           style: const TextStyle(
                             fontWeight: FontWeight.w500,
-                            fontSize: 10.0,
+                            fontSize: 11.0,
+                          )),
+                      Text(
+                          isNotEmpty(data.note)
+                              ? "${data.note}"
+                              : "| ${data.payType}",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 11.0,
                           )),
                     ],
                   ),

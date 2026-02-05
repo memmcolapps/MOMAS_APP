@@ -31,12 +31,19 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.memmcol.momaspayplus"
-    compileSdk = 35//flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    compileSdk = 36//flutter.compileSdkVersion
+    ndkVersion = "26.1.10909125"//flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility = JavaVersion.VERSION_11  // Change from VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_11  // Change from VERSION_1_8
+//        sourceCompatibility = JavaVersion.VERSION_1_8
+//        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "11"
     }
 
     defaultConfig {
@@ -44,11 +51,16 @@ android {
         applicationId = "com.memmcol.momaspayplus"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdk = 21//flutter.minSdkVersion
-        targetSdk = 35//flutter.targetSdkVersion
+        minSdkVersion = flutter.minSdkVersion//flutter.minSdkVersion//flutter.minSdkVersion
+        targetSdk = 36//flutter.targetSdkVersion
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
+
+        ndk {
+            abiFilters 'arm64-v8a', 'armeabi-v7a'
+        }
     }
+
     signingConfigs {
         release {
             keyAlias keystoreProperties['keyAlias']
@@ -64,6 +76,19 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = false
+//            excludes += ["lib/x86/**", "lib/x86_64/**"]
+        }
+    }
+}
+
+dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.multidex:multidex:2.0.1'
 }
 
 flutter {

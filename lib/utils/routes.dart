@@ -1,5 +1,7 @@
 class Routes {
-  static const String _baseURL = "https://momaspay.memmserve.com/api";
+  // static const String _baseURL = "https://momaspay.memmserve.com/api";
+  // static const String _baseURL = "http://34.116.150.23:8080/api";
+  static const String _baseURL = "http://staging.memmserve.com/api";
   static String login = "$_baseURL/login";
   static String buyAirtime = "$_baseURL/buy-airtime";
   static String buyData = "$_baseURL/buy-data";

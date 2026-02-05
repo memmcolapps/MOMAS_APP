@@ -37,7 +37,11 @@ class ServerRequest {
       response = await http.get(url, headers: header);
       var data = jsonDecode(response.body);
       log("$data  route: $path  status: ${response.statusCode}");
-      log("route: $path  status: ${response.statusCode}");
+
+      // log("route: $path  status: ${response.statusCode}");
+      // log("data>>>: $data");
+      //62124022443
+      //62310072192
 
       if (response.statusCode == 401) {
         Navigator.of(NavigationService.navigatorKey.currentContext!)
@@ -51,11 +55,14 @@ class ServerRequest {
         });
       }
       if (response.statusCode == 200 || response.statusCode == 201) {
+        log("response>>>: ${response.body}");
         return HttpData(data);
       } else {
         return HttpData(data);
       }
     } catch (e) {
+
+      // log("route1: $path  status1: ${response.statusCode}");
       debugPrint('exception post ${e.toString()}');
       if (e is HttpException) {
         throw HttpException({"message": e.toString(), "error": true});
