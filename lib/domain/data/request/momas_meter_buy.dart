@@ -40,9 +40,9 @@ class MomasMeterBuy {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['vending_amount'] = vendingAmount;
     data['trxref'] = trxref;
-    data['meterType'] = meterType;
+    data['meter_type'] = meterType;
     data['estate_id'] = estateId;
-    data['meterNo'] = meterNo;
+    data['meter_no'] = meterNo;
     data['tariff_id'] = tariffId;
     data['vend_amount_kw_per_naira'] = vendValueKWPerNaira;
     data['total_paid_amount'] = totalPaidAmount;

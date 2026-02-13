@@ -80,7 +80,8 @@ class CustomerArrearsBloc
       final response = await repository.payArrear({
         "type": "single",
         "id": event.id.toString(),
-        "paymentRef": event.paymentRef,
+        // TODO: for pay with test, pass generated ref
+        "ref": event.paymentRef,
       });
 
       if (response.status == true) {
@@ -99,7 +100,7 @@ class CustomerArrearsBloc
     try {
       final response = await repository.payArrear({
         "type": "all",
-        "paymentRef": event.paymentRef,
+        "ref": event.paymentRef,
       });
 
       if (response.status == true) {

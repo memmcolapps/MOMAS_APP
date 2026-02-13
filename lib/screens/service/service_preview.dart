@@ -3,7 +3,9 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:momaspayplus/domain/data/response/artisan_list_response.dart';
 import 'package:momaspayplus/domain/data/response/service_response.dart';
+import 'package:momaspayplus/reuseable/rating_star.dart';
 import 'package:momaspayplus/screens/service/rating_widget.dart';
 import 'package:momaspayplus/utils/colors.dart';
 
@@ -19,7 +21,7 @@ import '../../utils/service_launcher.dart';
 import '../../utils/time_util.dart';
 
 class ServicePreviewScreen extends StatefulWidget {
-  final SearchData data;
+  final Artisan data;
   final String estate;
 
   const ServicePreviewScreen(
@@ -128,7 +130,7 @@ class _ServicePreviewScreenState extends State<ServicePreviewScreen> {
     );
   }
 
-  Widget _buildContactCard(SearchData data) {
+  Widget _buildContactCard(Artisan data) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 4,
@@ -153,16 +155,17 @@ class _ServicePreviewScreenState extends State<ServicePreviewScreen> {
                     const SizedBox(
                       width: 10,
                     ),
-                    Row(
-                      children: List.generate(
-                        int.parse(data.rating ?? '0'),
-                        (index) => const Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                          size: 13,
-                        ),
-                      ),
-                    )
+                    RatingStar(rating: data.rating ?? '0')
+                    // Row(
+                    //   children: List.generate(
+                    //     int.parse(data.rating ?? '0'),
+                    //     (index) => const Icon(
+                    //       Icons.star,
+                    //       color: Colors.amber,
+                    //       size: 13,
+                    //     ),
+                    //   ),
+                    // )
                   ],
                 ),
                 Text(data.serviceTitle ?? ""),
@@ -227,16 +230,17 @@ class _ServicePreviewScreenState extends State<ServicePreviewScreen> {
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold)),
                       const SizedBox(width: 8),
-                      Row(
-                        children: List.generate(
-                          rating,
-                          (index) => const Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                            size: 20,
-                          ),
-                        ),
-                      )
+                      RatingStar(rating: rating.toString())
+                      // Row(
+                      //   children: List.generate(
+                      //     rating,
+                      //     (index) => const Icon(
+                      //       Icons.star,
+                      //       color: Colors.amber,
+                      //       size: 20,
+                      //     ),
+                      //   ),
+                      // )
                     ],
                   ),
                   const SizedBox(height: 8),

@@ -8,10 +8,10 @@ class ThemeConfig {
       primary: MoColors.mainColor,
       secondary: Colors.orange,
       surface: Colors.white,
-      background: Colors.grey[200],
+      // background: Colors.grey[200],
       error: Colors.red,
       onPrimary: MoColors.mainColor,
-      onSecondary: MoColors.mainColor.withOpacity(0.1),
+      onSecondary: MoColors.mainColor.withValues(alpha: 0.1),
       onSurface: MoColors.mainColor,
       onError: Colors.red,
       brightness: Brightness.light,
@@ -20,7 +20,7 @@ class ThemeConfig {
     return base.copyWith(
       textSelectionTheme: TextSelectionThemeData(
         cursorColor: MoColors.mainColor,
-        selectionColor: MoColors.mainColor.withOpacity(0.5),
+        selectionColor: MoColors.mainColor.withValues(alpha: 0.5),
         selectionHandleColor: MoColors.mainColor,
       ),
       colorScheme: colorScheme,

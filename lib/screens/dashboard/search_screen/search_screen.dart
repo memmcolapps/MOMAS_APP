@@ -166,17 +166,18 @@ class _SearchScreenState extends State<SearchScreen> {
                   MaterialPageRoute(
                       builder: (builder) => TransactionSuccessPage(
                             details: ReceiptBuilder()
-                                .meterPayment(state.momasPaymentResponse.data!),
+                                .meterPayment(state.momasPaymentResponse.data!.receipt!),
                           )));
             } else if (state is ViewMomasPaymentSuccess) {
+              //TODO: Receipt could be null ... come back to this if there is an error
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (builder) => TransactionSuccessPage(
-                            failed: state.momasPaymentResponse.data?.status !=
+                            failed: state.momasPaymentResponse.data?.receipt?.status!=
                                 PaymentStatus.successful,
                             details: ReceiptBuilder()
-                                .meterPayment(state.momasPaymentResponse.data!),
+                                .meterPayment(state.momasPaymentResponse.data!.receipt!),
                           )));
             }
           },

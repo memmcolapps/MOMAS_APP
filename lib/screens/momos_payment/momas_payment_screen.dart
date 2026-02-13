@@ -674,7 +674,7 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                     MaterialPageRoute(
                         builder: (builder) => TransactionSuccessPage(
                               details: ReceiptBuilder().meterPayment(
-                                  state.momasPaymentResponse.data!),
+                                  state.momasPaymentResponse.data!.receipt!),
                             )));
               default:
                 log("state not implemented");

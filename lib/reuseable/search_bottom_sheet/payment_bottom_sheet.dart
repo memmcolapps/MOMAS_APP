@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,6 +34,7 @@ class PaymentBottomSheet extends StatefulWidget {
 
 class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
   late PaymentBloc paymentBloc;
+  String ref = DateTime.now().millisecondsSinceEpoch.toString();
   User? user;
 
   @override
@@ -127,14 +130,12 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
                   ],
                 ),
                 const SizedBox(height: 20),
-                _buildPaymentOption(
-                    context, 'Pay with Test', MoImage.payStack,
+                _buildPaymentOption(context, 'Pay with Test', MoImage.payStack,
                     onTap: () {
-                      widget.onPayment!("ref");
-                      Navigator.pop(context);
-                      // _onPaymentOptionTap(PaymentType.paystack),
-                    },
-                    additionalInfo: "1.5% + NGN100"),
+                  widget.onPayment!(ref);
+                  Navigator.pop(context);
+                  // _onPaymentOptionTap(PaymentType.paystack),
+                }, additionalInfo: "1.5% + NGN100"),
                 const SizedBox(height: 10),
                 _buildPaymentOption(
                     context, 'Pay with Paystack', MoImage.payStack,
@@ -172,9 +173,19 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
               MaterialPageRoute(
                   builder: (context) => PaymentWebView(url: state.url)),
             ).then((value) {
-              if (value["status"] == "success") {
-                widget.onPayment!(value["ref"]);
-                Navigator.pop(context);
+              debugPrint("Check the response here $value");
+              if (value != null) {
+                if (value["status"] == "success") {
+                  widget.onPayment!(value["ref"]);
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                  }
+                } else if (value["status"] == "failure") {
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                    showErrorBottomSheet(context, "Payment Failed");
+                  }
+                }
               }
             });
           } else if (state is PaymentWalletSuccess) {
@@ -267,6 +278,38 @@ class _PaymentWebViewState extends State<PaymentWebView> {
 
   late WebViewController controller;
 
+  Future<void> handleApiRedirect(BuildContext context, String apiUrl) async {
+    var client = HttpClient();
+
+    try {
+      var request = await client.getUrl(Uri.parse(apiUrl));
+      request.followRedirects = false;
+      var response = await request.close();
+
+      if (response.statusCode == 302 || response.statusCode == 301) {
+        String? redirectUrl = response.headers.value('location');
+
+        bool containsPayment = redirectUrl.toString().contains('payment');
+        if (redirectUrl != null && containsPayment) {
+          Uri uri = Uri.parse(redirectUrl);
+          print('Query params: ${uri.queryParameters}');
+
+
+          String? ref =
+              uri.queryParameters['ref'] ?? uri.queryParameters["trans_id"];
+          String? status = uri.queryParameters['status'];
+          if (context.mounted) {
+            Navigator.pop(context, {"ref": ref, "status": status});
+          }
+        }
+      }
+    } catch (e) {
+      print('Error: $e');
+    } finally {
+      client.close();
+    }
+  }
+
   loadController() {
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -290,12 +333,22 @@ class _PaymentWebViewState extends State<PaymentWebView> {
           onWebResourceError: (WebResourceError error) {},
           onNavigationRequest: (NavigationRequest request) {
             Uri uri = Uri.parse(request.url);
+            debugPrint("Navigating to ${request.url}");
+
+            if (request.url.contains('paystack-check')) {
+              handleApiRedirect(context, request.url);
+              return NavigationDecision.prevent;
+            }
+
+            // TODO: Leave as fallback for now
             bool containsPayment = uri.toString().contains('payment');
             if (containsPayment == true) {
+              debugPrint("Payment verification route detected");
               String? ref =
                   uri.queryParameters['ref'] ?? uri.queryParameters["trans_id"];
               String? status = uri.queryParameters['status'];
               Navigator.pop(context, {"ref": ref, "status": status});
+              return NavigationDecision.prevent;
             }
             return NavigationDecision.navigate;
           },
@@ -307,7 +360,14 @@ class _PaymentWebViewState extends State<PaymentWebView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Payment')),
+      appBar: AppBar(
+          title: const Text(
+        'Make Payment',
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w700,
+        ),
+      )),
       body: Stack(
         children: [
           WebViewWidget(controller: controller),

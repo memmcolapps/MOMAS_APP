@@ -46,7 +46,7 @@ class PaymentRepository {
 
   Future<MomasPaymentResponse> getReceipt(String transactionRef) async {
     var response = await _request
-        .postData(path: Routes.getTrx, body: {"id": transactionRef});
+        .getData(path: Routes.getTrx, dataToSend: {"transaction_id": transactionRef});
     return MomasPaymentResponse.fromJson(response.data);
   }
 }

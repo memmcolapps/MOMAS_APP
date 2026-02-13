@@ -82,7 +82,6 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
 
   @override
   void didPopNext() {
-    print('Screen return back');
     userBloc.add(GetUserDashboardEvent());
   }
 

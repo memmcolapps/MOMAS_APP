@@ -29,9 +29,13 @@ class ServerRequest {
 
   Future<HttpResponse> getData({
     String? path,
+    Map<String, String>? dataToSend,
   }) async {
     var header = await getHeader();
-    var url = Uri.parse(path!);
+    print(dataToSend);
+    var url = Uri.parse(path!).replace(
+      queryParameters: dataToSend
+    );
     var response;
     try {
       response = await http.get(url, headers: header);

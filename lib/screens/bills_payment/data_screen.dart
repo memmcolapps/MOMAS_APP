@@ -69,7 +69,13 @@ class _DataScreenState extends State<DataScreen> {
             Navigator.pop(context);
           },
         ),
-        title: const Text('Data Bundle'),
+        title: const Text(
+          'Data Bundle',
+          style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700
+          ),
+        ),
       ),
       body: BlocProvider(
         create: (context) => DataBloc(repository: BillRepository()),

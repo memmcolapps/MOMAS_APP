@@ -2,9 +2,13 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:momaspayplus/bloc/service_bloc/service_state.dart';
+import 'package:momaspayplus/domain/data/response/artisan_list_response.dart';
+import 'package:momaspayplus/domain/data/response/service_type_response.dart';
 import 'package:momaspayplus/domain/repository/service_repository.dart';
 import 'package:momaspayplus/reuseable/mo_button.dart';
+import 'package:momaspayplus/reuseable/rating_star.dart';
 import 'package:momaspayplus/screens/service/service_preview.dart';
 import 'package:momaspayplus/utils/screen_utils.dart';
 
@@ -30,17 +34,20 @@ class ServiceScreen extends StatefulWidget {
 class _ServiceScreenState extends State<ServiceScreen> {
   late ServiceBloc serviceBloc;
   Estate? selectedEstate;
-  Service? selectedService;
-  ServiceDataResponse? serviceDataResponse;
-  ServiceSearchResponse? serviceSearchResponse;
+  ServiceType? selectedService;
+  ServiceTypeResponse? serviceTypeResponse;
+  ArtisanListResponse? artisanListResponse;
+  // ServiceDataResponse? serviceDataResponse;
+  // ServiceSearchResponse? serviceSearchResponse;
   String? estateId;
 
   @override
   void initState() {
     super.initState();
     serviceBloc = ServiceBloc(ServiceRepository())
-      ..add(const ServicePropertiesEvent());
-    getUserEstate();
+      ..add(const ServiceTypeEvent());
+    // ..add(const ServicePropertiesEvent());
+    // getUserEstate();
   }
 
   getUserEstate() async {
@@ -129,11 +136,14 @@ class _ServiceScreenState extends State<ServiceScreen> {
                               : const EdgeInsets.all(0.0),
                           child: Column(
                             children: [
-                              EPDropdownButton<Service>(
+                              EPDropdownButton<ServiceType>(
                                 itemsListTitle: "Choose Services",
                                 iconSize: 22,
                                 value: selectedService,
-                                hint: const Text(""),
+                                hint: const Text(
+                                  "Choose a service type",
+                                  style: TextStyle(fontSize: 14),
+                                ),
                                 isExpanded: true,
                                 underline: const Divider(),
                                 searchMatcher: (item, text) {
@@ -145,9 +155,11 @@ class _ServiceScreenState extends State<ServiceScreen> {
                                   setState(() {
                                     selectedService = v;
                                   });
+                                  serviceBloc.add(ArtisanListEvent(
+                                      // estateId.toString(),
+                                      selectedService!.id));
                                 },
-                                items: (serviceDataResponse?.data?.service ??
-                                        [])
+                                items: (serviceTypeResponse?.data ?? [])
                                     .map(
                                       (e) => DropdownMenuItem(
                                         value: e,
@@ -177,9 +189,9 @@ class _ServiceScreenState extends State<ServiceScreen> {
                                   isLoading: state is ServiceStateLoading,
                                   title: "Search",
                                   onTap: () {
-                                    serviceBloc.add(ServiceSearchEvent(
-                                        estateId.toString(),
-                                        selectedService!.id.toString()));
+                                    serviceBloc.add(ArtisanListEvent(
+                                        // estateId.toString(),
+                                        selectedService!.id));
                                   },
                                 ),
                               )
@@ -189,53 +201,66 @@ class _ServiceScreenState extends State<ServiceScreen> {
                       ],
                     ),
                   ),
-                  serviceSearchResponse?.data?.isNotEmpty == true
+                  artisanListResponse?.data?.artisans?.isNotEmpty == true
                       ? SliverList(
                           delegate: SliverChildBuilderDelegate(
                             (BuildContext context, int index) {
-                              if (serviceSearchResponse?.data?.isNotEmpty ==
+                              if (artisanListResponse
+                                      ?.data?.artisans?.isNotEmpty ==
                                   true) {
-                                var searchData =
-                                    serviceSearchResponse!.data![index];
+                                var artisanList =
+                                    artisanListResponse!.data!.artisans![index];
                                 return InkWell(
                                   onTap: () {
                                     Navigator.of(context).push(
                                         MaterialPageRoute(
                                             builder: (_) =>
                                                 ServicePreviewScreen(
-                                                  data: searchData,
+                                                  data: artisanList,
                                                   estate:
                                                       selectedEstate?.title ??
                                                           "",
                                                 )));
                                   },
                                   child: CustomListItem(
-                                    name: searchData.professionalName ?? "",
-                                    profession: searchData.serviceTitle ?? "",
-                                    rating: int.parse(searchData.rating ?? "0"),
+                                    name: artisanList.professionalName ?? "",
+                                    profession: artisanList.serviceTitle ?? "",
+                                    rating: artisanList.rating ?? "0",
                                     phoneNumber:
-                                        searchData.professionalPhone ?? "",
+                                        artisanList.professionalPhone ?? "",
                                   ),
                                 );
                               }
-                              return const EmptyList();
+                              return EmptyList(
+                                selectedService: null,
+                                isLoading: state is ServiceStateLoading,
+                              );
                             },
                             childCount:
-                                serviceSearchResponse?.data?.length ?? 0,
+                                artisanListResponse?.data?.artisans?.length ??
+                                    0,
                           ),
                         )
-                      : const SliverToBoxAdapter(child: EmptyList()),
+                      : SliverToBoxAdapter(
+                          child: EmptyList(
+                          selectedService: selectedService,
+                          isLoading: state is ServiceStateLoading,
+                        )),
                 ],
               );
             },
             listener: (BuildContext context, ServiceState state) {
               switch (state) {
-                case ServiceSearchStateSuccess():
-                  serviceSearchResponse = state.dataResponse;
+                // case ServiceSearchStateSuccess():
+                //   serviceSearchResponse = state.dataResponse;
                 case ServiceStateFailed():
                   showErrorBottomSheet(context, state.error);
-                case ServiceStateSuccess():
-                  serviceDataResponse = state.dataResponse;
+                // case ServiceStateSuccess():
+                //   serviceDataResponse = state.dataResponse;
+                case ServiceTypeSuccess():
+                  serviceTypeResponse = state.dataResponse;
+                case ArtisanListSuccess():
+                  artisanListResponse = state.dataResponse;
 
                 default:
                   log("state not implemented");
@@ -252,7 +277,7 @@ class CustomListItem extends StatelessWidget {
   final String name;
   final String profession;
   final String phoneNumber;
-  final int rating;
+  final String rating;
 
   const CustomListItem({
     super.key,
@@ -302,16 +327,7 @@ class CustomListItem extends StatelessWidget {
                     const SizedBox(
                       width: 10,
                     ),
-                    Row(
-                      children: List.generate(
-                        rating,
-                        (index) => const Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                          size: 20,
-                        ),
-                      ),
-                    )
+                    RatingStar(rating: rating),
                   ],
                 ),
                 const SizedBox(height: 4.0),
@@ -336,30 +352,40 @@ class CustomListItem extends StatelessWidget {
 }
 
 class EmptyList extends StatelessWidget {
-  const EmptyList({super.key});
+  final ServiceType? selectedService;
+  final bool isLoading;
+
+  const EmptyList({super.key, this.selectedService, required this.isLoading});
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    return Center(
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.person_search_sharp,
               size: 50,
               color: Colors.grey,
             ),
-            SizedBox(height: 5),
-            Text(
-              'No professional available',
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey,
-              ),
-            ),
+            const SizedBox(height: 5),
+            isLoading ? const Text(
+              "Fetching services...",
+            ) :
+            selectedService != null
+                ? const Text(
+                    'No professional available',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                    ),
+                  )
+                : const Text(
+                    "Select a service type to view available professionals.",
+                  ),
           ],
         ),
       ),

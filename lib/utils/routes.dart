@@ -1,7 +1,8 @@
 class Routes {
   // static const String _baseURL = "https://momaspay.memmserve.com/api";
   // static const String _baseURL = "http://34.116.150.23:8080/api";
-  static const String _baseURL = "http://staging.memmserve.com/api";
+  static const String _baseURL = "https://unobstructed-kindredly-jeanmarie.ngrok-free.dev/api";
+  // static const String _baseURL = "http://staging.memmserve.com/api";
   static String login = "$_baseURL/login";
   static String buyAirtime = "$_baseURL/buy-airtime";
   static String buyData = "$_baseURL/buy-data";
@@ -14,6 +15,8 @@ class Routes {
   static String getTransaction = "$_baseURL/get-transactions";
   static String retryMeter = "$_baseURL/retry-meter";
   static String getTrx = "$_baseURL/get-trx";
+  static String serviceType = "$_baseURL/fetch-services";
+  static String artisanByService = "$_baseURL/get-artisans-by-service";
   static String serviceProperties = "$_baseURL/service-properties";
   static String serviceSearch = "$_baseURL/service-search";
   static String features = "$_baseURL/features";

@@ -1,4 +1,6 @@
+import 'package:momaspayplus/domain/data/response/artisan_list_response.dart';
 import 'package:momaspayplus/domain/data/response/generic_response.dart';
+import 'package:momaspayplus/domain/data/response/service_type_response.dart';
 
 import '../../utils/routes.dart';
 import '../data/response/comment_response.dart';
@@ -8,6 +10,18 @@ import '../request.dart';
 
 class ServiceRepository {
   final ServerRequest _request = ServerRequest();
+
+  Future<ServiceTypeResponse> getServiceType() async {
+    var response = await _request.getData(path: Routes.serviceType);
+    return ServiceTypeResponse.fromJson(response.data);
+  }
+
+  Future<ArtisanListResponse> getArtisanByService(int serviceId) async {
+    var response = await _request.getData(
+        path: Routes.artisanByService,
+        dataToSend: {"service_id": serviceId.toString()});
+    return ArtisanListResponse.fromJson(response.data);
+  }
 
   Future<ServiceDataResponse> getService() async {
     var response = await _request.getData(path: Routes.serviceProperties);

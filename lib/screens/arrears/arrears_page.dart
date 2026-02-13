@@ -93,7 +93,7 @@ class _CustomerArrearsPageState extends State<CustomerArrearsPage> {
                               itemBuilder: (context, index) {
                                 final item = items[index];
 
-                                final isPaid = item.status == 1;
+                                final isPaid = item.status == 1 || item.status == 2;
 
                                 return Container(
                                   margin:

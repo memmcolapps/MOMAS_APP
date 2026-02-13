@@ -51,7 +51,13 @@ class _AirtimeScreenState extends State<AirtimeScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: MoColors.mainColor,
-        title: const Text('Airtime'),
+        title: const Text(
+          'Airtime',
+          style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: BlocProvider(

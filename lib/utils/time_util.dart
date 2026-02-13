@@ -8,8 +8,8 @@ class TimeUtil {
   }
 
 
- static String formatMMMMDY(String dateString){
-    DateTime dateTime = DateTime.parse(dateString);
+ static String formatMMMMDY(String? dateString){
+    DateTime dateTime = DateTime.parse(dateString ?? DateTime.now().toString());
    return ai.DateFormat('MMMM d, y \'at\' h:mm a').format(dateTime);
   }
 }

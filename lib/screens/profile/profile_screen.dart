@@ -71,7 +71,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.green,
-        title: const Text('Profile'),
+        title: const Text(
+          'PROFILE',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700
+          ),
+        ),
         centerTitle: true,
       ),
       body: BlocConsumer<SettingsBloc, SettingsState>(
@@ -96,52 +102,76 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         CircleAvatar(
                           radius: 40,
-                          backgroundImage: AssetImage(MoImage
-                              .profilePic), // Replace with your image asset
+                          backgroundImage: AssetImage(MoImage.profilePic),
                         ),
                         const SizedBox(width: 16),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              user?.firstName ?? "${user?.lastName}",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      "${user?.firstName ?? ""} ${user?.lastName ?? ""}",
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          Colors.white.withValues(alpha: 0.2),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: const Row(
+                                      children: [
+                                        Icon(Icons.circle,
+                                            color: Colors.greenAccent, size: 8),
+                                        SizedBox(width: 6),
+                                        Text(
+                                          "Active",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                            Text(
-                              user?.email ?? "",
-                              style: const TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                            Text(
-                              user?.meterNo ?? "",
-                              style: const TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Text(
-                                'Active',
+                              const SizedBox(height: 6),
+                              Text(
+                                user?.email ?? "",
                                 style: TextStyle(
-                                  color: Colors.green,
+                                  color: Colors.white.withValues(alpha: 0.85),
                                 ),
                               ),
-                            ),
-                          ],
+                              Text(
+                                user?.estateName ?? "",
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.85),
+                                ),
+                              ),
+                              Text(
+                                user?.meterNo ?? "",
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.85),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

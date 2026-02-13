@@ -8,6 +8,10 @@ class ServiceBloc extends Bloc<ServiceEvent, ServiceState> {
   final ServiceRepository serviceRepository;
 
   ServiceBloc(this.serviceRepository) : super(ServiceStateInitial()) {
+    on<ServiceTypeEvent>(
+        (event, emit) async => onServiceTypeEvent(event, emit));
+    on<ArtisanListEvent>(
+        (event, emit) async => onArtisanListEvent(event, emit));
     on<ServicePropertiesEvent>(
         (event, emit) async => onServiceEvent(event, emit));
     on<ServiceSearchEvent>(
@@ -15,6 +19,41 @@ class ServiceBloc extends Bloc<ServiceEvent, ServiceState> {
     on<ServicePostCommentEvent>(
         (event, emit) async => postCommentEvent(event, emit));
     on<GetCommentEvent>((event, emit) async => getCommentEvent(event, emit));
+  }
+
+  void onServiceTypeEvent(
+      ServiceTypeEvent event, Emitter<ServiceState> emit) async {
+    super.onEvent(event);
+    try {
+      emit(ServiceStateLoading());
+      var response = await serviceRepository.getServiceType();
+      if (response.status == true) {
+        emit(ServiceTypeSuccess(response));
+      } else {
+        emit(ServiceStateFailed(response.message ?? ""));
+      }
+    } catch (_, e) {
+      print(e);
+      emit(ServiceStateFailed(_.toString()));
+    }
+  }
+
+  void onArtisanListEvent(
+      ArtisanListEvent event, Emitter<ServiceState> emit) async {
+    super.onEvent(event);
+    try {
+      emit(ServiceStateLoading());
+      var response =
+          await serviceRepository.getArtisanByService(event.serviceId);
+      if (response.status == true) {
+        emit(ArtisanListSuccess(response));
+      } else {
+        emit(ServiceStateFailed(response.message ?? ""));
+      }
+    } catch (_, e) {
+      print(e);
+      emit(ServiceStateFailed(_.toString()));
+    }
   }
 
   void onServiceEvent(ServiceEvent event, Emitter<ServiceState> emit) async {

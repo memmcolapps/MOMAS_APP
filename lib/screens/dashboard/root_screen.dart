@@ -66,6 +66,7 @@ class _RootScreenState extends State<RootScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final EdgeInsets safePadding =  MediaQuery.paddingOf(context);
     return Scaffold(
       backgroundColor: Colors.white,
       body: FutureBuilder<User?>(
@@ -88,7 +89,7 @@ class _RootScreenState extends State<RootScreen> {
                         ? _estateStaffTabView()[_selectedIndex]
                         : _buildTabViews()[_selectedIndex]),
                 Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    padding: EdgeInsets.fromLTRB(8, 0, 8, safePadding.bottom),
                     child: (snapshot.data?.userRole == UserRole.estateStaff)
                         ? _rowEstateStaff()
                         : _rowBuildTap()),
@@ -104,9 +105,9 @@ class _RootScreenState extends State<RootScreen> {
       onTap: () => _onTabTapped(index),
       child: Column(
         children: [
-          const SizedBox(
-            height: 10,
-          ),
+          // const SizedBox(
+          //   height: 10,
+          // ),
           SizedBox(
               height: 20,
               width: 20,
@@ -128,11 +129,11 @@ class _RootScreenState extends State<RootScreen> {
                   topLeft: Radius.circular(20), topRight: Radius.circular(20)),
             ),
           ),
-          Platform.isIOS == true
-              ? const SizedBox(
-                  height: 20,
-                )
-              : Container()
+          // Platform.isIOS == true
+          //     ? const SizedBox(
+          //         height: 20,
+          //       )
+          //     : Container()
         ],
       ),
     );

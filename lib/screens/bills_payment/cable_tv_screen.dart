@@ -72,7 +72,13 @@ class _CableTvScreenState extends State<CableTvScreen> {
             Navigator.pop(context);
           },
         ),
-        title: const Text('Cable Tv'),
+        title: const Text(
+          'Cable Tv',
+          style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: BlocProvider(
