@@ -11,8 +11,7 @@ import '../utils/colors.dart';
 import '../utils/shared_pref.dart';
 
 class MoBottomSheet {
-  Future payment(
-      BuildContext context,
+  Future payment(BuildContext context,
       {required String amount,
       required ServiceType serviceType,
       Function(String ref)? onPayment,
@@ -53,11 +52,12 @@ class MoBottomSheet {
             }
             print("monthly 222222 fee: ${snapshot.data?.monthlyAdminFee}");
             print("status>>> : ${snapshot.data?.status}");
-            return
-              PaymentBottomSheet(
-              amount: amount,
-              onPayment: onPayment,
-              service: serviceType,
+            return SingleChildScrollView(
+              child: PaymentBottomSheet(
+                amount: amount,
+                onPayment: onPayment,
+                service: serviceType,
+              ),
             );
           },
         );

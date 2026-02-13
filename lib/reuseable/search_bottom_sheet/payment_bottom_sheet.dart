@@ -62,6 +62,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final EdgeInsets safePadding = MediaQuery.paddingOf(context);
     return BlocProvider(
       create: (context) => PaymentBloc(PaymentRepository()),
       child: BlocConsumer<PaymentBloc, PaymentState>(
@@ -75,7 +76,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
             ));
           }
           return Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.fromLTRB(16, 16, 16, safePadding.bottom + 16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
