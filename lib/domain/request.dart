@@ -32,11 +32,12 @@ class ServerRequest {
     Map<String, String>? dataToSend,
   }) async {
     var header = await getHeader();
-    print(dataToSend);
+    log("${path}    ${dataToSend.toString()}");
     var url = Uri.parse(path!).replace(
       queryParameters: dataToSend
     );
     var response;
+    print(url);
     try {
       response = await http.get(url, headers: header);
       var data = jsonDecode(response.body);

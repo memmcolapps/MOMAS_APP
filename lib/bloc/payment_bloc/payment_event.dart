@@ -20,6 +20,15 @@ class MakePayment extends PaymentEvent {
   List<Object> get props => [payType, amount, serviceType];
 }
 
+class VerifyPayment extends PaymentEvent {
+  final String ref;
+
+  const VerifyPayment({required this.ref});
+
+  @override
+  List<Object> get props => [ref];
+}
+
 class SearchPayment extends PaymentEvent {
   const SearchPayment();
 

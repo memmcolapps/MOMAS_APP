@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -70,19 +72,26 @@ class _CustomerArrearsPageState extends State<CustomerArrearsPage> {
 
                 return items.isEmpty
                     ? const Center(
-                      child: Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Icon(Icons.history_edu, size: 50, color: Colors.grey,),
+                            Icon(
+                              Icons.history_edu,
+                              size: 50,
+                              color: Colors.grey,
+                            ),
                             Text(
-                              "No available arrears", textAlign: TextAlign.center,
+                              "No available arrears",
+                              textAlign: TextAlign.center,
                               style: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.normal,),
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal,
+                              ),
                             ),
                           ],
                         ),
-                    )
+                      )
                     : Column(
                         children: [
                           Expanded(
@@ -93,7 +102,8 @@ class _CustomerArrearsPageState extends State<CustomerArrearsPage> {
                               itemBuilder: (context, index) {
                                 final item = items[index];
 
-                                final isPaid = item.status == 1 || item.status == 2;
+                                final isPaid =
+                                    item.status == 1 || item.status == 2;
 
                                 return Container(
                                   margin:
@@ -288,6 +298,9 @@ class _CustomerArrearsPageState extends State<CustomerArrearsPage> {
 
   void payment(BuildContext context, String amount, int arrearsId, bool single,
       serviceType) {
+    final ServiceType arrearsType = serviceType.contains("admin")
+        ? ServiceType.admin_fee
+        : ServiceType.arrears;
     MoBottomSheet().payment(context,
         amount: amount,
         showMonthlyFee: false,
@@ -295,9 +308,8 @@ class _CustomerArrearsPageState extends State<CustomerArrearsPage> {
             ? ServiceType.admin_fee
             : ServiceType.arrears, onPayment: (String ref) {
       if (single) {
-        context
-            .read<CustomerArrearsBloc>()
-            .add(PaySingleArrear(id: arrearsId, paymentRef: ref));
+        context.read<CustomerArrearsBloc>().add(PaySingleArrear(
+            id: arrearsId, paymentRef: ref, serviceType: arrearsType));
       } else {
         context.read<CustomerArrearsBloc>().add(PayAllArrears(ref));
       }

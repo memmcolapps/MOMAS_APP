@@ -45,6 +45,11 @@ class ReceiptBuilder {
           label: 'Unit  :',
           value: data.unitKwh ?? data.vendAmountKwPerNaira
       ),
+      TransactionDetail(
+          label: 'Other Fee (${data.miscellaneous}):',
+          value: data.miscellaneousTrxAmount == null
+              ? null
+              : AmountFormatter.formatNaira(double.parse(data.miscellaneousTrxAmount!)) ?? ""),
       TransactionDetail(label: 'KCT1  Token:', value: data.kctToken1),
       TransactionDetail(label: 'KCT2  Token:', value: data.kctToken2),
       TransactionDetail(label: 'Token:', value: data.token ?? ""),

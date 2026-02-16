@@ -399,6 +399,8 @@ class _AccessTokenScreenState extends State<AccessTokenScreen> {
                           context,
                           MaterialPageRoute(
                               builder: (builder) => TransactionSuccessPage(
+                                    successMessage: "Code generated successfully",
+                                    receiptHeading: "Code Details",
                                     details: ReceiptBuilder()
                                         .accessToken(state.data.data!),
                                   )));

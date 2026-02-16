@@ -1,3 +1,5 @@
+import 'package:momaspayplus/domain/data/response/payment_verification_response.dart';
+
 import '../../utils/routes.dart';
 import '../data/request/momas_payent_response.dart';
 import '../data/response/bank_details.dart';
@@ -14,7 +16,7 @@ class PaymentRepository {
     var response = await _request.postData(path: Routes.pay, body: {
       'pay_type': paymentType,
       'amount': amount,
-      "service": serviceType
+      "service_type": serviceType
     });
     return PaymentResponse.fromJson(response.data);
   }
@@ -22,6 +24,13 @@ class PaymentRepository {
   Future<TransactionDataResponse> searchTransaction() async {
     var response = await _request.getData(path: Routes.getTransaction);
     return TransactionDataResponse.fromJson(response.data);
+  }
+
+  Future<PaymentVerificationResponse> verifyPayment(String ref) async {
+    var response = await _request.getData(
+        path: Routes.verifyPayment,
+        dataToSend: {"reference": ref, "access_point": "mobile"});
+    return PaymentVerificationResponse.fromJson(response.data);
   }
 
   Future<MomasPaymentResponse> retryPayment(String transactionRef) async {
@@ -45,8 +54,8 @@ class PaymentRepository {
   }
 
   Future<MomasPaymentResponse> getReceipt(String transactionRef) async {
-    var response = await _request
-        .getData(path: Routes.getTrx, dataToSend: {"transaction_id": transactionRef});
+    var response = await _request.getData(
+        path: Routes.getTrx, dataToSend: {"transaction_id": transactionRef});
     return MomasPaymentResponse.fromJson(response.data);
   }
 }

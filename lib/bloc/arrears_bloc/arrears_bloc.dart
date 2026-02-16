@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:momaspayplus/bloc/payment_bloc/payment_bloc.dart';
 
 import '../../domain/data/response/arrears_items.dart';
 import '../../domain/repository/bill_repository.dart';
@@ -10,9 +11,11 @@ class GetArrears extends CustomerArrearsEvent {}
 
 class PaySingleArrear extends CustomerArrearsEvent {
   final int id;
+  final ServiceType serviceType;
   final String paymentRef;
   PaySingleArrear({
     required this.id,
+    required this.serviceType,
     required this.paymentRef,
   });
 }
@@ -80,7 +83,7 @@ class CustomerArrearsBloc
       final response = await repository.payArrear({
         "type": "single",
         "id": event.id.toString(),
-        // TODO: for pay with test, pass generated ref
+        "service_type": event.serviceType.toString(),
         "ref": event.paymentRef,
       });
 

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/bloc/payment_bloc/payment_event.dart';
 import 'package:momaspayplus/bloc/payment_bloc/payment_state.dart';
@@ -10,6 +11,9 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   PaymentBloc(this.repository) : super(PaymentInitial()) {
     on<MakePayment>((event, emit) async {
       await payment(event, emit);
+    });
+    on<VerifyPayment>((event, emit) async {
+      await verifyPayment(event, emit);
     });
     on<SearchPayment>((event, emit) async {
       await searchPayment(event, emit);
@@ -48,6 +52,22 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
       } catch (e) {
         emit(PaymentFailure(error: e.toString()));
       }
+    }
+  }
+
+  verifyPayment(VerifyPayment event, Emitter<PaymentState> emit) async {
+    emit(PaymentLoading());
+    try {
+      final response = await repository.verifyPayment(event.ref);
+      if (response.status == true) {
+        emit(PaymentVerified(
+            paymentStatus: response.data?.paymentStatus ?? "failure",
+            ref: response.data?.ref ?? ''));
+      } else {
+        emit(PaymentFailure(error: response.message ?? "Network issue"));
+      }
+    } catch (e, _) {
+      emit(PaymentFailure(error: e.toString()));
     }
   }
 
@@ -114,4 +134,12 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
 
 enum PaymentType { paystack, wallet, flutterwave, remita, enkpay }
 
-enum ServiceType { credit_token, data, airtime, electricity, cable, arrears, admin_fee }
+enum ServiceType {
+  credit_token,
+  data,
+  airtime,
+  electricity,
+  cable,
+  arrears,
+  admin_fee
+}

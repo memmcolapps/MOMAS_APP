@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:momaspayplus/domain/data/response/payment_verification_response.dart';
 
 import '../../domain/data/request/momas_payent_response.dart';
 import '../../domain/data/response/bank_details.dart';
@@ -14,6 +15,16 @@ abstract class PaymentState extends Equatable {
 class PaymentInitial extends PaymentState {}
 
 class PaymentLoading extends PaymentState {}
+
+class PaymentVerified extends PaymentState {
+  final String paymentStatus;
+  final String ref;
+
+  const PaymentVerified({required this.paymentStatus, required this.ref});
+
+  @override
+  List<Object> get props => [paymentStatus, ref];
+}
 
 class PaymentSuccess extends PaymentState {
   final String url;

@@ -55,6 +55,8 @@ class MomasPaymentData {
   String? token;
   String? unitKwh;
   String? amount;
+  String? miscellaneous;
+  String? miscellaneousTrxAmount;
   String? trxId;
   String? date;
   String? meterNo;
@@ -78,6 +80,8 @@ class MomasPaymentData {
     this.token,
     this.unitKwh,
     this.amount,
+    this.miscellaneous,
+    this.miscellaneousTrxAmount,
     this.trxId,
     this.date,
     this.meterNo,
@@ -103,6 +107,8 @@ class MomasPaymentData {
     token = json['token'];
     unitKwh = json['unitkwh'];
     amount = json['amount'];
+    miscellaneous = json['miscellaneous'];
+    miscellaneousTrxAmount = json['miscellaneous_trx_amount'];
     trxId = json['trx_id'];
     date = json['updated_at'];
     meterNo = json['meterNo'];
@@ -130,6 +136,8 @@ class MomasPaymentData {
     data['token'] = token;
     data['unitkwh'] = unitKwh;
     data['amount'] = amount;
+    data['miscellaneous'] = miscellaneous;
+    data['miscellaneousTrxAmount'] = miscellaneousTrxAmount;
     data['trx_id'] = trxId;
     data['updated_at'] = date;
     data['meterNo'] = meterNo;

@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -56,12 +57,20 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
     );
   }
 
+  void _onPaymentVerified(String ref) {
+    setState(() {
+      isLoading = true;
+    });
+    paymentBloc.add(VerifyPayment(ref: ref));
+  }
+
   load() async {
     user = await SharedPreferenceHelper.getUser();
   }
 
   @override
   Widget build(BuildContext context) {
+    final double deviceHeight = MediaQuery.heightOf(context);
     final EdgeInsets safePadding = MediaQuery.paddingOf(context);
     return BlocProvider(
       create: (context) => PaymentBloc(PaymentRepository()),
@@ -69,11 +78,14 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
         bloc: paymentBloc,
         builder: (context, state) {
           if (state is PaymentLoading) {
-            return Center(
-                child: SpinKitFadingCircle(
-              color: MoColors.mainColor,
-              size: 40.0,
-            ));
+            return SizedBox(
+              height: deviceHeight * 0.5,
+              child: Center(
+                  child: SpinKitFadingCircle(
+                color: MoColors.mainColor,
+                size: 40.0,
+              )),
+            );
           }
           return Padding(
             padding: EdgeInsets.fromLTRB(16, 16, 16, safePadding.bottom + 16),
@@ -142,10 +154,10 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
                     context, 'Pay with Paystack', MoImage.payStack,
                     onTap: () => _onPaymentOptionTap(PaymentType.paystack),
                     additionalInfo: "1.5% + NGN100"),
-                const SizedBox(height: 10),
-                _buildPaymentOption(context, 'Enkpay payment', null,
-                    onTap: () => _onPaymentOptionTap(PaymentType.enkpay),
-                    additionalInfo: "Flat NGN100"),
+                // const SizedBox(height: 10),
+                // _buildPaymentOption(context, 'Enkpay payment', null,
+                //     onTap: () => _onPaymentOptionTap(PaymentType.enkpay),
+                //     additionalInfo: "Flat NGN100"),
                 const SizedBox(height: 10),
                 _buildPaymentOption(
                     context, 'Pay with Flutterwave', MoImage.flutterWave,
@@ -163,32 +175,28 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
           );
         },
         listener: (BuildContext context, PaymentState state) {
+          debugPrint("Listener received state: $state");
           if (state is PaymentSuccess) {
             setState(() {
               isLoading = false;
             });
-            // widget.onPayment!("ref");
-            // Navigator.pop(context);
             Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => PaymentWebView(url: state.url)),
             ).then((value) {
-              debugPrint("Check the response here $value");
-              if (value != null) {
-                if (value["status"] == "success") {
-                  widget.onPayment!(value["ref"]);
-                  if (context.mounted) {
-                    Navigator.pop(context);
-                  }
-                } else if (value["status"] == "failure") {
-                  if (context.mounted) {
-                    Navigator.pop(context);
-                    showErrorBottomSheet(context, "Payment Failed");
-                  }
-                }
+              if (value != null && value["ref"] != null) {
+                _onPaymentVerified(value["ref"]);
               }
             });
+          } else if (state is PaymentVerified) {
+            Navigator.pop(context);
+            if (state.paymentStatus == 'success' && state.ref.isNotEmpty) {
+              debugPrint('ref ${state.ref}');
+              widget.onPayment!(state.ref);
+            } else {
+              showErrorBottomSheet(context, "Payment Failed");
+            }
           } else if (state is PaymentWalletSuccess) {
             widget.onPayment!(state.ref);
             Navigator.pop(context);
@@ -279,37 +287,38 @@ class _PaymentWebViewState extends State<PaymentWebView> {
 
   late WebViewController controller;
 
-  Future<void> handleApiRedirect(BuildContext context, String apiUrl) async {
-    var client = HttpClient();
-
-    try {
-      var request = await client.getUrl(Uri.parse(apiUrl));
-      request.followRedirects = false;
-      var response = await request.close();
-
-      if (response.statusCode == 302 || response.statusCode == 301) {
-        String? redirectUrl = response.headers.value('location');
-
-        bool containsPayment = redirectUrl.toString().contains('payment');
-        if (redirectUrl != null && containsPayment) {
-          Uri uri = Uri.parse(redirectUrl);
-          print('Query params: ${uri.queryParameters}');
-
-
-          String? ref =
-              uri.queryParameters['ref'] ?? uri.queryParameters["trans_id"];
-          String? status = uri.queryParameters['status'];
-          if (context.mounted) {
-            Navigator.pop(context, {"ref": ref, "status": status});
-          }
-        }
-      }
-    } catch (e) {
-      print('Error: $e');
-    } finally {
-      client.close();
-    }
-  }
+  // Future<void> handleApiRedirect(BuildContext context, String apiUrl) async {
+  //   var client = HttpClient();
+  //
+  //   try {
+  //     var request = await client.getUrl(Uri.parse(apiUrl));
+  //     request.headers.set("ngrok-skip-browser-warning", "true");
+  //     request.followRedirects = false;
+  //     var response = await request.close();
+  //
+  //     if (response.statusCode >= 300 && response.statusCode < 400 ) {
+  //       String? redirectUrl = response.headers.value('location');
+  //       print(redirectUrl);
+  //
+  //       bool containsPayment = redirectUrl.toString().contains('payment');
+  //       if (redirectUrl != null && containsPayment) {
+  //         Uri uri = Uri.parse(redirectUrl);
+  //         print('Query params: ${uri.queryParameters}');
+  //
+  //         String? ref =
+  //             uri.queryParameters['ref'] ?? uri.queryParameters["trans_id"];
+  //         String? status = uri.queryParameters['status'];
+  //         if (context.mounted) {
+  //           Navigator.pop(context, {"ref": ref, "status": status});
+  //         }
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print('Error: $e');
+  //   } finally {
+  //     client.close();
+  //   }
+  // }
 
   loadController() {
     controller = WebViewController()
@@ -336,19 +345,28 @@ class _PaymentWebViewState extends State<PaymentWebView> {
             Uri uri = Uri.parse(request.url);
             debugPrint("Navigating to ${request.url}");
 
-            if (request.url.contains('paystack-check')) {
-              handleApiRedirect(context, request.url);
-              return NavigationDecision.prevent;
-            }
+            // if (request.url.contains('paystack-check')) {
+            //   handleApiRedirect(context, request.url);
+            //   return NavigationDecision.prevent;
+            // }
 
-            // TODO: Leave as fallback for now
-            bool containsPayment = uri.toString().contains('payment');
-            if (containsPayment == true) {
-              debugPrint("Payment verification route detected");
-              String? ref =
-                  uri.queryParameters['ref'] ?? uri.queryParameters["trans_id"];
-              String? status = uri.queryParameters['status'];
-              Navigator.pop(context, {"ref": ref, "status": status});
+            // bool containsPayment = uri.toString().contains('payment');
+            // if (containsPayment == true) {
+            //   debugPrint("Payment verification route detected");
+            //   String? ref =
+            //       uri.queryParameters['ref'] ?? uri.queryParameters["trans_id"];
+            //   String? status = uri.queryParameters['status'];
+            //   Navigator.pop(context, {"ref": ref, "status": status});
+            //   return NavigationDecision.prevent;
+            // }
+
+            bool paystackVerification =
+                uri.toString().contains('paystack-check');
+
+            if (paystackVerification) {
+              String? ref = uri.queryParameters['trxref'] ??
+                  uri.queryParameters["reference"];
+              Navigator.pop(context, {"ref": ref});
               return NavigationDecision.prevent;
             }
             return NavigationDecision.navigate;

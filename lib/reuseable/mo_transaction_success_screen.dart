@@ -16,10 +16,17 @@ import 'package:path_provider/path_provider.dart' as path;
 import '../utils/strings.dart';
 
 class TransactionSuccessPage extends StatefulWidget {
+  final String? successMessage;
+  final String? receiptHeading;
   final List<TransactionDetail>? details;
   final bool failed;
 
-  const TransactionSuccessPage({super.key, this.details, this.failed = false});
+  const TransactionSuccessPage(
+      {super.key,
+      this.successMessage,
+      this.receiptHeading,
+      this.details,
+      this.failed = false});
 
   @override
   State<TransactionSuccessPage> createState() => _TransactionSuccessPageState();
@@ -97,16 +104,21 @@ class _TransactionSuccessPageState extends State<TransactionSuccessPage> {
                                     color: Colors.red,
                                   ),
                                 )
-                              : const Text(
-                                  "Payment Successful",
-                                  style: TextStyle(
+                              : Text(
+                                  widget.successMessage != null
+                                      ? widget.successMessage!
+                                      : "Payment Successful",
+                                  style: const TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.green,
                                   ),
                                 ),
                           const SizedBox(height: 16.0),
-                          ReceiptWidget(details: widget.details ?? []),
+                          ReceiptWidget(
+                            details: widget.details ?? [],
+                            receiptHeading: widget.receiptHeading,
+                          ),
                           const SizedBox(height: 16.0),
                         ],
                       ),
@@ -187,8 +199,9 @@ Future<dynamic> ShowCapturedWidget(
 
 class ReceiptWidget extends StatelessWidget {
   final List<TransactionDetail> details;
+  final String? receiptHeading;
 
-  const ReceiptWidget({super.key, required this.details});
+  const ReceiptWidget({super.key, required this.details, this.receiptHeading});
 
   @override
   Widget build(BuildContext context) {
@@ -208,10 +221,12 @@ class ReceiptWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Center(
+                Center(
                   child: Text(
-                    'Purchase Details',
-                    style: TextStyle(
+                    receiptHeading != null
+                        ? receiptHeading!
+                        : 'Purchase Details',
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20.0,
                     ),
