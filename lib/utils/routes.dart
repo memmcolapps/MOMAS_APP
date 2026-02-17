@@ -1,9 +1,9 @@
 class Routes {
-  // static const String _baseURL = "https://momaspay.memmserve.com/api";
-  // static const String _baseURL = "http://34.116.150.23:8080/api";
-  static const String _baseURL = "https://unobstructed-kindredly-jeanmarie.ngrok-free.dev/api";
-  static const String _baseUR = "https://unobstructed-kindredly-jeanmarie.ngrok-free.dev";
-  // static const String _baseURL = "http://staging.memmserve.com/api";
+  // static const String _url = "https://momaspay.memmserve.com/api";
+  // static const String _url = "http://34.116.150.23:8080/api";
+  static const String _url = "http://staging.memmserve.com/api";
+  // static const String _url = "https://unobstructed-kindredly-jeanmarie.ngrok-free.dev";
+  static const String _baseURL = "$_url/api";
   static String login = "$_baseURL/login";
   static String buyAirtime = "$_baseURL/buy-airtime";
   static String buyData = "$_baseURL/buy-data";
@@ -13,7 +13,7 @@ class Routes {
   static String verifyEmail = "$_baseURL/validate-email";
   static String balance = "$_baseURL/balance";
   static String pay = "$_baseURL/pay";
-  static String verifyPayment = "$_baseUR/paystack-check";
+  static String verifyPayment = "$_url/paystack-check";
   static String getTransaction = "$_baseURL/get-transactions";
   static String retryMeter = "$_baseURL/retry-meter";
   static String getTrx = "$_baseURL/get-trx";
