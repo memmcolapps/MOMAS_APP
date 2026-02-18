@@ -100,7 +100,7 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
+    return RefreshIndicator( 
       onRefresh: () async {
         walletBloc = WalletBloc(DashboardService(DashboardRepository()))
           ..add(WalletDashboardEvent());

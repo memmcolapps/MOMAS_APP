@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'colors.dart';
 
@@ -27,7 +28,11 @@ class ThemeConfig {
       primaryColor: MoColors.mainColor,
       scaffoldBackgroundColor: Colors.grey[200],
       appBarTheme: AppBarTheme(
-        color: MoColors.mainColor,
+        backgroundColor: MoColors.mainColor,
+        // systemOverlayStyle:  const SystemUiOverlayStyle (
+        //   statusBarIconBrightness: Brightness.light,
+        //   statusBarBrightness: Brightness.dark,
+        // ),
         iconTheme: IconThemeData(
           color: MoColors.whiteColor,
         ),
