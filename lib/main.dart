@@ -10,11 +10,11 @@ final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.light,
-    statusBarBrightness: Brightness.dark
-  ));
+  // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+  //   statusBarColor: Colors.transparent,
+  //   statusBarIconBrightness: Brightness.light,
+  //   statusBarBrightness: Brightness.dark
+  // ));
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await SharedPreferenceHelper.init();
   runApp(const MomasPayApp());

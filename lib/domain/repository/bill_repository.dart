@@ -95,6 +95,7 @@ class BillRepository {
   Future<List<ArrearItem>> getCustomerArrears() async {
     var response = await _request.getData(path: Routes.arrears);
     return (response.data["data"] as List)
+        .where((item) => item['id'] != null)
         .map((v) => ArrearItem.fromJson(v))
         .toList();
   }

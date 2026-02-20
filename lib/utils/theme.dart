@@ -5,7 +5,8 @@ import 'colors.dart';
 
 class ThemeConfig {
   static ThemeData buildCustomTheme() {
-    final ColorScheme colorScheme = ColorScheme(
+    final ColorScheme colorScheme = ColorScheme.fromSeed(
+      seedColor: MoColors.mainColor,
       primary: MoColors.mainColor,
       secondary: Colors.orange,
       surface: Colors.white,
@@ -29,10 +30,11 @@ class ThemeConfig {
       scaffoldBackgroundColor: Colors.grey[200],
       appBarTheme: AppBarTheme(
         backgroundColor: MoColors.mainColor,
-        // systemOverlayStyle:  const SystemUiOverlayStyle (
-        //   statusBarIconBrightness: Brightness.light,
-        //   statusBarBrightness: Brightness.dark,
-        // ),
+        systemOverlayStyle:  const SystemUiOverlayStyle (
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
+        ),
         iconTheme: IconThemeData(
           color: MoColors.whiteColor,
         ),

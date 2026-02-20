@@ -22,6 +22,8 @@ class CustomerArrearsPage extends StatefulWidget {
 
 class _CustomerArrearsPageState extends State<CustomerArrearsPage> {
   late CustomerArrearsBloc bloc;
+  bool showDetails = false;
+
   @override
   void initState() {
     bloc = CustomerArrearsBloc(repository: BillRepository());
@@ -104,6 +106,8 @@ class _CustomerArrearsPageState extends State<CustomerArrearsPage> {
 
                                 final isPaid =
                                     item.status == 1 || item.status == 2;
+                                final hasHistory = item.history != null &&
+                                    item.history!.length > 1;
 
                                 return Container(
                                   margin:
@@ -173,60 +177,115 @@ class _CustomerArrearsPageState extends State<CustomerArrearsPage> {
                                         ],
                                       ),
                                       const SizedBox(height: 16),
-                                      if (!isPaid)
-                                        SizedBox(
-                                          width: double.infinity,
-                                          child: ElevatedButton.icon(
-                                            onPressed: () {
-                                              payment(
-                                                  context,
-                                                  item.amount.toString(),
-                                                  item.id,
-                                                  true,
-                                                  item.type);
-                                            },
-                                            icon: const Icon(Icons.payment,
-                                                size: 18),
-                                            label: const Text("Pay Now"),
-                                            style: ElevatedButton.styleFrom(
-                                              elevation: 0,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 14),
-                                              backgroundColor:
-                                                  const Color(0xFF1BA94C),
-                                              foregroundColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
+                                      // if (!isPaid)
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: ElevatedButton.icon(
+                                          onPressed: () {
+                                            payment(
+                                                context,
+                                                item.amount.toString(),
+                                                item.id,
+                                                true,
+                                                item.type);
+                                          },
+                                          icon: const Icon(Icons.payment,
+                                              size: 18),
+                                          label: const Text("Pay Now"),
+                                          style: ElevatedButton.styleFrom(
+                                            elevation: 0,
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 14),
+                                            backgroundColor:
+                                                const Color(0xFF1BA94C),
+                                            foregroundColor: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                             ),
                                           ),
-                                        )
-                                      else
+                                        ),
+                                      ),
+                                      if (hasHistory) ...[
+                                        const SizedBox(height: 8),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              showDetails = !showDetails;
+                                            });
+                                          },
+                                          child: Text(
+                                            showDetails ? "Hide details" : "See details",
+                                            style: const TextStyle(
+                                              fontSize: 13,
+                                              color: Colors.blueGrey,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                      if (showDetails && hasHistory) ...[
+                                        const SizedBox(height: 12),
                                         Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 8, horizontal: 12),
+                                          padding: const EdgeInsets.all(12),
                                           decoration: BoxDecoration(
-                                            color: Colors.green.shade100,
-                                            borderRadius:
-                                                BorderRadius.circular(8),
+                                            color: Colors.grey.shade100,
+                                            borderRadius: BorderRadius.circular(12),
                                           ),
-                                          child: const Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Icon(Icons.check_circle,
-                                                  size: 18,
-                                                  color: Colors.green),
-                                              SizedBox(width: 6),
-                                              Text("Paid",
-                                                  style: TextStyle(
-                                                      color: Colors.green,
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                            ],
+                                          child: Column(
+                                            children: item.history!.map((history) {
+                                              return Padding(
+                                                padding: const EdgeInsets.symmetric(vertical: 6),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      AmountFormatter.formatNaira(
+                                                          double.tryParse(history.amount) ?? 0),
+                                                      style: const TextStyle(
+                                                          fontWeight: FontWeight.w500),
+                                                    ),
+                                                    Text(
+                                                      history.createdAt
+                                                          .toLocal()
+                                                          .toString()
+                                                          .split(' ')[0],
+                                                      style: const TextStyle(
+                                                          fontSize: 12,
+                                                          color: Colors.grey),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            }).toList(),
                                           ),
-                                        )
+                                        ),
+                                      ],
+                                      // else
+                                      //   Container(
+                                      //   padding: const EdgeInsets.symmetric(
+                                      //       vertical: 8, horizontal: 12),
+                                      //   decoration: BoxDecoration(
+                                      //     color: Colors.green.shade100,
+                                      //     borderRadius:
+                                      //         BorderRadius.circular(8),
+                                      //   ),
+                                      //   child: const Row(
+                                      //     mainAxisSize: MainAxisSize.min,
+                                      //     children: [
+                                      //       Icon(Icons.check_circle,
+                                      //           size: 18,
+                                      //           color: Colors.green),
+                                      //       SizedBox(width: 6),
+                                      //       Text("Paid",
+                                      //           style: TextStyle(
+                                      //               color: Colors.green,
+                                      //               fontWeight:
+                                      //                   FontWeight.bold)),
+                                      //     ],
+                                      //   ),
+                                      // )
                                     ],
                                   ),
                                 );
