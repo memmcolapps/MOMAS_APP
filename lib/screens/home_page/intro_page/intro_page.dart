@@ -42,15 +42,6 @@ class _IntroPageState extends State<IntroPage> {
     );
   }
 
-  //TODO: If possible animate the transition
-  // void _getStarted() {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(builder: (context) => const LoginScreen()),
-  //   );
-  //   SharedPreferenceHelper.setOnboardingSeen(true);
-  // }
-
   void _getStarted() async {
     await SharedPreferenceHelper.setOnboardingSeen(true);
 

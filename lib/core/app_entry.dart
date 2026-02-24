@@ -29,7 +29,7 @@ class _AppEntryState extends State<AppEntry> {
       //   ],
       //   child:
         SharedPreferenceHelper.hasSeenOnboarding
-            ? const IntroPage()
+            ? const LoginScreen()
             : const IntroPage();
     // );
   }

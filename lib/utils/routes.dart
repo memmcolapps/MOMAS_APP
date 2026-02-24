@@ -1,8 +1,8 @@
 class Routes {
   // static const String _url = "https://momaspay.memmserve.com/api";
   // static const String _url = "http://34.116.150.23:8080/api";
-  static const String _url = "http://staging.memmserve.com";
-  // static const String _url = "https://unobstructed-kindredly-jeanmarie.ngrok-free.dev";
+  // static const String _url = "http://staging.memmserve.com";
+  static const String _url = "https://unobstructed-kindredly-jeanmarie.ngrok-free.dev";
   static const String _baseURL = "$_url/api";
   static String login = "$_baseURL/login";
   static String buyAirtime = "$_baseURL/buy-airtime";
@@ -48,4 +48,6 @@ class Routes {
   static String resetPassword = "$_baseURL/reset-password";
   static String getAccount = "$_baseURL/get-account";
   static String adminFeeCheck = "$_baseURL/admin-fee-check";
+
+  static String checkAppUpdate = "$_baseURL/check-app-version";
 }

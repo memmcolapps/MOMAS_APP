@@ -143,6 +143,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
                   ],
                 ),
                 const SizedBox(height: 20),
+                //TODO: Use flavour to control the visibility of this
                 _buildPaymentOption(context, 'Pay with Test', MoImage.payStack,
                     onTap: () {
                   widget.onPayment!(ref);
@@ -153,7 +154,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
                 _buildPaymentOption(
                     context, 'Pay with Paystack', MoImage.payStack,
                     onTap: () => _onPaymentOptionTap(PaymentType.paystack),
-                    additionalInfo: "1.5% + NGN100"),
+                    additionalInfo: "2.5% + NGN100"),
                 // const SizedBox(height: 10),
                 // _buildPaymentOption(context, 'Enkpay payment', null,
                 //     onTap: () => _onPaymentOptionTap(PaymentType.enkpay),

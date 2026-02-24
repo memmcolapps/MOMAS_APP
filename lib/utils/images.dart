@@ -3,6 +3,7 @@ class MoImage{
   static String root = "assets";
   static String lottieSuccess =  "$root/success_lottie.json";
   static String logo =  "$root/logo.png";
+  static String logoColor = "$root/logo-color.png";
   static String fingerPrint =  "$root/finger_print.png";
   static String settingsIcon =  "$root/settings.png";
   static String history =  "$root/history.png";
@@ -46,7 +47,8 @@ class MoImage{
   static String family =  "$root/family.png";
 
 
-
+  static String playStore =  "$root/google-play-store.png";
+  static String appStore =  "$root/app-store.png";
 
 
 }
