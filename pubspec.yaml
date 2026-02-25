@@ -59,6 +59,7 @@ icons_launcher:
 
 flutter:
   uses-material-design: true
+  default-flavor: production
 
   # To add assets to your application, add an assets section, like this:
   assets:

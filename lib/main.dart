@@ -24,6 +24,7 @@ Future<void> main() async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   await SharedPreferenceHelper.init();
   runApp(const MomasPayApp());
+  debugPrint("Current flavor: $appFlavor");
 }
 
 class MomasPayApp extends StatelessWidget {

@@ -77,6 +77,52 @@ android {
         }
     }
 
+    flavorDimensions += "default"
+
+    productFlavors {
+        development {
+            dimension = "default"
+            manifestPlaceholders = [appName: "Momaspay Plus [DEV]"]
+            applicationIdSuffix = ".dev"
+        }
+
+        staging {
+            dimension = "default"
+            manifestPlaceholders = [appName: "Momaspay Plus [STG]"]
+            applicationIdSuffix = ".stg"
+        }
+
+        production {
+            dimension = "default"
+            manifestPlaceholders = [appName: "Momaspay Plus"]
+            applicationIdSuffix = ""
+        }
+//        create("development") {
+//            dimension = "default"
+//            resValue(
+//                    type = "string",
+//                    name = "app_name",
+//                    value = "Momaspay Plus [DEV]")
+//            applicationIdSuffix = ".dev"
+//        }
+//        create("staging") {
+//            dimension = "default"
+//            resValue(
+//                    type = "string",
+//                    name = "app_name",
+//                    value = "Momaspay Plus [STG]")
+//            applicationIdSuffix = ".stg"
+//        }
+//        create("production") {
+//            dimension = "default"
+//            resValue(
+//                    type = "string",
+//                    name = "app_name",
+//                    value = "Momaspay Plus")
+//            applicationIdSuffix = ""
+//        }
+    }
+
     packagingOptions {
         jniLibs {
             useLegacyPackaging = false

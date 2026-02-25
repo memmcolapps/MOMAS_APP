@@ -1,9 +1,12 @@
+import 'package:momaspayplus/config/app_config.dart';
+
 class Routes {
   // static const String _url = "https://momaspay.memmserve.com/api";
   // static const String _url = "http://34.116.150.23:8080/api";
   // static const String _url = "http://staging.memmserve.com";
-  static const String _url = "https://unobstructed-kindredly-jeanmarie.ngrok-free.dev";
-  static const String _baseURL = "$_url/api";
+  // static const String _url = "https://unobstructed-kindredly-jeanmarie.ngrok-free.dev";
+  static final String _url = AppConfig.baseUrl;
+  static final String _baseURL = "$_url/api";
   static String login = "$_baseURL/login";
   static String buyAirtime = "$_baseURL/buy-airtime";
   static String buyData = "$_baseURL/buy-data";

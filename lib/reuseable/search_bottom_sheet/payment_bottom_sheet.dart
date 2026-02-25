@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:momaspayplus/domain/repository/payment_repository.dart';
@@ -143,13 +144,14 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
                   ],
                 ),
                 const SizedBox(height: 20),
-                //TODO: Use flavour to control the visibility of this
-                _buildPaymentOption(context, 'Pay with Test', MoImage.payStack,
-                    onTap: () {
-                  widget.onPayment!(ref);
-                  Navigator.pop(context);
-                  // _onPaymentOptionTap(PaymentType.paystack),
-                }, additionalInfo: "1.5% + NGN100"),
+                if (appFlavor == 'development' || appFlavor == 'staging') ... [
+                  _buildPaymentOption(context, 'Pay with Test', MoImage.payStack,
+                      onTap: () {
+                        widget.onPayment!(ref);
+                        Navigator.pop(context);
+                        // _onPaymentOptionTap(PaymentType.paystack),
+                      }, additionalInfo: "1.5% + NGN100"),
+                ],
                 const SizedBox(height: 10),
                 _buildPaymentOption(
                     context, 'Pay with Paystack', MoImage.payStack,
