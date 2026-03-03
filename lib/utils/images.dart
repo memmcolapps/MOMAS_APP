@@ -6,8 +6,9 @@ class MoImage{
   static String logoColor = "$root/logo-color.png";
   static String fingerPrint =  "$root/finger_print.png";
   static String settingsIcon =  "$root/settings.png";
-  static String history =  "$root/history.png";
+  static String history =  "$root/history_tab.png";
   static String home =  "$root/home.png";
+  static String analyticsTab = "$root/analytics_tab.png";
 
   //dashboard
   static String momasPayment =  "$root/momos_payment.png";

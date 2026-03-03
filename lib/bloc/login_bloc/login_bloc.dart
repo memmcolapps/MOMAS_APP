@@ -27,7 +27,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           print("MI ${response.user!.monthlyAdminFee}");
           SharedPreferenceHelper.saveLogin(event.login.toJson());
           SharedPreferenceHelper.saveToken(response.user!.token!);
-          emit(LoginSuccess());
+          emit(LoginSuccess(role: response.user!.userRole!));
         } else {
           emit(LoginFailure(response.message ?? ""));
         }

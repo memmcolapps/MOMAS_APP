@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +9,8 @@ import 'package:momaspayplus/bloc/registeration_bloc/register_event.dart';
 import 'package:momaspayplus/domain/repository/auth_repository.dart';
 import 'package:momaspayplus/domain/service/auth_service.dart';
 import 'package:momaspayplus/screens/auth/email_screen.dart';
-import 'package:momaspayplus/screens/dashboard/root_screen.dart';
+// import 'package:momaspayplus/screens/dashboard/root_screen.dart';
+import 'package:momaspayplus/tabs/root_screen.dart';
 import 'package:momaspayplus/utils/colors.dart';
 import 'package:momaspayplus/utils/screen_utils.dart';
 import 'package:momaspayplus/utils/shared_pref.dart';
@@ -21,11 +21,9 @@ import '../../domain/data/request/login.dart';
 import '../../reuseable/error_modal.dart';
 import '../../reuseable/mo_button.dart';
 import '../../reuseable/mo_form.dart';
-import '../../utils/bio_metric.dart';
 import '../../utils/bio_metric_widget.dart';
 import '../../utils/images.dart';
 import '../../utils/validators.dart';
-import 'email_code_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -162,12 +160,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (_) => const EmailScreen(
-                                                    emailType: CheckEmail.forget,
+                                                    emailType:
+                                                        CheckEmail.forget,
                                                   )));
                                     },
                                     child: Text(
                                       "Forgot Password",
-                                      style: TextStyle(color: MoColors.mainColor),
+                                      style:
+                                          TextStyle(color: MoColors.mainColor),
                                     ),
                                   )
                                 ],
@@ -177,14 +177,16 @@ class _LoginScreenState extends State<LoginScreen> {
                               height: 20,
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 15),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15),
                               child: Row(
                                 children: [
                                   Expanded(
                                     child: MoButton(
                                       title: "LOGIN",
-                                      isLoading: context.watch<LoginBloc>().state
-                                          is LoginLoading,
+                                      isLoading: context
+                                          .watch<LoginBloc>()
+                                          .state is LoginLoading,
                                       onTap: () {
                                         var meterNo = "";
                                         var email = "";
@@ -194,7 +196,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                         } else {
                                           meterNo = generalController.text;
                                         }
-                                        final password = passwordController.text;
+                                        final password =
+                                            passwordController.text;
                                         final login = Login(
                                             meterNo: meterNo,
                                             password: password,
@@ -262,12 +265,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                   TextSpan(
                                     text: 'Register Here!',
                                     style: TextStyle(
-                                        color: MoColors.mainColor, fontSize: 14),
+                                        color: MoColors.mainColor,
+                                        fontSize: 14),
                                     recognizer: TapGestureRecognizer()
                                       ..onTap = () {
-                                        Navigator.of(context)
-                                            .push(MaterialPageRoute(
-                                                builder: (_) => const EmailScreen(
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (_) =>
+                                                    const EmailScreen(
                                                       emailType:
                                                           CheckEmail.register,
                                                     )));
@@ -291,7 +296,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 case LoginSuccess():
                   Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(builder: (_) => const RootScreen()),
+                      MaterialPageRoute(
+                          builder: (_) => RootScreen(
+                                role: state.role,
+                              )),
                       (v) => false);
                 default:
                   log("state not implemented");

@@ -7,7 +7,6 @@ import 'package:momaspayplus/utils/colors.dart';
 class UpdateModal extends StatelessWidget {
   final AppUpdateRequired state;
 
-
   const UpdateModal({
     required this.state,
     super.key,
