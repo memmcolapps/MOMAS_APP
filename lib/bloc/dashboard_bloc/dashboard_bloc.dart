@@ -44,6 +44,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     try {
       if (event is FeatureDashboardEvent) {
         emit(FeaturesLoading());
+        /// TODO: Load from cache first
         var data = await service.getFeature();
         if (data.status == true) {
           emit(FeaturesSuccessful(data.feature));
@@ -86,6 +87,7 @@ class PromoBloc extends Bloc<DashboardEvent, DashboardState> {
     on<PromotionEvent>((event, emit) async {
       emit(FeaturesLoading());
       try {
+        /// TODO: i need to load cached items from shared preference first and lazy load this
         var data = await service.getPromo();
         if (data.status == true) {
           emit(PromotionSuccessful(data.promo));

@@ -9,24 +9,24 @@ import 'package:momaspayplus/utils/amount_formatter.dart';
 import 'package:momaspayplus/utils/shared_pref.dart';
 
 class MainBalance extends StatefulWidget {
-  const MainBalance({super.key});
+  const MainBalance({
+    super.key,
+  });
 
   @override
   State<MainBalance> createState() => _MainBalanceState();
 }
 
 class _MainBalanceState extends State<MainBalance> {
-  late WalletBloc walletBloc;
   bool _isBalanceVisible = true;
 
   @override
   void initState() {
     super.initState();
     _load();
-    walletBloc = WalletBloc(DashboardService(DashboardRepository()))
-      ..add(WalletDashboardEvent());
   }
 
+  //TODO: Make this stateless and handle this with provider
   Future<void> _load() async {
     final visible = await SharedPreferenceHelper.getBalanceVisibility();
     setState(() => _isBalanceVisible = visible);
@@ -40,12 +40,11 @@ class _MainBalanceState extends State<MainBalance> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<WalletBloc, DashboardState>(
-      bloc: walletBloc,
       builder: (context, state) {
         final String? balance = switch (state) {
           WalletSuccessful() => state.wallet.mainWallet.toString(),
-          WalletFailure()    => "- -",
-          _                  => null,
+          WalletFailure() => "- -",
+          _ => null,
         };
 
         return Column(
@@ -69,17 +68,19 @@ class _MainBalanceState extends State<MainBalance> {
                 balance == null
                     ? const _BalanceShimmer()
                     : Text(
-                  _isBalanceVisible
-                      ? AmountFormatter.formatNaira(
-                    double.tryParse(balance) ?? 0,
-                  )
-                      : "***",
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
+                        balance == "- -"
+                            ? "- -"
+                            : _isBalanceVisible
+                                ? AmountFormatter.formatNaira(
+                                    double.tryParse(balance) ?? 0,
+                                  )
+                                : "***",
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
 
                 const SizedBox(width: 10),
 

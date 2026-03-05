@@ -1,53 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:momaspayplus/bloc/dashboard_bloc/dashboard_bloc.dart';
 import 'package:momaspayplus/domain/data/response/user_model.dart';
 import 'package:momaspayplus/screens/tab_views/customer/Homepage/widgets/main_balance.dart';
 import 'package:momaspayplus/utils/colors.dart';
 import 'package:momaspayplus/utils/shared_pref.dart';
 import 'package:momaspayplus/utils/strings.dart';
 
-class HomePageHeader extends StatefulWidget {
+class HomePageHeader extends StatelessWidget {
 
   const HomePageHeader({
     super.key,
     required this.safePadding,
+    required this.height,
+    required this.name,
   });
 
   final EdgeInsets safePadding;
-
-  @override
-  State<HomePageHeader> createState() => _HomePageHeaderState();
-}
-
-class _HomePageHeaderState extends State<HomePageHeader> {
-  User? user;
-  String name = "";
-
-  @override
-  void initState() {
-    super.initState();
-    _load();
-  }
-
-  Future<void> _load() async {
-    user = await SharedPreferenceHelper.getUser();
-    getName(user);
-  }
-
-  getName(User? user) {
-    var firstname = isEmpty(user?.firstName) ? "" : user?.firstName;
-    var lastName = isEmpty(user?.lastName) ? "" : user?.lastName;
-    name = "$firstname $lastName";
-    setState(() {});
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
+  final double height;
+  final String name;
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: height,
       color: Colors.white,
       child: Container(
         decoration: BoxDecoration(
@@ -65,7 +40,7 @@ class _HomePageHeaderState extends State<HomePageHeader> {
         ),
         child: Padding(
           padding: EdgeInsetsGeometry.only(
-              top: widget.safePadding.top + 12, left: 16, right: 16),
+              top: safePadding.top + 12, left: 16, right: 16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,10 +55,10 @@ class _HomePageHeaderState extends State<HomePageHeader> {
               const SizedBox(
                 height: 20,
               ),
-              MainBalance(),
-              const SizedBox(
-                height: 60,
-              )
+              const MainBalance(),
+              // const SizedBox(
+              //   height: 60,
+              // )
             ],
           ),
         ),

@@ -36,7 +36,7 @@ class _RootScreenState extends State<RootScreen> {
       bottomNavigationBar: NavigationBar(
         elevation: 8,
         shadowColor: MoColors.mainColor.withValues(alpha: 0.75),
-        height: 50,
+        height: 60,
         backgroundColor: Colors.white,
         labelPadding: EdgeInsets.zero,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,

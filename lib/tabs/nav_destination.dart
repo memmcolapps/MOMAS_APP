@@ -22,7 +22,7 @@ class NavDestination extends StatelessWidget {
             children: [
               ImageIcon(
                 AssetImage(imageUrl),
-                size: 20,
+                size: 24,
                 color: isSelected ? MoColors.mainColor : Colors.grey,
               ),
               const SizedBox(

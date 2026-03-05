@@ -16,7 +16,7 @@ import 'images.dart';
 
 class DashboardBuilder {
   static List<GridItemModel> builder(
-      Feature future, BuildContext context, User user) {
+      Feature future, BuildContext context, User? user) {
     List<GridItemModel> value = [];
     if (future.momasMeter == 1) {
       value.add(
@@ -69,12 +69,12 @@ class DashboardBuilder {
         GridItemModel(
             image: MoImage.accessToken,
             title: "Access Token",
-            subtitle: user.userRole == UserRole.estateStaff
+            subtitle: user?.userRole == UserRole.estateStaff
                 ? "Verify estate token"
                 : "Generate and manage security token",
             onTap: () {
-              print(user.userRole);
-              if ((user.userRole == UserRole.estateStaff)) {
+              print(user?.userRole);
+              if ((user?.userRole == UserRole.estateStaff)) {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
