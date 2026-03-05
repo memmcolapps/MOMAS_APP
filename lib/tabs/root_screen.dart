@@ -28,10 +28,7 @@ class _RootScreenState extends State<RootScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _tabScreens,
-      ),
+      body: _tabScreens[_selectedIndex],
       backgroundColor: MoColors.whiteColor,
       bottomNavigationBar: NavigationBar(
         elevation: 8,

@@ -18,7 +18,7 @@ class HomePageBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.sizeOf(context).height;
 
-    // TODO: Fix the scrolling of promosection... it should not scroll
+    // TODO: Fix the scrolling of promo section... it should not scroll
     return Container(
       constraints: BoxConstraints(minHeight: screenHeight - headerHeight),
       decoration: const BoxDecoration(

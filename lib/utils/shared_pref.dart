@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:momaspayplus/domain/data/request/login.dart';
+import 'package:momaspayplus/domain/data/response/feature.dart';
+import 'package:momaspayplus/domain/data/response/promo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../domain/data/response/user_model.dart';
@@ -21,6 +23,8 @@ class SharedPreferenceHelper {
   static const String _token = 'TOKEN';
   static const String _balance = 'balance_visible';
   static const String _unit = 'unit_visible';
+  static const String _promoCache = 'promo_cache';
+  static const String _featureCache = 'feature_cache';
 
   static bool get hasSeenOnboarding =>
       _prefs.getBool(_keyHasSeenOnboarding) ?? false;
@@ -90,5 +94,32 @@ class SharedPreferenceHelper {
   static Future<void> saveUnitVisibility(bool isVisible) async {
     // final _prefs = await SharedPreferences.getInstance();
     _prefs.setBool(_unit, isVisible);
+  }
+
+  static Future<void> savePromo(List promos) async {
+    await _prefs.setString(_promoCache, json.encode(promos));
+  }
+
+  static List<Promo>? getCachedPromo() {
+    final data = _prefs.getString(_promoCache);
+    return data == null
+        ? null
+        : (json.decode(data) as List)
+        .map((e) => Promo.fromJson(e))
+        .toList();
+  }
+
+  static Future<void> saveFeature(Feature feature) async {
+    await _prefs.setString(
+      _featureCache,
+      json.encode(feature.toJson()),
+    );
+  }
+
+  static Feature? getCachedFeature() {
+    final data = _prefs.getString(_featureCache);
+    return data == null
+        ? null
+        : Feature.fromJson(json.decode(data));
   }
 }

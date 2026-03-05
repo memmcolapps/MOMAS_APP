@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/bloc/dashboard_bloc/dashboard_state.dart';
 import 'package:momaspayplus/domain/service/dashboard_service.dart';
 
-import '../../domain/repository/dashboard_repository.dart';
 import '../../utils/shared_pref.dart';
 import 'dashboard_event.dart';
 
@@ -39,23 +38,25 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
 
   Future<void> _onFeatureEvent(
       DashboardEvent event, Emitter<DashboardState> emit) async {
-    super.onEvent(event);
-
-    try {
-      if (event is FeatureDashboardEvent) {
+    if (event is FeatureDashboardEvent) {
+      final cached = SharedPreferenceHelper.getCachedFeature();
+      if (cached != null) {
+        emit(FeaturesSuccessful(cached));
+      } else {
         emit(FeaturesLoading());
-        /// TODO: Load from cache first
-        var data = await service.getFeature();
+      }
+
+      try {
+        final data = await service.getFeature();
         if (data.status == true) {
+          await SharedPreferenceHelper.saveFeature(data.feature);
           emit(FeaturesSuccessful(data.feature));
         } else {
-          emit(FeaturesFailure());
+          if (cached == null) emit(FeaturesFailure());
         }
+      } catch (e) {
+        if (cached == null) emit(FeaturesFailure());
       }
-    } catch (_, e) {
-      print(_);
-      print(e);
-      emit(WalletFailure());
     }
   }
 }
@@ -83,19 +84,46 @@ class WalletBloc extends Bloc<DashboardEvent, DashboardState> {
 class PromoBloc extends Bloc<DashboardEvent, DashboardState> {
   final DashboardService service;
 
+  // on<PromotionEvent>((event, emit) async {
+  // final cached = SharedPreferenceHelper.getCachedPromo();
+  // if (cached != null) {
+  // emit(PromotionSuccessful(cached));
+  // } else {
+  // emit(FeaturesLoading());
+  // }
+  //
+  // try {
+  // final data = await service.getPromo();
+  // if (data.status == true) {
+  // await SharedPreferenceHelper.savePromo(data.promo); // 👈 clean
+  // emit(PromotionSuccessful(data.promo));
+  // } else {
+  // if (cached == null) emit(PromotionFailure());
+  // }
+  // } catch (e) {
+  // if (cached == null) emit(PromotionFailure());
+  // }
+  // });
+
   PromoBloc(this.service) : super(DashboardInitial()) {
     on<PromotionEvent>((event, emit) async {
-      emit(FeaturesLoading());
+      final cached = SharedPreferenceHelper.getCachedPromo();
+      if (cached != null) {
+        emit(PromotionSuccessful(cached));
+      } else {
+        emit(FeaturesLoading());
+      }
+
       try {
-        /// TODO: i need to load cached items from shared preference first and lazy load this
-        var data = await service.getPromo();
+        final data = await service.getPromo();
         if (data.status == true) {
+          await SharedPreferenceHelper.savePromo(data.promo);
           emit(PromotionSuccessful(data.promo));
         } else {
-          emit(PromotionFailure());
+          if (cached == null) emit(PromotionFailure());
         }
       } catch (e) {
-        emit(PromotionFailure());
+        if (cached == null) emit(PromotionFailure());
       }
     });
   }
