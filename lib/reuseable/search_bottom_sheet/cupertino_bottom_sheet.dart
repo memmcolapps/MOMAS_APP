@@ -377,7 +377,7 @@ class CupertinoScaffold extends StatefulWidget {
     //   animationCurve: animationCurve,
     //   previousRouteAnimationCurve: previousRouteAnimationCurve,
     //   duration: duration,
-    //   settings: settings,
+    //   profile: profile,
     // ));
     return result!;
   }
