@@ -253,7 +253,7 @@ class _CustomerArrearsPageState extends State<CustomerArrearsPage> {
                                                           .split(' ')[0],
                                                       style: const TextStyle(
                                                           fontSize: 12,
-                                                          color: Colors.grey),
+                                                          ),
                                                     ),
                                                   ],
                                                 ),

@@ -2,32 +2,33 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:momaspayplus/screens/tab_views/shared/tabview_skeleton.dart';
 import 'package:momaspayplus/utils/screen_utils.dart';
 import 'package:momaspayplus/utils/strings.dart';
 import 'package:screenshot/screenshot.dart';
 
-import '../../../bloc/payment_bloc/payment_bloc.dart';
-import '../../../bloc/payment_bloc/payment_event.dart';
-import '../../../bloc/payment_bloc/payment_state.dart';
-import '../../../domain/data/response/transaction_data_response.dart';
-import '../../../domain/repository/payment_repository.dart';
-import '../../../reuseable/error_modal.dart';
-import '../../../reuseable/mo_form.dart';
-import '../../../reuseable/mo_transaction_success_screen.dart';
-import '../../../reuseable/pop_button.dart';
-import '../../../reuseable/shadow_container.dart';
-import '../../../utils/colors.dart';
-import '../../../utils/receipt_builder.dart';
-import '../../../utils/time_util.dart';
+import '../../../../bloc/payment_bloc/payment_bloc.dart';
+import '../../../../bloc/payment_bloc/payment_event.dart';
+import '../../../../bloc/payment_bloc/payment_state.dart';
+import '../../../../domain/data/response/transaction_data_response.dart';
+import '../../../../domain/repository/payment_repository.dart';
+import '../../../../reuseable/error_modal.dart';
+import '../../../../reuseable/mo_form.dart';
+import '../../../../reuseable/mo_transaction_success_screen.dart';
+import '../../../../reuseable/pop_button.dart';
+import '../../../../reuseable/shadow_container.dart';
+import '../../../../utils/colors.dart';
+import '../../../../utils/receipt_builder.dart';
+import '../../../../utils/time_util.dart';
 
-class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
+class Transactions extends StatefulWidget {
+  const Transactions({super.key});
 
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  State<Transactions> createState() => _TransactionsState();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
+class _TransactionsState extends State<Transactions> {
   late PaymentBloc paymentBloc;
   List<TransactionData>? transactionDataList = [];
   List<TransactionData>? filteredTransactionDataList = [];
@@ -53,135 +54,104 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: BlocConsumer<PaymentBloc, PaymentState>(
-          bloc: paymentBloc,
-          builder: (context, state) {
-            return Column(
+    return TabViewSkeleton(
+      appBarTitle: "Search Transaction",
+      body: BlocConsumer<PaymentBloc, PaymentState>(
+        bloc: paymentBloc,
+        builder: (context, state) {
+          return Padding(
+            padding: context.isTablet
+                ? EdgeInsets.symmetric(
+                    horizontal:
+                        MediaQuery.of(context).size.width * 0.15)
+                : const EdgeInsets.all(0.0),
+            child: Column(
               children: [
-                const SizedBox(height: 13),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Center(
-                    child: ShadowContainer(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 8),
-                        child: SizedBox(
-                          height: 40,
-                          width: MediaQuery.of(context).size.width - 15,
-                          child: const Row(
-                            children: [
-                              // PopButton().pop(context),
-                              SizedBox(width: 20),
-                              Text("Search Transaction"),
-                            ],
-                          ),
-                        ),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16.0,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 16.0),
+                      MoFormWidget(
+                        prefixIcon: Icon(Icons.search,
+                            color: MoColors.mainColor),
+                        hintText: "Search",
+                        onChange: (value) {
+                          _filterData(value);
+                        },
                       ),
-                    ),
+                    ],
                   ),
                 ),
-                Expanded(
-                  child: Padding(
-                    padding: context.isTablet
-                        ? EdgeInsets.symmetric(
-                            horizontal:
-                                MediaQuery.of(context).size.width * 0.15)
-                        : const EdgeInsets.all(0.0),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 16.0,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 16.0),
-                              MoFormWidget(
-                                prefixIcon: Icon(Icons.search,
-                                    color: MoColors.mainColor),
-                                hintText: "Search",
-                                onChange: (value) {
-                                  _filterData(value);
+                state is PaymentLoading
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SpinKitFadingCircle(
+                            color: MoColors.mainColorII,
+                            size: 50.0,
+                          )
+                        ],
+                      )
+                    : Expanded(
+                        child: ListView.builder(
+                          itemCount:
+                              filteredTransactionDataList?.length ?? 0,
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                              onTap: () {
+                                paymentBloc.add(ViewReceipt(
+                                    filteredTransactionDataList![index]
+                                        .id
+                                        .toString())); // Navigator.push(
+                              },
+                              child: TransactionCard(
+                                data:
+                                    filteredTransactionDataList![index],
+                                retry: (transRef) {
+                                  paymentBloc
+                                      .add(RetryPayment(transRef));
                                 },
                               ),
-                            ],
-                          ),
+                            );
+                          },
                         ),
-                        state is PaymentLoading
-                            ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SpinKitFadingCircle(
-                                    color: MoColors.mainColorII,
-                                    size: 50.0,
-                                  )
-                                ],
-                              )
-                            : Expanded(
-                                child: ListView.builder(
-                                  itemCount:
-                                      filteredTransactionDataList?.length ?? 0,
-                                  itemBuilder: (context, index) {
-                                    return InkWell(
-                                      onTap: () {
-                                        paymentBloc.add(ViewReceipt(
-                                            filteredTransactionDataList![index]
-                                                .id
-                                                .toString())); // Navigator.push(
-                                      },
-                                      child: TransactionCard(
-                                        data:
-                                            filteredTransactionDataList![index],
-                                        retry: (transRef) {
-                                          paymentBloc
-                                              .add(RetryPayment(transRef));
-                                        },
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                      ],
-                    ),
-                  ),
-                )
+                      ),
               ],
-            );
-          },
-          listener: (BuildContext context, PaymentState state) {
-            if (state is PaymentHistorySuccess) {
-              transactionDataList = state.data;
-              filteredTransactionDataList = List.from(transactionDataList!);
-            } else if (state is PaymentFailure) {
-              showErrorBottomSheet(context, state.error);
-            } else if (state is MomasPaymentSuccess) {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (builder) => TransactionSuccessPage(
-                            details: ReceiptBuilder()
-                                .meterPayment(state.momasPaymentResponse.data!.receipt!),
-                          )));
-            } else if (state is ViewMomasPaymentSuccess) {
-              //TODO: Receipt could be null ... come back to this if there is an error
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (builder) => TransactionSuccessPage(
-                            failed: state.momasPaymentResponse.data?.receipt?.status!=
-                                PaymentStatus.successful,
-                            details: ReceiptBuilder()
-                                .meterPayment(state.momasPaymentResponse.data!.receipt!),
-                          )));
-            }
-          },
-        ),
+            ),
+          );
+        },
+        listener: (BuildContext context, PaymentState state) {
+          if (state is PaymentHistorySuccess) {
+            transactionDataList = state.data;
+            filteredTransactionDataList = List.from(transactionDataList!);
+          } else if (state is PaymentFailure) {
+            showErrorBottomSheet(context, state.error);
+          } else if (state is MomasPaymentSuccess) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (builder) => TransactionSuccessPage(
+                          details: ReceiptBuilder()
+                              .meterPayment(state.momasPaymentResponse.data!.receipt!),
+                        )));
+          } else if (state is ViewMomasPaymentSuccess) {
+            //TODO: Receipt could be null ... come back to this if there is an error
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (builder) => TransactionSuccessPage(
+                          failed: state.momasPaymentResponse.data?.receipt?.status!=
+                              PaymentStatus.successful,
+                          details: ReceiptBuilder()
+                              .meterPayment(state.momasPaymentResponse.data!.receipt!),
+                        )));
+          }
+        },
       ),
     );
   }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:momaspayplus/bloc/auth_bloc/auth_cubit.dart';
 import 'package:momaspayplus/domain/data/response/user_model.dart';
 import 'package:momaspayplus/tabs/nav_destination.dart';
 import 'package:momaspayplus/utils/colors.dart';
@@ -6,22 +8,44 @@ import 'nav_config.dart';
 import 'nav_item.dart';
 
 class RootScreen extends StatefulWidget {
-  final UserRole role;
-  const RootScreen({super.key, required this.role});
+  const RootScreen({super.key});
 
   @override
   State<RootScreen> createState() => _RootScreenState();
 }
 
 class _RootScreenState extends State<RootScreen> {
+
+  // int _selectedIndex = 0;
+  // late List<NavItem> _tabs;
+  // bool _tabsInitialized = false; // ← prevent re-init on every dependency change
+  //
+  // List<Widget> get _tabScreens => _tabs.map((tab) => tab.screen).toList();
+  //
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   if (!_tabsInitialized) {
+  //     final user = context.read<AuthCubit>().state;
+  //     _tabs = NavConfig.getTabsForRole(user?.role);
+  //     _tabsInitialized = true;
+  //   }
+  // }
   int _selectedIndex = 0;
   late List<NavItem> _tabs;
+  bool _tabsInitialized = false;
 
   List<Widget> get _tabScreens => _tabs.map((tab) => tab.screen).toList();
+
   @override
-  void initState() {
-    super.initState();
-    _tabs = NavConfig.getTabsForRole(widget.role);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_tabsInitialized) {
+      final user = context.read<AuthCubit>().state;
+      print("useuiuuiieieie >>>> + ${user?.userRole}");
+      _tabs = NavConfig.getTabsForRole(user?.userRole);
+      _tabsInitialized = true;
+    }
   }
 
   @override
@@ -57,7 +81,8 @@ class _RootScreenState extends State<RootScreen> {
       final tab = _tabs[index];
       return NavDestination(
         isSelected: _selectedIndex == index,
-        imageUrl: tab.imageUrl,
+        filledIcon: tab.filledIcon,
+        outlinedIcon: tab.outlinedIcon,
       );
     });
   }

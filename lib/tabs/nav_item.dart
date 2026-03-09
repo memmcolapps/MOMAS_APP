@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 class NavItem {
-  final String imageUrl;
+  final IconData filledIcon;
+  final IconData outlinedIcon;
   final String label;
   final Widget screen;
 
   const NavItem({
-    required this.imageUrl,
+    required this.filledIcon,
+    required this.outlinedIcon,
     required this.label,
     required this.screen,
   });

@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:momaspayplus/bloc/auth_bloc/auth_cubit.dart';
 import 'package:momaspayplus/bloc/login_bloc/login_bloc.dart';
 import 'package:momaspayplus/bloc/registeration_bloc/register_event.dart';
 import 'package:momaspayplus/domain/repository/auth_repository.dart';
@@ -294,11 +295,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 case LoginFailure():
                   showErrorBottomSheet(context, state.error);
                 case LoginSuccess():
+                  context.read<AuthCubit>().loadUser();
                   Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
                           builder: (_) => RootScreen(
-                                role: state.role,
+                                // role: state.role,
                               )),
                       (v) => false);
                 default:

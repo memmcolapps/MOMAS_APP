@@ -4,9 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/bloc/dashboard_bloc/dashboard_bloc.dart';
 import 'package:momaspayplus/bloc/dashboard_bloc/dashboard_event.dart';
 import 'package:momaspayplus/domain/data/response/user_model.dart';
-import 'package:momaspayplus/domain/repository/dashboard_repository.dart';
-import 'package:momaspayplus/domain/service/dashboard_service.dart';
-import 'package:momaspayplus/screens/tab_views/customer/Homepage/widgets/home_page_body.dart';
+import 'package:momaspayplus/screens/tab_views/customer/Homepage/widgets/features_grid.dart';
 import 'package:momaspayplus/screens/tab_views/customer/Homepage/widgets/home_page_header.dart';
 import 'package:momaspayplus/screens/tab_views/customer/Homepage/widgets/quick_widgets.dart';
 import 'package:momaspayplus/utils/colors.dart';
@@ -56,58 +54,42 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final EdgeInsets safePadding = MediaQuery.paddingOf(context);
+    final double promoDivHeight = 175;
     final double headerHeight = safePadding.top + 170;
-    final double promoSectionHeight = 145;
 
     return Scaffold(
         backgroundColor: MoColors.mainColorII,
-        body: MultiBlocProvider(
-          providers: [
-            BlocProvider<WalletBloc>(
-              create: (BuildContext context) =>
-                  WalletBloc(DashboardService(DashboardRepository()))
-                    ..add(WalletDashboardEvent()),
+        body: CustomScrollView(
+          slivers: [
+            CupertinoSliverRefreshControl(
+              onRefresh: () async {
+                debugPrint("Refreshing state");
+                context.read<WalletBloc>().add(WalletDashboardEvent());
+                context.read<PromoBloc>().add(PromotionEvent());
+                context.read<DashboardBloc>().add(FeatureDashboardEvent());
+              },
             ),
-            BlocProvider<PromoBloc>(
-              create: (BuildContext context) =>
-                  PromoBloc(DashboardService(DashboardRepository()))
-                    ..add(PromotionEvent()),
+            SliverPersistentHeader(
+              pinned: true,
+              floating: false,
+              delegate: _HomeHeaderDelegate(
+                safePadding: safePadding,
+                headerHeight: headerHeight,
+                promoDivHeight: promoDivHeight,
+                name: name,
+              ),
             ),
-            BlocProvider<DashboardBloc>(
-              create: (BuildContext context) =>
-                  DashboardBloc(DashboardService(DashboardRepository()))
-                    ..add(FeatureDashboardEvent()),
+            SliverToBoxAdapter(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.sizeOf(context).height -
+                      headerHeight -
+                      promoDivHeight,
+                ),
+                child: FeaturesGrid(user: user),
+              ),
             ),
           ],
-          child: CustomScrollView(
-            slivers: [
-              CupertinoSliverRefreshControl(
-                onRefresh: () async {
-                  debugPrint("Refreshing state");
-                  context.read<WalletBloc>().add(WalletDashboardEvent());
-                  context.read<PromoBloc>().add(PromotionEvent());
-                  context.read<DashboardBloc>().add(FeatureDashboardEvent());
-                },
-              ),
-              SliverPersistentHeader(
-                pinned: true,
-                floating: false,
-                delegate: _HomeHeaderDelegate(
-                  safePadding: safePadding,
-                  headerHeight: headerHeight,
-                  name: name,
-                ),
-              ),
-
-
-              SliverToBoxAdapter(
-                child: HomePageBody(
-                  headerHeight: headerHeight,
-                  user: user,
-                ),
-              ),
-            ],
-          ),
         ));
   }
 }
@@ -115,26 +97,28 @@ class _HomePageState extends State<HomePage> {
 class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
   final EdgeInsets safePadding;
   final double headerHeight;
+  final double promoDivHeight;
   final String name;
 
   _HomeHeaderDelegate({
     required this.safePadding,
     required this.headerHeight,
+    required this.promoDivHeight,
     required this.name,
   });
 
   @override
-  double get minExtent => headerHeight;
+  double get minExtent => headerHeight + promoDivHeight;
 
   @override
-  double get maxExtent => headerHeight;
+  double get maxExtent => headerHeight + promoDivHeight;
 
   @override
   Widget build(
-      BuildContext context,
-      double shrinkOffset,
-      bool overlapsContent,
-      ) {
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return Stack(
       clipBehavior: Clip.none,
       alignment: AlignmentGeometry.bottomCenter,
@@ -155,7 +139,7 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
   @override
   bool shouldRebuild(_HomeHeaderDelegate old) {
     return old.name != name ||
-        old.headerHeight != headerHeight ||
+        old.headerHeight != headerHeight + promoDivHeight ||
         old.safePadding != safePadding;
   }
 }

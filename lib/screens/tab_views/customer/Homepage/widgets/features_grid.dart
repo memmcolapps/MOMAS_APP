@@ -18,9 +18,10 @@ class FeaturesGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<DashboardBloc, DashboardState>(
         builder: (context, state) {
-          return Padding(
+          return Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: 15.0),
+              horizontal: 15.0),
+            color: Colors.white,
             child: Container(
               decoration: BoxDecoration(
                   borderRadius:

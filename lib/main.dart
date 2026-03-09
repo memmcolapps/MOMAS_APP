@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/bloc/app_version_bloc/update_bloc.dart';
+import 'package:momaspayplus/bloc/auth_bloc/auth_cubit.dart';
 import 'package:momaspayplus/core/app_entry.dart';
 import 'package:momaspayplus/core/app_update_wrapper.dart';
 
@@ -24,8 +25,13 @@ class MomasPayApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AppUpdateBloc>(
-      create: (context) => AppUpdateBloc()..checkForUpdate(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AppUpdateBloc>(
+          create: (context) => AppUpdateBloc()..checkForUpdate(),
+        ),
+        BlocProvider<AuthCubit>(create: (context) => AuthCubit()..loadUser())
+      ],
       child: MaterialApp(
         navigatorObservers: [routeObserver],
         navigatorKey: NavigationService.navigatorKey,

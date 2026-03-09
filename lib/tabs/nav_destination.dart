@@ -3,11 +3,13 @@ import 'package:momaspayplus/utils/colors.dart';
 
 class NavDestination extends StatelessWidget {
   final bool isSelected;
-  final String imageUrl;
+  final IconData filledIcon;
+  final IconData outlinedIcon;
 
   const NavDestination({
     required this.isSelected,
-    required this.imageUrl,
+    required this.filledIcon,
+    required this.outlinedIcon,
     super.key
   });
 
@@ -20,11 +22,16 @@ class NavDestination extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ImageIcon(
-                AssetImage(imageUrl),
+              Icon(
+                isSelected ? filledIcon : outlinedIcon,
                 size: 24,
                 color: isSelected ? MoColors.mainColor : Colors.grey,
               ),
+              // ImageIcon(
+              //   AssetImage(imageUrl),
+              //   size: 24,
+              //   color: isSelected ? MoColors.mainColor : Colors.grey,
+              // ),
               const SizedBox(
                 height: 8,
               ),

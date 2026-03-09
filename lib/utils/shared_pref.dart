@@ -32,6 +32,8 @@ class SharedPreferenceHelper {
   static Future<void> setOnboardingSeen(bool value) =>
      _prefs.setBool(_keyHasSeenOnboarding, value);
 
+
+
   static Future<void> clearUser() async {
     // final _prefs = await SharedPreferences.getInstance();
     _prefs.remove(_keyUser);

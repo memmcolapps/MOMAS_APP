@@ -1,25 +1,36 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/bloc/dashboard_bloc/dashboard_bloc.dart';
 import 'package:momaspayplus/bloc/dashboard_bloc/dashboard_event.dart';
 import 'package:momaspayplus/domain/data/response/user_model.dart';
 import 'package:momaspayplus/domain/repository/dashboard_repository.dart';
 import 'package:momaspayplus/domain/service/dashboard_service.dart';
-import 'package:momaspayplus/screens/dashboard/main_dashboard/main_screen.dart';
-import 'package:momaspayplus/screens/dashboard/search_screen/search_screen.dart';
 import 'package:momaspayplus/screens/generate_token/access_token_verification.dart';
 import 'package:momaspayplus/screens/profile/profile_screen.dart';
 import 'package:momaspayplus/screens/tab_views/customer/Homepage/home_page.dart';
+import 'package:momaspayplus/screens/tab_views/customer/analytics/analytics.dart';
+import 'package:momaspayplus/screens/tab_views/customer/transactions/transactions.dart';
 import 'package:momaspayplus/utils/images.dart';
 import 'nav_item.dart';
 
 class NavConfig {
-  static List<NavItem> getTabsForRole(UserRole role) {
+  static List<NavItem> getTabsForRole(UserRole? role) {
     switch (role) {
       case UserRole.estateStaff:
         return [
-          NavItem(imageUrl: MoImage.home, label: 'Home', screen: const AccessTokenVerification()),
-          NavItem(imageUrl: MoImage.settingsIcon, label: 'Settings', screen: const ProfileScreen()),
+          const NavItem(
+              filledIcon: Icons.home,
+              outlinedIcon: Icons.home_outlined,
+              label: 'Home',
+              screen: AccessTokenVerification()
+          ),
+          const NavItem(
+              filledIcon: Icons.settings,
+              outlinedIcon: Icons.settings_outlined,
+              label: 'Settings',
+              screen: ProfileScreen()
+          ),
         ];
 
       // case UserRole.admin:
@@ -39,7 +50,8 @@ class NavConfig {
       default:
         return [
           NavItem(
-              imageUrl: MoImage.home,
+              filledIcon: Icons.home,
+              outlinedIcon: Icons.home_outlined,
               label: 'Home',
               screen: MultiBlocProvider (
                   providers: [
@@ -62,9 +74,24 @@ class NavConfig {
                   child: const HomePage()
               )
           ),
-          NavItem(imageUrl: MoImage.history, label: 'History', screen: const SearchScreen()),
-          NavItem(imageUrl: MoImage.analyticsTab, label: 'Analytics', screen: const Placeholder()),
-          NavItem(imageUrl: MoImage.settingsIcon, label: 'Settings', screen: const ProfileScreen()),
+          const NavItem(
+              filledIcon: Icons.history,
+              outlinedIcon: Icons.history_outlined,
+              label: 'History',
+              screen: Transactions()
+          ),
+          // const NavItem(
+          //     filledIcon: Icons.analytics,
+          //     outlinedIcon: Icons.analytics_outlined,
+          //     label: 'Analytics',
+          //     screen: Analytics()
+          // ),
+          const NavItem(
+              filledIcon: Icons.settings,
+              outlinedIcon: Icons.settings_outlined,
+              label: 'Settings',
+              screen: ProfileScreen()
+          ),
         ];
     }
   }
