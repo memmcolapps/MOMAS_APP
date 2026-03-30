@@ -42,6 +42,7 @@ class User {
   String? lga;
   String? meterNo;
   String? meterType;
+  int? meterStatus;
   int? status;
   String? token;
   String? meter;
@@ -50,8 +51,8 @@ class User {
   String? hno;
   String? address;
   bool? monthlyAdminFee;
-  FlutterWaveKeys? flutterWaveKeys;
-  PayStackKeys? payStackKeys;
+  // FlutterWaveKeys? flutterWaveKeys;
+  // PayStackKeys? payStackKeys;
   UserRole? userRole;
   Purchase? purchase;
   List<Tariff>? tariffs;
@@ -81,8 +82,8 @@ class User {
     this.address,
     this.monthlyAdminFee,
     this.estateId,
-    this.flutterWaveKeys,
-    this.payStackKeys,
+    // this.flutterWaveKeys,
+    // this.payStackKeys,
     this.userRole,
     this.purchase,
     this.tariffs,
@@ -106,6 +107,7 @@ class User {
     lga = json['lga'];
     meterNo = json['meterNo'];
     meterType = json['meterType'];
+    meterStatus = json['meter_status'];
     status = json['status'];
     token = json['token'];
     estateId = json['estate_id'];
@@ -121,12 +123,12 @@ class User {
         json['purchase'] != null ? Purchase.fromJson(json['purchase']) : null;
     userRole =
         json["role"] != null ? UserRole.getById(json["role"]) : UserRole.none;
-    flutterWaveKeys = json['flutterwave_keys'] != null
-        ? new FlutterWaveKeys.fromJson(json['flutterwave_keys'])
-        : null;
-    payStackKeys = json['paystack_keys'] != null
-        ? new PayStackKeys.fromJson(json['paystack_keys'])
-        : null;
+    // flutterWaveKeys = json['flutterwave_keys'] != null
+    //     ? new FlutterWaveKeys.fromJson(json['flutterwave_keys'])
+    //     : null;
+    // payStackKeys = json['paystack_keys'] != null
+    //     ? new PayStackKeys.fromJson(json['paystack_keys'])
+    //     : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -149,6 +151,7 @@ class User {
     data['lga'] = lga;
     data['meterNo'] = meterNo;
     data['meterType'] = meterType;
+    data['meter_status'] = meterStatus;
     data['status'] = status;
     data['token'] = token;
     data['estate_id'] = estateId;
@@ -160,53 +163,53 @@ class User {
       data['purchase'] = purchase!.toJson();
     }
 
-    if (flutterWaveKeys != null) {
-      data['flutterwave_keys'] = flutterWaveKeys!.toJson();
-    }
-    if (payStackKeys != null) {
-      data['paystack_keys'] = payStackKeys!.toJson();
-    }
+    // if (flutterWaveKeys != null) {
+    //   data['flutterwave_keys'] = flutterWaveKeys!.toJson();
+    // }
+    // if (payStackKeys != null) {
+    //   data['paystack_keys'] = payStackKeys!.toJson();
+    // }
     return data;
   }
 }
 
-class PayStackKeys {
-  String? paystackSecret;
-  String? paystackPublic;
+// class PayStackKeys {
+//   String? paystackSecret;
+//   String? paystackPublic;
+//
+//   PayStackKeys({this.paystackSecret, this.paystackPublic});
+//
+//   PayStackKeys.fromJson(Map<String, dynamic> json) {
+//     paystackSecret = json['paystack_secret'];
+//     paystackPublic = json['paystack_public'];
+//   }
+//
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = <String, dynamic>{};
+//     data['paystack_secret'] = paystackSecret;
+//     data['paystack_public'] = paystackPublic;
+//     return data;
+//   }
+// }
 
-  PayStackKeys({this.paystackSecret, this.paystackPublic});
-
-  PayStackKeys.fromJson(Map<String, dynamic> json) {
-    paystackSecret = json['paystack_secret'];
-    paystackPublic = json['paystack_public'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['paystack_secret'] = paystackSecret;
-    data['paystack_public'] = paystackPublic;
-    return data;
-  }
-}
-
-class FlutterWaveKeys {
-  String? flutterWaveSecret;
-  String? flutterWavePublic;
-
-  FlutterWaveKeys({this.flutterWaveSecret, this.flutterWavePublic});
-
-  FlutterWaveKeys.fromJson(Map<String, dynamic> json) {
-    flutterWaveSecret = json['flutterwave_secret'];
-    flutterWavePublic = json['flutterwave_public'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['flutterwave_secret'] = flutterWaveSecret;
-    data['flutterwave_public'] = flutterWavePublic;
-    return data;
-  }
-}
+// class FlutterWaveKeys {
+//   String? flutterWaveSecret;
+//   String? flutterWavePublic;
+//
+//   FlutterWaveKeys({this.flutterWaveSecret, this.flutterWavePublic});
+//
+//   FlutterWaveKeys.fromJson(Map<String, dynamic> json) {
+//     flutterWaveSecret = json['flutterwave_secret'];
+//     flutterWavePublic = json['flutterwave_public'];
+//   }
+//
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = new Map<String, dynamic>();
+//     data['flutterwave_secret'] = flutterWaveSecret;
+//     data['flutterwave_public'] = flutterWavePublic;
+//     return data;
+//   }
+// }
 
 enum UserRole {
   none(0),

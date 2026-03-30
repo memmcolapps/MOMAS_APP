@@ -12,9 +12,33 @@ abstract class PaymentState extends Equatable {
   List<Object> get props => [];
 }
 
+abstract class PaymentFailureState extends PaymentState {
+  final String error;
+  const PaymentFailureState({required this.error});
+
+  @override
+  List<Object> get props => [error];
+}
+
 class PaymentInitial extends PaymentState {}
 
 class PaymentLoading extends PaymentState {}
+
+class ReceiptLoading extends PaymentState {
+  const ReceiptLoading();
+}
+
+class ReceiptFailure extends PaymentFailureState {
+  const ReceiptFailure({required super.error});
+}
+
+class RetryLoading extends PaymentState {
+  const RetryLoading();
+}
+
+class RetryFailure extends PaymentFailureState {
+  const RetryFailure({required super.error});
+}
 
 class PaymentVerified extends PaymentState {
   final String paymentStatus;
@@ -45,13 +69,8 @@ class PaymentWalletSuccess extends PaymentState {
   List<Object> get props => [message];
 }
 
-class PaymentFailure extends PaymentState {
-  final String error;
-
-  const PaymentFailure({required this.error});
-
-  @override
-  List<Object> get props => [error];
+class PaymentFailure extends PaymentFailureState {
+  const PaymentFailure({required super.error});
 }
 
 class PaymentHistorySuccess extends PaymentState {

@@ -79,13 +79,28 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
         bloc: paymentBloc,
         builder: (context, state) {
           if (state is PaymentLoading) {
+
             return SizedBox(
               height: deviceHeight * 0.5,
-              child: Center(
-                  child: SpinKitFadingCircle(
-                color: MoColors.mainColor,
-                size: 40.0,
-              )),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SpinKitFadingCircle(
+                    color: MoColors.mainColor,
+                    size: 40.0,
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    "Just a moment...",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
             );
           }
           return Padding(
@@ -144,14 +159,14 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
                   ],
                 ),
                 const SizedBox(height: 20),
-                if (appFlavor == 'development' || appFlavor == 'staging') ... [
-                  _buildPaymentOption(context, 'Pay with Test', MoImage.payStack,
-                      onTap: () {
-                        widget.onPayment!(ref);
-                        Navigator.pop(context);
-                        // _onPaymentOptionTap(PaymentType.paystack),
-                      }, additionalInfo: "1.5% + NGN100"),
-                ],
+                // if (appFlavor == 'development' || appFlavor == 'staging') ... [
+                //   _buildPaymentOption(context, 'Pay with Test', MoImage.payStack,
+                //       onTap: () {
+                //         widget.onPayment!(ref);
+                //         Navigator.pop(context);
+                //         // _onPaymentOptionTap(PaymentType.paystack),
+                //       }, additionalInfo: "1.5% + NGN100"),
+                // ],
                 const SizedBox(height: 10),
                 _buildPaymentOption(
                     context, 'Pay with Paystack', MoImage.payStack,

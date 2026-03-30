@@ -8,100 +8,68 @@ import 'package:momaspayplus/utils/launcher.dart';
 import 'package:shimmer/shimmer.dart';
 
 class PromoSection extends StatelessWidget {
-  const PromoSection({super.key});
+  // final double promoDivHeight;
+  const PromoSection({super.key,
+    // required this.promoDivHeight
+  });
 
   // TODO: COME BACK HERE >>> IMPROPER WIDGET HANDLING
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: MoColors.mainColorII,
-      child: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(50)),
-        ),
-        child: Column(
-          // mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 50,
-            ),
-            Padding(
-              padding:
-              const EdgeInsets.symmetric(vertical: 10),
-              child: SizedBox(
-                height: 75,
-                width: MediaQuery.of(context).size.width,
-                child: BlocBuilder<PromoBloc, DashboardState>(
-                    builder: (context, state) {
-                      return SizedBox(
-                          height: 75,
-                          width: MediaQuery.of(context)
-                              .size
-                              .width *
-                              0.9,
-                          child: CarouselSlider(
-                            options: CarouselOptions(
-                              height: 200.0,
-                              enableInfiniteScroll: true,
-                              autoPlay: true,
-                              enlargeCenterPage: true,
-                              scrollDirection:
-                              Axis.horizontal,
-                            ),
-                            items: state
-                            is PromotionSuccessful
-                                ? state.promo.map((value) {
-                              return Builder(
-                                builder: (BuildContext
-                                context) {
-                                  return InkWell(
-                                    onTap: () => Launcher()
-                                        .launchInBrowser(
-                                        Uri.parse(value
-                                            .link!)),
-                                    child: Padding(
-                                      padding:
-                                      const EdgeInsets
-                                          .symmetric(
-                                          horizontal:
-                                          1.0),
-                                      child:
-                                      Image.network(
-                                          value.url,
-                                          fit: BoxFit
-                                              .fill),
-                                    ),
-                                  );
-                                },
-                              );
-                            }).toList()
-                                : List.generate(4,
-                                    (i) => _widgetPromo(context))
-                                .map((widget) {
-                              return Builder(
-                                builder: (BuildContext
-                                context) {
-                                  return Container(
-                                    child: widget,
-                                  );
-                                },
-                              );
-                            }).toList(),
-                          ));
-                    }),
-              ),
-            ),
-            const SizedBox(height: 10),
-            const Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 45,
-              ),
-              child: Text("What will you like to do?"),
-            ),
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: SizedBox(
+        height: 75,
+        width: MediaQuery.of(context).size.width,
+        child: BlocBuilder<PromoBloc, DashboardState>(
+            builder: (context, state) {
+          return SizedBox(
+              height: 75,
+              width: MediaQuery.of(context).size.width * 0.9,
+              child: CarouselSlider(
+                options: CarouselOptions(
+                  height: 200.0,
+                  enableInfiniteScroll: true,
+                  autoPlay: true,
+                  enlargeCenterPage: true,
+                  scrollDirection: Axis.horizontal,
+                ),
+                items: state is PromotionSuccessful
+                    ? state.promo.map((value) {
+                        return Builder(
+                          builder: (BuildContext context) {
+                            return InkWell(
+                              onTap: () => Launcher().launchInBrowser(
+                                  Uri.parse(value.link!)),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 1.0),
+                                child: Image.network(
+                                  value.url,
+                                  fit: BoxFit.fill,
+                                  errorBuilder:
+                                      (context, error, stackTrace) {
+                                    // return Image.asset('assets/images/fallback.png');
+                                    return _widgetPromo(context);
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      }).toList()
+                    : List.generate(4, (i) => _widgetPromo(context))
+                        .map((widget) {
+                        return Builder(
+                          builder: (BuildContext context) {
+                            return Container(
+                              child: widget,
+                            );
+                          },
+                        );
+                      }).toList(),
+              ));
+        }),
       ),
     );
   }
@@ -122,5 +90,3 @@ class PromoSection extends StatelessWidget {
     );
   }
 }
-
-

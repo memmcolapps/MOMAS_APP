@@ -1,4 +1,4 @@
-import 'dart:async';
+ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -18,11 +18,13 @@ Future<Map<String, String>> getHeader() async {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
     'Authorization': 'Bearer $token',
+    'Access-Point': 'mobile',
   };
   return header;
 }
 
 const IS_PRODUCTION = kReleaseMode;
+const _timeout = Duration(seconds: 10);
 
 class ServerRequest {
   String? deviceId;
@@ -33,13 +35,15 @@ class ServerRequest {
   }) async {
     var header = await getHeader();
     log("${path}    ${dataToSend.toString()}");
-    var url = Uri.parse(path!).replace(
-      queryParameters: dataToSend
-    );
+    var url = Uri.parse(path!).replace(queryParameters: dataToSend);
     var response;
     print(url);
     try {
-      response = await http.get(url, headers: header);
+      response = await http.get(url, headers: header).timeout(
+            _timeout,
+            onTimeout: () => throw TimeoutException('process time out'),
+          );
+      // response = await http.get(url, headers: header);
       var data = jsonDecode(response.body);
       log("$data  route: $path  status: ${response.statusCode}");
 
@@ -66,7 +70,6 @@ class ServerRequest {
         return HttpData(data);
       }
     } catch (e) {
-
       // log("route1: $path  status1: ${response.statusCode}");
       debugPrint('exception post ${e.toString()}');
       if (e is HttpException) {

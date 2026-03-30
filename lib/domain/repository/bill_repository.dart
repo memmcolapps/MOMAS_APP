@@ -3,7 +3,7 @@ import 'package:momaspayplus/domain/data/request/cable_tv_request.dart';
 import 'package:momaspayplus/domain/data/request/data_request.dart';
 import 'package:momaspayplus/domain/data/response/arrears_items.dart';
 import 'package:momaspayplus/domain/data/response/generic_response.dart';
-import 'package:momaspayplus/screens/arrears/arrears_page.dart';
+import 'package:momaspayplus/screens/stack_screens/arrears/arrears_page.dart';
 
 import '../../utils/routes.dart';
 import '../data/request/momas_meter_buy.dart';

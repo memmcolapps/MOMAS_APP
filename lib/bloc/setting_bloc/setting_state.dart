@@ -24,6 +24,9 @@ class SettingsSupportStateSuccess extends SettingsState {
 }
 
 class SettingsSupportStateLoading extends SettingsState {
-  final SettingsDataResponse response;
-  const SettingsSupportStateLoading({required this.response});
+  final SupportData data;
+  const SettingsSupportStateLoading({required this.data});
+
+  @override
+  List<Object> get props => [data];
 }

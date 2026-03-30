@@ -8,19 +8,20 @@ import 'package:flutter_native_contact_picker/model/contact.dart';
 import 'package:momaspayplus/bloc/data_bloc/data_state.dart';
 import 'package:momaspayplus/domain/data/response/data_response.dart';
 import 'package:momaspayplus/domain/repository/bill_repository.dart';
+import 'package:momaspayplus/screens/stack_screens/action_detail_skeleton.dart';
 import 'package:momaspayplus/utils/screen_utils.dart';
 
-import '../../bloc/data_bloc/data_bloc.dart';
-import '../../bloc/data_bloc/data_event.dart';
-import '../../bloc/payment_bloc/payment_bloc.dart';
-import '../../reuseable/bottom_sheet.dart';
-import '../../reuseable/error_modal.dart';
-import '../../reuseable/mo_button.dart';
-import '../../reuseable/mo_form.dart';
-import '../../reuseable/network_selector.dart';
-import '../../reuseable/search_bottom_sheet/ka_dropdown.dart';
-import '../../utils/network_enum.dart';
-import '../auth/registation/registration_success_screen.dart';
+import '../../../../bloc/data_bloc/data_bloc.dart';
+import '../../../../bloc/data_bloc/data_event.dart';
+import '../../../../bloc/payment_bloc/payment_bloc.dart';
+import '../../../../reuseable/bottom_sheet.dart';
+import '../../../../reuseable/error_modal.dart';
+import '../../../../reuseable/mo_button.dart';
+import '../../../../reuseable/mo_form.dart';
+import '../../../../reuseable/network_selector.dart';
+import '../../../../reuseable/search_bottom_sheet/ka_dropdown.dart';
+import '../../../../utils/network_enum.dart';
+import '../../../auth/registation/registration_success_screen.dart';
 
 class DataScreen extends StatefulWidget {
   const DataScreen({super.key});
@@ -60,23 +61,8 @@ class _DataScreenState extends State<DataScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.green,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: const Text(
-          'Data Bundle',
-          style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w700
-          ),
-        ),
-      ),
+    return ActionDetailSkeleton(
+      heading: 'Data Bundle',
       body: BlocProvider(
         create: (context) => DataBloc(repository: BillRepository()),
         child: Padding(

@@ -36,6 +36,7 @@ dependencies:
   carousel_slider:
   flutter_rating_bar: ^4.0.1
   package_info_plus: ^9.0.0
+  collection: ^1.19.1
 #  upgrader: ^11.5.0
 #  webview_flutter: ^4.10.0
 #  shared_preferences: ^2.5.3

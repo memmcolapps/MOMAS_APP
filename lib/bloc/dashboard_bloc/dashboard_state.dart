@@ -48,8 +48,8 @@ class PromotionSuccessful extends DashboardState {
 }
 
 class GetUserSuccessful extends DashboardState {
-  final UserModel userModel;
-  const GetUserSuccessful(this.userModel);
+  final User user;
+  const GetUserSuccessful(this.user);
   @override
-  List<Object> get props => [userModel];
+  List<Object> get props => [user];
 }

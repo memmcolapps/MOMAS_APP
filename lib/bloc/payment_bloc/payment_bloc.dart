@@ -88,31 +88,31 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   }
 
   retryPayment(RetryPayment event, Emitter<PaymentState> emit) async {
-    emit(PaymentLoading());
+    emit(const RetryLoading());
     try {
       final response = await repository.retryPayment(event.transactionId);
       if (response.status == true) {
         emit(MomasPaymentSuccess(response));
       } else {
-        emit(PaymentFailure(error: response.message ?? "Network issue"));
+        emit(RetryFailure(error: response.message ?? "Network issue"));
       }
     } catch (e, _) {
-      emit(PaymentFailure(error: e.toString()));
+      emit(RetryFailure(error: e.toString()));
     }
   }
 
   viewPayment(ViewReceipt event, Emitter<PaymentState> emit) async {
-    emit(PaymentLoading());
+    emit(const ReceiptLoading());
     try {
       final response = await repository.getReceipt(event.transactionId);
       if (response.status == true) {
         emit(ViewMomasPaymentSuccess(response));
       } else {
-        emit(PaymentFailure(error: response.message ?? "Network issue"));
+        emit(ReceiptFailure(error: response.message ?? "Failed to load receipt"));
       }
     } catch (e, _) {
       print(_);
-      emit(PaymentFailure(error: e.toString()));
+      emit(ReceiptFailure(error: e.toString()));
     }
   }
 
@@ -140,6 +140,6 @@ enum ServiceType {
   airtime,
   electricity,
   cable,
-  arrears,
+  utilities,
   admin_fee
 }

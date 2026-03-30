@@ -7,7 +7,7 @@ import 'package:momaspayplus/domain/data/response/user_model.dart';
 import 'package:momaspayplus/domain/repository/dashboard_repository.dart';
 import 'package:momaspayplus/domain/service/dashboard_service.dart';
 import 'package:momaspayplus/screens/generate_token/access_token_verification.dart';
-import 'package:momaspayplus/screens/profile/profile_screen.dart';
+import 'package:momaspayplus/screens/tab_views/customer/profile/profile_screen.dart';
 import 'package:momaspayplus/screens/tab_views/customer/Homepage/home_page.dart';
 import 'package:momaspayplus/screens/tab_views/customer/analytics/analytics.dart';
 import 'package:momaspayplus/screens/tab_views/customer/transactions/transactions.dart';
@@ -23,14 +23,12 @@ class NavConfig {
               filledIcon: Icons.home,
               outlinedIcon: Icons.home_outlined,
               label: 'Home',
-              screen: AccessTokenVerification()
-          ),
+              screen: AccessTokenVerification()),
           const NavItem(
               filledIcon: Icons.settings,
               outlinedIcon: Icons.settings_outlined,
               label: 'Settings',
-              screen: ProfileScreen()
-          ),
+              screen: ProfileScreen()),
         ];
 
       // case UserRole.admin:
@@ -49,49 +47,48 @@ class NavConfig {
 
       default:
         return [
-          NavItem(
+          const NavItem(
               filledIcon: Icons.home,
               outlinedIcon: Icons.home_outlined,
               label: 'Home',
-              screen: MultiBlocProvider (
-                  providers: [
-                    BlocProvider<WalletBloc>(
-                      create: (BuildContext context) =>
-                      WalletBloc(DashboardService(DashboardRepository()))
-                        ..add(WalletDashboardEvent()),
-                    ),
-                    BlocProvider<PromoBloc>(
-                      create: (BuildContext context) =>
-                      PromoBloc(DashboardService(DashboardRepository()))
-                        ..add(PromotionEvent()),
-                    ),
-                    BlocProvider<DashboardBloc>(
-                      create: (BuildContext context) =>
-                      DashboardBloc(DashboardService(DashboardRepository()))
-                        ..add(FeatureDashboardEvent()),
-                    ),
-                  ],
-                  child: const HomePage()
-              )
-          ),
+              screen:
+                  // MultiBlocProvider (
+                  //               providers: [
+                  //   BlocProvider<WalletBloc>(
+                  //     create: (BuildContext context) =>
+                  //     WalletBloc(DashboardService(DashboardRepository()))
+                  //       ..add(WalletDashboardEvent()),
+                  //   ),
+                  //   BlocProvider<PromoBloc>(
+                  //     create: (BuildContext context) =>
+                  //     PromoBloc(DashboardService(DashboardRepository()))
+                  //       ..add(PromotionEvent()),
+                  //   ),
+                  //   BlocProvider<DashboardBloc>(
+                  //     create: (BuildContext context) =>
+                  //     DashboardBloc(DashboardService(DashboardRepository()))
+                  //       ..add(FeatureDashboardEvent()),
+                  //   ),
+                  // ],
+                  // child:
+                  const HomePage()
+              // )
+              ),
           const NavItem(
               filledIcon: Icons.history,
               outlinedIcon: Icons.history_outlined,
               label: 'History',
-              screen: Transactions()
-          ),
-          // const NavItem(
-          //     filledIcon: Icons.analytics,
-          //     outlinedIcon: Icons.analytics_outlined,
-          //     label: 'Analytics',
-          //     screen: Analytics()
-          // ),
+              screen: Transactions()), 
+          const NavItem(
+              filledIcon: Icons.analytics,
+              outlinedIcon: Icons.analytics_outlined,
+              label: 'Analytics',
+              screen: Analytics()),
           const NavItem(
               filledIcon: Icons.settings,
               outlinedIcon: Icons.settings_outlined,
               label: 'Settings',
-              screen: ProfileScreen()
-          ),
+              screen: ProfileScreen()),
         ];
     }
   }

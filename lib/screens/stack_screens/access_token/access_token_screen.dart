@@ -11,21 +11,22 @@ import 'package:momaspayplus/bloc/access_token_bloc/access_token_state.dart';
 import 'package:momaspayplus/domain/data/request/set_estate_request.dart';
 import 'package:momaspayplus/domain/data/response/estate_response.dart';
 import 'package:momaspayplus/domain/repository/access_token_repository.dart';
+import 'package:momaspayplus/screens/stack_screens/stack_screen_skeleton.dart';
 import 'package:momaspayplus/utils/colors.dart';
 import 'package:momaspayplus/utils/images.dart';
 import 'package:momaspayplus/utils/screen_utils.dart';
 import 'package:momaspayplus/utils/strings.dart';
-import '../../domain/data/request/generate_token_request.dart';
-import '../../domain/data/response/user_model.dart';
-import '../../reuseable/error_modal.dart';
-import '../../reuseable/mo_button.dart';
-import '../../reuseable/mo_form.dart';
-import '../../reuseable/mo_transaction_success_screen.dart';
-import '../../reuseable/pop_button.dart';
-import '../../reuseable/search_bottom_sheet/ka_dropdown.dart';
-import '../../reuseable/shadow_container.dart';
-import '../../utils/receipt_builder.dart';
-import '../../utils/shared_pref.dart';
+import '../../../domain/data/request/generate_token_request.dart';
+import '../../../domain/data/response/user_model.dart';
+import '../../../reuseable/error_modal.dart';
+import '../../../reuseable/mo_button.dart';
+import '../../../reuseable/mo_form.dart';
+import '../../../reuseable/mo_transaction_success_screen.dart';
+import '../../../reuseable/pop_button.dart';
+import '../../../reuseable/search_bottom_sheet/ka_dropdown.dart';
+import '../../../reuseable/shadow_container.dart';
+import '../../../utils/receipt_builder.dart';
+import '../../../utils/shared_pref.dart';
 
 class AccessTokenScreen extends StatefulWidget {
   const AccessTokenScreen({super.key});
@@ -57,8 +58,8 @@ class _AccessTokenScreenState extends State<AccessTokenScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => accessTokenBloc,
-      child: Scaffold(
-        backgroundColor: Colors.white,
+      child: StackScreenSkeleton(
+        heading: "Generate Access Token",
         body: FutureBuilder<User?>(
             future: SharedPreferenceHelper.getUser(),
             builder: (context, snapshot) {
@@ -213,172 +214,141 @@ class _AccessTokenScreenState extends State<AccessTokenScreen> {
                     selectedEstateData = estateData.firstWhere(
                         (v) => v.id.toString() == snapshot.data!.estateId);
                   }
-                  return SafeArea(
-                    child: SingleChildScrollView(
+                  return SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        padding: context.isTablet
+                            ? EdgeInsets.symmetric(
+                                horizontal:
+                                    MediaQuery.of(context).size.width *
+                                        0.15)
+                            : const EdgeInsets.all(0.0),
                         child: Column(
                           children: [
                             const SizedBox(
-                              height: 13,
+                              height: 20,
                             ),
-                            Center(
-                              child: ShadowContainer(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 8),
-                                  child: SizedBox(
-                                    height: 40,
-                                    width:
-                                        MediaQuery.of(context).size.width - 15,
-                                    child: Row(
-                                      children: [
-                                        PopButton().pop(context),
-                                        const SizedBox(
-                                          width: 20,
-                                        ),
-                                        const Text("Generate Access Token"),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                            const Text(
+                              'Easily create access token and  share with your visitor',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            const SizedBox(height: 20),
+                            EPDropdownButton<EstateData>(
+                                disabled: true,
+                                itemsListTitle: "Selected estate",
+                                iconSize: 22,
+                                value: selectedEstateData,
+                                hint: const Text(""),
+                                isExpanded: true,
+                                underline: const Divider(),
+                                searchMatcher: (item, text) {
+                                  return ("${item.title!}  ${item..state}")
+                                      .toLowerCase()
+                                      .contains(text.toLowerCase());
+                                },
+                                onChanged: (v) {
+                                  setState(() {
+                                    selectedEstateData = v;
+                                  });
+                                },
+                                items: ([selectedEstateData])
+                                    .map(
+                                      (e) => DropdownMenuItem(
+                                          value: e,
+                                          child: Row(
+                                            children: [
+                                              Text(e?.title ?? "",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .labelMedium!
+                                                      .copyWith(
+                                                          fontWeight:
+                                                              FontWeight
+                                                                  .w400,
+                                                          color: Colors
+                                                              .black)),
+                                            ],
+                                          )),
+                                    )
+                                    .toList()),
+                            MoFormWidget(
+                              title: "Expected Number of Visitor ",
+                              keyboardType: TextInputType.number,
+                              controller: _expectedVisitorController,
+                              prefixIcon: const Icon(
+                                Icons.person,
+                                color: Colors.grey,
                               ),
                             ),
                             Padding(
-                              padding: context.isTablet
-                                  ? EdgeInsets.symmetric(
-                                      horizontal:
-                                          MediaQuery.of(context).size.width *
-                                              0.15)
-                                  : const EdgeInsets.all(0.0),
-                              child: Column(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20.0, vertical: 10),
+                              child: Row(
                                 children: [
-                                  const SizedBox(
-                                    height: 20,
+                                  const Text("Send Token to Email"),
+                                  const Spacer(),
+                                  CupertinoSwitch(
+                                    value: _switchValue,
+                                    onChanged: (bool value) {
+                                      setState(() {
+                                        _switchValue = value;
+                                      });
+                                    },
                                   ),
-                                  const Text(
-                                    'Easily create access token and  share with your visitor',
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                  const SizedBox(height: 20),
-                                  EPDropdownButton<EstateData>(
-                                      disabled: true,
-                                      itemsListTitle: "Selected estate",
-                                      iconSize: 22,
-                                      value: selectedEstateData,
-                                      hint: const Text(""),
-                                      isExpanded: true,
-                                      underline: const Divider(),
-                                      searchMatcher: (item, text) {
-                                        return ("${item.title!}  ${item..state}")
-                                            .toLowerCase()
-                                            .contains(text.toLowerCase());
-                                      },
-                                      onChanged: (v) {
-                                        setState(() {
-                                          selectedEstateData = v;
-                                        });
-                                      },
-                                      items: ([selectedEstateData])
-                                          .map(
-                                            (e) => DropdownMenuItem(
-                                                value: e,
-                                                child: Row(
-                                                  children: [
-                                                    Text(e?.title ?? "",
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .labelMedium!
-                                                            .copyWith(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                color: Colors
-                                                                    .black)),
-                                                  ],
-                                                )),
-                                          )
-                                          .toList()),
-                                  MoFormWidget(
-                                    title: "Expected Number of Visitor ",
-                                    keyboardType: TextInputType.number,
-                                    controller: _expectedVisitorController,
+                                ],
+                              ),
+                            ),
+                            _switchValue
+                                ? MoFormWidget(
+                                    title: "Visitor's Email",
+                                    keyboardType:
+                                        TextInputType.emailAddress,
+                                    controller: _emailController,
                                     prefixIcon: const Icon(
-                                      Icons.person,
+                                      Icons.email,
                                       color: Colors.grey,
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0, vertical: 10),
-                                    child: Row(
-                                      children: [
-                                        const Text("Send Token to Email"),
-                                        const Spacer(),
-                                        CupertinoSwitch(
-                                          value: _switchValue,
-                                          onChanged: (bool value) {
-                                            setState(() {
-                                              _switchValue = value;
-                                            });
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  _switchValue
-                                      ? MoFormWidget(
-                                          title: "Visitor's Email",
-                                          keyboardType:
-                                              TextInputType.emailAddress,
-                                          controller: _emailController,
-                                          prefixIcon: const Icon(
-                                            Icons.email,
-                                            color: Colors.grey,
-                                          ),
-                                        )
-                                      : Container(),
-                                  SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        .05,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 15),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: MoButton(
-                                            isLoading:
-                                                state is AccessTokenLoading,
-                                            title: "CONTINUE",
-                                            onTap: () {
-                                              if (isNotEmpty(
+                                  )
+                                : Container(),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height *
+                                  .05,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: MoButton(
+                                      isLoading:
+                                          state is AccessTokenLoading,
+                                      title: "CONTINUE",
+                                      onTap: () {
+                                        if (isNotEmpty(
+                                            _expectedVisitorController
+                                                .text)) {
+                                          var data = GenerateTokenRequest(
+                                              qty:
                                                   _expectedVisitorController
-                                                      .text)) {
-                                                var data = GenerateTokenRequest(
-                                                    qty:
-                                                        _expectedVisitorController
-                                                            .text,
-                                                    email:
-                                                        _emailController.text,
-                                                    canSendMail: _switchValue
-                                                        ? "1"
-                                                        : "0",
-                                                    estateId: selectedEstateData
-                                                        ?.id
-                                                        .toString());
-                                                print(data.toJson());
-                                                accessTokenBloc.add(
-                                                    GenerateTokenEvent(data));
-                                              } else {
-                                                showErrorBottomSheet(context,
-                                                    "Please provide all entries");
-                                              }
-                                            },
-                                          ),
-                                        ),
-                                      ],
+                                                      .text,
+                                              email:
+                                                  _emailController.text,
+                                              canSendMail: _switchValue
+                                                  ? "1"
+                                                  : "0",
+                                              estateId: selectedEstateData
+                                                  ?.id
+                                                  .toString());
+                                          print(data.toJson());
+                                          accessTokenBloc.add(
+                                              GenerateTokenEvent(data));
+                                        } else {
+                                          showErrorBottomSheet(context,
+                                              "Please provide all entries");
+                                        }
+                                      },
                                     ),
                                   ),
                                 ],

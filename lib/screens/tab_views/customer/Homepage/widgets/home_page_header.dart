@@ -13,11 +13,13 @@ class HomePageHeader extends StatelessWidget {
     super.key,
     required this.safePadding,
     required this.height,
+    // required this.promoDivHeight,
     required this.name,
   });
 
   final EdgeInsets safePadding;
   final double height;
+  // final double promoDivHeight;
   final String name;
 
   @override
@@ -64,7 +66,7 @@ class HomePageHeader extends StatelessWidget {
             ),
           ),
         ),
-        const PromoSection()
+        // PromoSection(promoDivHeight: promoDivHeight)
       ],
     );
   }

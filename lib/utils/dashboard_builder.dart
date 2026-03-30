@@ -1,29 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/bloc/momas_bloc/momas_bloc.dart';
-import 'package:momaspayplus/screens/service/service_screen.dart';
+import 'package:momaspayplus/bloc/setting_bloc/setting_bloc.dart';
+import 'package:momaspayplus/bloc/setting_bloc/setting_event.dart';
+import 'package:momaspayplus/screens/stack_screens/service/service_screen.dart';
 
 import '../domain/data/response/feature.dart';
 import '../domain/data/response/user_model.dart';
-import '../screens/arrears/arrears_page.dart';
-import '../screens/bills_payment/bill_selected_screen.dart';
-import '../screens/generate_token/access_token_screen.dart';
+import 'package:momaspayplus/screens/stack_screens/arrears/arrears_page.dart';
+import '../screens/stack_screens/bills_payment/bill_selected_screen.dart';
+import '../screens/stack_screens/access_token/access_token_screen.dart';
 import '../screens/generate_token/access_token_verification.dart';
 import '../screens/metrics/metrics_screen.dart';
-import '../screens/momos_payment/momas_payment_screen.dart';
+import '../screens/stack_screens/momos_payment/momas_payment_screen.dart';
 import '../screens/reprint_token/reprint_token_screen.dart';
-import '../screens/profile/support/support_screen.dart';
+import '../screens/stack_screens/support/support_screen.dart';
 import 'images.dart';
 
 class DashboardBuilder {
   static List<GridItemModel> builder(
       Feature future, BuildContext context, User? user) {
+
+    // TODO(DON): Come back and fix this code
     List<GridItemModel> value = [];
-    if (future.momasMeter == 1) {
+    if (future.momasMeter != 0) {
       value.add(
         GridItemModel(
             image: MoImage.momasPayment,
-            title: "Make Payment",
+            title: "Buy Units",
             subtitle: "Buy more unit for your momas meter",
+            active: future.momasMeter == 2 ? false : true,
             onTap: () {
               Navigator.push(
                   context,
@@ -34,12 +40,13 @@ class DashboardBuilder {
             }),
       );
     }
-    if (future.otherMeter == 1) {
+    if (future.otherMeter != 0) {
       value.add(
         GridItemModel(
             image: MoImage.meterPayment,
             title: "Pay Other Meter",
             subtitle: "Buy  unit for other meters",
+            active: future.otherMeter == 2 ? false : true,
             onTap: () {
               Navigator.push(
                   context,
@@ -50,12 +57,13 @@ class DashboardBuilder {
             }),
       );
     }
-    if (future.printToken == 1) {
+    if (future.printToken != 0) {
       value.add(
         GridItemModel(
             image: MoImage.reprintToken,
             title: "Reprint Token",
             subtitle: "Reprint your purchased token",
+            active: future.printToken == 2 ? false : true,
             onTap: () {
               Navigator.push(
                   context,
@@ -64,7 +72,7 @@ class DashboardBuilder {
             }),
       );
     }
-    if (future.accessToken == 1) {
+    if (future.accessToken != 0) {
       value.add(
         GridItemModel(
             image: MoImage.accessToken,
@@ -72,6 +80,7 @@ class DashboardBuilder {
             subtitle: user?.userRole == UserRole.estateStaff
                 ? "Verify estate token"
                 : "Generate and manage security token",
+            active: future.accessToken == 2 ? false : true,
             onTap: () {
               print(user?.userRole);
               if ((user?.userRole == UserRole.estateStaff)) {
@@ -88,12 +97,13 @@ class DashboardBuilder {
             }),
       );
     }
-    if (future.services == 1) {
+    if (future.services != 0) {
       value.add(
         GridItemModel(
             image: MoImage.services,
             title: "Services",
             subtitle: "Request for any services in your estate",
+            active: future.services == 2 ? false : true,
             onTap: () {
               Navigator.push(
                   context,
@@ -102,12 +112,13 @@ class DashboardBuilder {
             }),
       );
     }
-    if (future.billPayment == 1) {
+    if (future.billPayment != 0) {
       value.add(
         GridItemModel(
             image: MoImage.billPayment,
             title: "Bill Payment",
             subtitle: "Manage and add beneficiary to your account",
+            active: future.billPayment == 2 ? false : true,
             onTap: () {
               Navigator.push(
                   context,
@@ -116,17 +127,24 @@ class DashboardBuilder {
             }),
       );
     }
-    if (future.support == 1) {
+    if (future.support != 0) {
       value.add(
         GridItemModel(
             image: MoImage.support,
             title: "Support",
             subtitle: "Contact our 24/7 support",
+            active: future.support == 2 ? false : true,
             onTap: () {
+              final settingBloc = context.read<SettingsBloc>();
+              settingBloc.add(SupportSettingEvent());
+
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (builder) => const SupportScreen()));
+                      builder: (_) => BlocProvider.value(
+                        value: settingBloc,
+                        child: const SupportScreen(),
+                      )));
             }),
       );
     }
@@ -139,12 +157,13 @@ class DashboardBuilder {
     //         onTap: null),
     //   );
     // }
-    if (future.analysis == 1) {
+    if (future.analysis != 0) {
       value.add(
         GridItemModel(
             image: MoImage.analytics,
             title: "Analytics",
             subtitle: "Buy Airtime and Data for all Network",
+            active: future.analysis == 2 ? false : true,
             onTap: () {
               Navigator.push(
                   context,
@@ -173,11 +192,13 @@ class GridItemModel {
   final String title;
   final String subtitle;
   final VoidCallback? onTap;
+  final bool active;
 
   GridItemModel({
     required this.image,
     required this.title,
     required this.subtitle,
     this.onTap,
+    this.active = true
   });
 }

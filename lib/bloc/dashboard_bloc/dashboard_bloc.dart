@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/bloc/dashboard_bloc/dashboard_state.dart';
 import 'package:momaspayplus/domain/service/dashboard_service.dart';
@@ -84,27 +86,6 @@ class WalletBloc extends Bloc<DashboardEvent, DashboardState> {
 class PromoBloc extends Bloc<DashboardEvent, DashboardState> {
   final DashboardService service;
 
-  // on<PromotionEvent>((event, emit) async {
-  // final cached = SharedPreferenceHelper.getCachedPromo();
-  // if (cached != null) {
-  // emit(PromotionSuccessful(cached));
-  // } else {
-  // emit(FeaturesLoading());
-  // }
-  //
-  // try {
-  // final data = await service.getPromo();
-  // if (data.status == true) {
-  // await SharedPreferenceHelper.savePromo(data.promo); // 👈 clean
-  // emit(PromotionSuccessful(data.promo));
-  // } else {
-  // if (cached == null) emit(PromotionFailure());
-  // }
-  // } catch (e) {
-  // if (cached == null) emit(PromotionFailure());
-  // }
-  // });
-
   PromoBloc(this.service) : super(DashboardInitial()) {
     on<PromotionEvent>((event, emit) async {
       final cached = SharedPreferenceHelper.getCachedPromo();
@@ -134,17 +115,23 @@ class UserBloc extends Bloc<DashboardEvent, DashboardState> {
 
   UserBloc(this.service) : super(DashboardInitial()) {
     on<GetUserDashboardEvent>((event, emit) async {
-      emit(FeaturesLoading());
+      final cached = await SharedPreferenceHelper.getUser();
+      if (cached != null) {
+        emit(GetUserSuccessful(cached));
+      } else {
+        emit(FeaturesLoading());
+      }
+
       try {
         var data = await service.getUser();
-        if (data.status == true) {
+        if (data.status == true && data.user != null) {
           SharedPreferenceHelper.saveUser(data.user!.toJson());
-          emit(GetUserSuccessful(data));
+          emit(GetUserSuccessful(data.user!));
         } else {
-          emit(PromotionFailure());
+          if (cached == null) emit(PromotionFailure());
         }
       } catch (e) {
-        emit(PromotionFailure());
+        if (cached == null) emit(PromotionFailure());
       }
     });
   }

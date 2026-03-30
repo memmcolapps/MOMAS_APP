@@ -2,6 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:momaspayplus/reuseable/views/error_view.dart';
+import 'package:momaspayplus/screens/tab_views/customer/transactions/widgets/loading_dialog.dart';
+import 'package:momaspayplus/screens/tab_views/customer/transactions/widgets/skeleton_transaction_list.dart';
+import 'package:momaspayplus/screens/tab_views/customer/transactions/widgets/transaction_card.dart';
 import 'package:momaspayplus/screens/tab_views/shared/tabview_skeleton.dart';
 import 'package:momaspayplus/utils/screen_utils.dart';
 import 'package:momaspayplus/utils/strings.dart';
@@ -55,15 +59,23 @@ class _TransactionsState extends State<Transactions> {
   @override
   Widget build(BuildContext context) {
     return TabViewSkeleton(
-      appBarTitle: "Search Transaction",
+      appBarTitle: "Transactions",
       body: BlocConsumer<PaymentBloc, PaymentState>(
         bloc: paymentBloc,
         builder: (context, state) {
+
+
+          if (state is PaymentFailure) {
+            return ErrorView(
+              message: state.error,
+              onRetry: () => paymentBloc.add(const SearchPayment()),
+            );
+          }
+
           return Padding(
             padding: context.isTablet
                 ? EdgeInsets.symmetric(
-                    horizontal:
-                        MediaQuery.of(context).size.width * 0.15)
+                    horizontal: MediaQuery.of(context).size.width * 0.15)
                 : const EdgeInsets.all(0.0),
             child: Column(
               children: [
@@ -71,36 +83,19 @@ class _TransactionsState extends State<Transactions> {
                   padding: const EdgeInsets.symmetric(
                     vertical: 16.0,
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 16.0),
-                      MoFormWidget(
-                        prefixIcon: Icon(Icons.search,
-                            color: MoColors.mainColor),
-                        hintText: "Search",
-                        onChange: (value) {
-                          _filterData(value);
-                        },
-                      ),
-                    ],
+                  child: MoFormWidget(
+                    prefixIcon: Icon(Icons.search, color: MoColors.mainColor),
+                    hintText: "Search",
+                    onChange: (value) {
+                      _filterData(value);
+                    },
                   ),
                 ),
-                state is PaymentLoading
-                    ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SpinKitFadingCircle(
-                            color: MoColors.mainColorII,
-                            size: 50.0,
-                          )
-                        ],
-                      )
-                    : Expanded(
-                        child: ListView.builder(
-                          itemCount:
-                              filteredTransactionDataList?.length ?? 0,
+                Expanded(
+                  child: state is PaymentLoading
+                      ? const SkeletonTransactionList()
+                      : ListView.builder(
+                          itemCount: filteredTransactionDataList?.length ?? 0,
                           itemBuilder: (context, index) {
                             return InkWell(
                               onTap: () {
@@ -110,194 +105,68 @@ class _TransactionsState extends State<Transactions> {
                                         .toString())); // Navigator.push(
                               },
                               child: TransactionCard(
-                                data:
-                                    filteredTransactionDataList![index],
+                                data: filteredTransactionDataList![index],
                                 retry: (transRef) {
-                                  paymentBloc
-                                      .add(RetryPayment(transRef));
+                                  paymentBloc.add(RetryPayment(transRef));
                                 },
                               ),
                             );
                           },
                         ),
-                      ),
+                )
               ],
             ),
           );
         },
         listener: (BuildContext context, PaymentState state) {
+          if (state is ReceiptLoading) {
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (_) => const LoadingDialog(text: "Loading Receipt...",),
+            );
+          } else if (state is ReceiptFailure || state is ViewMomasPaymentSuccess) {
+            if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+          }
+
+          if (state is RetryLoading) {
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (_) => const LoadingDialog(text: "Retrying Transaction...",),
+            );
+          } else if (state is RetryFailure || state is ViewMomasPaymentSuccess) {
+            if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+          }
+
           if (state is PaymentHistorySuccess) {
             transactionDataList = state.data;
             filteredTransactionDataList = List.from(transactionDataList!);
-          } else if (state is PaymentFailure) {
+          } else if (state is PaymentFailureState) {
             showErrorBottomSheet(context, state.error);
           } else if (state is MomasPaymentSuccess) {
             Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (builder) => TransactionSuccessPage(
-                          details: ReceiptBuilder()
-                              .meterPayment(state.momasPaymentResponse.data!.receipt!),
+                          details: ReceiptBuilder().meterPayment(
+                              state.momasPaymentResponse.data!.receipt!),
                         )));
           } else if (state is ViewMomasPaymentSuccess) {
-            //TODO: Receipt could be null ... come back to this if there is an error
+            if (Navigator.of(context).canPop()) Navigator.of(context).pop();
             Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (builder) => TransactionSuccessPage(
-                          failed: state.momasPaymentResponse.data?.receipt?.status!=
+                          failed: state
+                                  .momasPaymentResponse.data?.receipt?.status !=
                               PaymentStatus.successful,
-                          details: ReceiptBuilder()
-                              .meterPayment(state.momasPaymentResponse.data!.receipt!),
+                          details: ReceiptBuilder().meterPayment(
+                              state.momasPaymentResponse.data!.receipt!),
                         )));
           }
         },
       ),
-    );
-  }
-}
-
-class TransactionCard extends StatelessWidget {
-  final TransactionData data;
-  final Function(String) retry;
-
-  const TransactionCard({super.key, required this.data, required this.retry});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-      child: ShadowContainer(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 16,
-                    backgroundColor: Colors.green[100],
-                    child: const Icon(
-                      Icons.receipt,
-                      color: Colors.green,
-                      size: 15,
-                    ),
-                  ),
-                  const SizedBox(width: 16.0),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "NGN${data.amount}",
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15.0,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                          isNotEmpty(data.note)
-                              ? "${data.note}"
-                              : "| ${data.serviceType}",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 11.0,
-                          )),
-                      Text(
-                          isNotEmpty(data.note)
-                              ? "${data.note}"
-                              : "| ${data.payType}",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 11.0,
-                          )),
-                    ],
-                  ),
-                ],
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      TimeUtil.formatMMMMDY(data.createdAt ?? ""),
-                      style: const TextStyle(fontSize: 10),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    data.status == PaymentStatus.successful
-                        ? Container(
-                            decoration: BoxDecoration(
-                                color: data.status!.color,
-                                borderRadius: BorderRadius.circular(18)),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                data.status.toString().toUpperCase(),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.white,
-                                  fontSize: 10.0,
-                                ),
-                              ),
-                            ),
-                          )
-                        : InkWell(
-                            onTap: () => showRepeatPaymentDialog(
-                                context, data.amount!, () {
-                              retry(data.trxId!);
-                            }),
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                  color: Colors.red, shape: BoxShape.circle),
-                              child: const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Icon(
-                                  Icons.repeat,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void showRepeatPaymentDialog(
-      BuildContext context, int amount, VoidCallback onRepeat) {
-    showCupertinoDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CupertinoAlertDialog(
-          title: const Text('Repeat Payment'),
-          content: Text('Do you want to repeat the payment of NGN$amount?'),
-          actions: [
-            CupertinoDialogAction(
-              isDefaultAction: true,
-              onPressed: () => Navigator.of(context).pop(), // Close the dialog
-              child: const Text('No'),
-            ),
-            CupertinoDialogAction(
-              isDestructiveAction: true,
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-                onRepeat(); // Call the repeat payment action
-              },
-              child: const Text('Yes'),
-            ),
-          ],
-        );
-      },
     );
   }
 }

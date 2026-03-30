@@ -6,19 +6,20 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:momaspayplus/domain/data/response/artisan_list_response.dart';
 import 'package:momaspayplus/domain/data/response/service_response.dart';
 import 'package:momaspayplus/reuseable/rating_star.dart';
-import 'package:momaspayplus/screens/service/rating_widget.dart';
+import 'package:momaspayplus/screens/stack_screens/action_detail_skeleton.dart';
+import 'package:momaspayplus/screens/stack_screens/service/actions/rating_widget.dart';
 import 'package:momaspayplus/utils/colors.dart';
 
-import '../../bloc/service_bloc/service_bloc.dart';
-import '../../bloc/service_bloc/service_event.dart';
-import '../../bloc/service_bloc/service_state.dart';
-import '../../domain/data/response/comment_response.dart';
-import '../../domain/repository/service_repository.dart';
-import '../../reuseable/error_modal.dart';
-import '../../reuseable/pop_button.dart';
-import '../../reuseable/shadow_container.dart';
-import '../../utils/service_launcher.dart';
-import '../../utils/time_util.dart';
+import '../../../../bloc/service_bloc/service_bloc.dart';
+import '../../../../bloc/service_bloc/service_event.dart';
+import '../../../../bloc/service_bloc/service_state.dart';
+import '../../../../domain/data/response/comment_response.dart';
+import '../../../../domain/repository/service_repository.dart';
+import '../../../../reuseable/error_modal.dart';
+import '../../../../reuseable/pop_button.dart';
+import '../../../../reuseable/shadow_container.dart';
+import '../../../../utils/service_launcher.dart';
+import '../../../../utils/time_util.dart';
 
 class ServicePreviewScreen extends StatefulWidget {
   final Artisan data;
@@ -42,89 +43,59 @@ class _ServicePreviewScreenState extends State<ServicePreviewScreen> {
       ..add(GetCommentEvent(widget.data.id.toString()));
   }
 
-  @override
+  @override  
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: BlocConsumer<ServiceBloc, ServiceState>(
-            bloc: serviceBloc,
-            builder: (context, state) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: ShadowContainer(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 8),
-                        child: SizedBox(
-                          height: 40,
-                          width: MediaQuery.of(context).size.width - 15,
-                          child: Row(
-                            children: [
-                              PopButton().pop(context),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              const Text("Service")
-                            ],
-                          ),
-                        ),
-                      ),
+    return ActionDetailSkeleton(
+      heading: 'Service',
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: BlocConsumer<ServiceBloc, ServiceState>(
+          bloc: serviceBloc,
+          builder: (context, state) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildContactCard(widget.data),
+                const SizedBox(height: 16),
+                const Text('Comments',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                state is ServiceStateLoading
+                    ? SpinKitFadingCircle(
+                      color: MoColors.mainColor,
+                      size: 50.0,
+                    )
+                    : Expanded(
+                      child: ListView.builder(
+                          itemCount:
+                              response?.comment?.reversed.length ?? 0,
+                          itemBuilder: (_, index) {
+                            var comment = response!.comment![index];
+                            return _buildCommentCard(
+                                comment.userName ?? "",
+                                comment.comment ?? "",
+                                TimeUtil().ago(
+                                  comment.createdAt ?? "",
+                                ),
+                                comment.rate ?? 0);
+                          }),
                     ),
-                  ),
-                  const SizedBox(height: 15),
-                  _buildContactCard(widget.data),
-                  const SizedBox(height: 16),
-                  const Text('Comments',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  state is ServiceStateLoading
-                      ? Expanded(
-                          child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SpinKitFadingCircle(
-                              color: MoColors.mainColor,
-                              size: 50.0,
-                            )
-                          ],
-                        ))
-                      : Expanded(
-                          child: ListView.builder(
-                              itemCount:
-                                  response?.comment?.reversed.length ?? 0,
-                              itemBuilder: (_, index) {
-                                var comment = response!.comment![index];
-                                return _buildCommentCard(
-                                    comment.userName ?? "",
-                                    comment.comment ?? "",
-                                    TimeUtil().ago(
-                                      comment.createdAt ?? "",
-                                    ),
-                                    comment.rate ?? 0);
-                              })),
-                ],
-              );
-            },
-            listener: (BuildContext context, ServiceState state) {
-              switch (state) {
-                case ServiceGetChatStateSuccess():
-                  response = state.response;
-                case ServiceStateFailed():
-                  showErrorBottomSheet(context, state.error);
-                case ServiceSaveChatStateSuccess():
-                  showSuccessBottomSheet(context, state.message);
-                default:
-                  log("state not implemented");
-              }
-            },
-          ),
+              ],
+            );
+          },
+          listener: (BuildContext context, ServiceState state) {
+            switch (state) {
+              case ServiceGetChatStateSuccess():
+                response = state.response;
+              case ServiceStateFailed():
+                showErrorBottomSheet(context, state.error);
+              case ServiceSaveChatStateSuccess():
+                showSuccessBottomSheet(context, state.message);
+              default:
+                log("state not implemented");
+            }
+          },
         ),
       ),
     );

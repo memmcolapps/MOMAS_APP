@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/reuseable/mo_button.dart';
+import 'package:momaspayplus/screens/stack_screens/action_detail_skeleton.dart';
 import 'package:momaspayplus/utils/screen_utils.dart';
 
 import '../../bloc/setting_bloc/setting_bloc.dart';
@@ -30,16 +31,30 @@ class _RequestMeterScreenState extends State<RequestMeterScreen> {
   @override
   void initState() {
     super.initState();
-    settingsBloc = SettingsBloc(SettingRepository())
-      ..add(SupportSettingEvent());
+    settingsBloc = SettingsBloc(SettingRepository());
+      // ..add(SupportSettingEvent());
+  }
+
+  void _clearControllers() {
+    fullNameController.clear();
+    emailController.clear();
+    phoneController.clear();
+    addressController.clear();
+  }
+
+  @override
+  void dispose() {
+    fullNameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    addressController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Request Meter"),
-      ),
+    return ActionDetailSkeleton(
+      heading: "Request Meter",
       body: SingleChildScrollView(
         child: BlocConsumer<SettingsBloc, SettingsState>(
           bloc: settingsBloc,
@@ -107,6 +122,7 @@ class _RequestMeterScreenState extends State<RequestMeterScreen> {
                 showErrorBottomSheet(context, state.error);
               case SettingsSupportStateSuccess():
                 showSuccessBottomSheet(context, state.message);
+                _clearControllers();
               default:
                 log("state not implemented");
             }

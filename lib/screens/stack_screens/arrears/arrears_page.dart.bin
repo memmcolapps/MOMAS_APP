@@ -3,15 +3,16 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:momaspayplus/screens/stack_screens/stack_screen_skeleton.dart';
 
-import '../../bloc/arrears_bloc/arrears_bloc.dart';
-import '../../bloc/payment_bloc/payment_bloc.dart';
-import '../../domain/data/response/arrears_items.dart';
-import '../../domain/repository/bill_repository.dart';
-import '../../reuseable/bottom_sheet.dart';
-import '../../reuseable/error_modal.dart';
-import '../../utils/amount_formatter.dart';
-import '../../utils/colors.dart';
+import '../../../bloc/arrears_bloc/arrears_bloc.dart';
+import '../../../bloc/payment_bloc/payment_bloc.dart';
+import '../../../domain/data/response/arrears_items.dart';
+import '../../../domain/repository/bill_repository.dart';
+import '../../../reuseable/bottom_sheet.dart';
+import '../../../reuseable/error_modal.dart';
+import '../../../utils/amount_formatter.dart';
+import '../../../utils/colors.dart';
 
 class CustomerArrearsPage extends StatefulWidget {
   const CustomerArrearsPage({super.key});
@@ -45,14 +46,8 @@ class _CustomerArrearsPageState extends State<CustomerArrearsPage> {
             showErrorBottomSheet(context, "Payment failed");
           }
         },
-        child: Scaffold(
-          backgroundColor: const Color(0xFFF7F9FC),
-          appBar: AppBar(
-            title: const Text('Customer Arrears Summary'),
-            centerTitle: true,
-            backgroundColor: MoColors.mainColor,
-            foregroundColor: Colors.white,
-          ),
+        child: StackScreenSkeleton(
+          heading: 'Customer Arrears Summary',
           body: BlocBuilder<CustomerArrearsBloc, CustomerArrearsState>(
             builder: (context, state) {
               if (state is ArrearsLoading || state is ArrearPaymentLoading) {
@@ -99,7 +94,7 @@ class _CustomerArrearsPageState extends State<CustomerArrearsPage> {
                           Expanded(
                             child: ListView.builder(
                               padding: const EdgeInsets.symmetric(
-                                  vertical: 12, horizontal: 16),
+                                  vertical: 12),
                               itemCount: items.length,
                               itemBuilder: (context, index) {
                                 final item = items[index];

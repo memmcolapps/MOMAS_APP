@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:momaspayplus/bloc/payment_bloc/payment_event.dart';
 import 'package:momaspayplus/reuseable/mo_button.dart';
-import 'package:momaspayplus/screens/arrears/arrears_page.dart';
+import 'package:momaspayplus/screens/stack_screens/arrears/arrears_page.dart';
 import 'package:momaspayplus/utils/colors.dart';
 import '../bloc/payment_bloc/payment_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,7 +18,9 @@ import '../domain/repository/payment_repository.dart';
 // }
 
 class AdminChargeUI extends StatelessWidget {
-  const AdminChargeUI({super.key});
+  final VoidCallback? onReturnFromArrears;
+
+  const AdminChargeUI({super.key, this.onReturnFromArrears});
 // class _AdminChargeUIState extends State<AdminChargeUI> {
   // late PaymentBloc paymentBloc;
 
@@ -54,12 +56,17 @@ class AdminChargeUI extends StatelessWidget {
             const SizedBox(height: 16),
             MoButton(
                 title: "Pay now",
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (builder) => const CustomerArrearsPage()));
-                })
+              onTap: () async {
+                // 👇 await the push so we know when user has come back
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const CustomerArrearsPage(),
+                  ),
+                );
+                // Re-check admin fee once they return
+                onReturnFromArrears?.call();
+              },)
             // if (state is PaymentLoading) _buildLoadingIndicator(),
             // if (state is PaymentFailure) _buildErrorText(state.error),
             // if (state is MomasGenerateBank)
@@ -109,24 +116,24 @@ class AdminChargeUI extends StatelessWidget {
     );
   }
 
-  Widget _buildLoadingIndicator() {
-    return Center(
-      child: SpinKitFadingCircle(
-        color: MoColors.mainColor,
-        size: 50.0,
-      ),
-    );
-  }
-
-  Widget _buildErrorText(String error) {
-    return Center(
-      child: Text(
-        'Error loading account details: $error',
-        style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-        textAlign: TextAlign.center,
-      ),
-    );
-  }
+  // Widget _buildLoadingIndicator() {
+  //   return Center(
+  //     child: SpinKitFadingCircle(
+  //       color: MoColors.mainColor,
+  //       size: 50.0,
+  //     ),
+  //   );
+  // }
+  //
+  // Widget _buildErrorText(String error) {
+  //   return Center(
+  //     child: Text(
+  //       'Error loading account details: $error',
+  //       style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+  //       textAlign: TextAlign.center,
+  //     ),
+  //   );
+  // }
 
   // Widget _buildAccountDetails(BankDetail accountDetails) {
   //   return Column(
@@ -158,52 +165,52 @@ class AdminChargeUI extends StatelessWidget {
   //     ],
   //   );
   // }
-
-  Widget _infoTile(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-          Text(value,
-              style: TextStyle(
-                  color: MoColors.mainColorII, fontWeight: FontWeight.w500)),
-        ],
-      ),
-    );
-  }
   //
-  // Widget _copyableTile(String label, String value) {
-  //   return GestureDetector(
-  //     onTap: () {
-  //       Clipboard.setData(ClipboardData(text: value));
-  //       ScaffoldMessenger.of(context)
-  //           .showSnackBar(SnackBar(content: Text('$label copied!')));
-  //     },
-  //     child: Padding(
-  //       padding: const EdgeInsets.symmetric(vertical: 6.0),
-  //       child: Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //         children: [
-  //           Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-  //           Row(
-  //             children: [
-  //               Text(value,
-  //                   style: TextStyle(
-  //                       color: MoColors.mainColorII,
-  //                       fontWeight: FontWeight.w500)),
-  //               const SizedBox(width: 6),
-  //               Icon(
-  //                 Icons.copy,
-  //                 size: 18,
-  //                 color: MoColors.mainColorII,
-  //               ),
-  //             ],
-  //           ),
-  //         ],
-  //       ),
+  // Widget _infoTile(String label, String value) {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(vertical: 6.0),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       children: [
+  //         Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+  //         Text(value,
+  //             style: TextStyle(
+  //                 color: MoColors.mainColorII, fontWeight: FontWeight.w500)),
+  //       ],
   //     ),
   //   );
   // }
+  // //
+  // // Widget _copyableTile(String label, String value) {
+  // //   return GestureDetector(
+  // //     onTap: () {
+  // //       Clipboard.setData(ClipboardData(text: value));
+  // //       ScaffoldMessenger.of(context)
+  // //           .showSnackBar(SnackBar(content: Text('$label copied!')));
+  // //     },
+  // //     child: Padding(
+  // //       padding: const EdgeInsets.symmetric(vertical: 6.0),
+  // //       child: Row(
+  // //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  // //         children: [
+  // //           Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+  // //           Row(
+  // //             children: [
+  // //               Text(value,
+  // //                   style: TextStyle(
+  // //                       color: MoColors.mainColorII,
+  // //                       fontWeight: FontWeight.w500)),
+  // //               const SizedBox(width: 6),
+  // //               Icon(
+  // //                 Icons.copy,
+  // //                 size: 18,
+  // //                 color: MoColors.mainColorII,
+  // //               ),
+  // //             ],
+  // //           ),
+  // //         ],
+  // //       ),
+  // //     ),
+  // //   );
+  // // }
 }

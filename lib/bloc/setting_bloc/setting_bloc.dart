@@ -1,6 +1,10 @@
+import 'dart:developer';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/bloc/setting_bloc/setting_event.dart';
 import 'package:momaspayplus/bloc/setting_bloc/setting_state.dart';
+import 'package:momaspayplus/utils/shared_pref.dart';
 
 import '../../domain/repository/setting_repository.dart';
 
@@ -19,16 +23,25 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   void onServiceEvent(
       SupportSettingEvent event, Emitter<SettingsState> emit) async {
     super.onEvent(event);
-    try {
+
+    final cached = SharedPreferenceHelper.getSupport();
+    if (cached != null) {
+      emit(SettingsSupportStateLoading(data: cached));
+    } else {
       emit(SettingsStateLoading());
+    }
+
+    try {
+      // emit(SettingsStateLoading());
       var response = await serviceRepository.support();
-      if (response.status == true) {
-        emit(SettingsSupportStateLoading(response: response));
+      if (response.status == true && response.data != null) {
+          await SharedPreferenceHelper.saveSupport(response.data!);
+          emit(SettingsSupportStateLoading(data: response.data!));
       } else {
-        emit(const SettingsStateFailed("Fail to get list of support"));
+        if (cached == null ) emit(const SettingsStateFailed("Fail to get list of support"));
       }
     } catch (_, e) {
-      emit(SettingsStateFailed(_.toString()));
+      if (cached == null ) emit(SettingsStateFailed(_.toString()));
     }
   }
 

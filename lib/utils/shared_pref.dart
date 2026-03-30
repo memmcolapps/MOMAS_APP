@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:momaspayplus/domain/data/request/login.dart';
 import 'package:momaspayplus/domain/data/response/feature.dart';
 import 'package:momaspayplus/domain/data/response/promo.dart';
+import 'package:momaspayplus/domain/data/response/setting_response.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../domain/data/response/user_model.dart';
@@ -25,6 +26,7 @@ class SharedPreferenceHelper {
   static const String _unit = 'unit_visible';
   static const String _promoCache = 'promo_cache';
   static const String _featureCache = 'feature_cache';
+  static const String _supportCache = 'support_cache';
 
   static bool get hasSeenOnboarding =>
       _prefs.getBool(_keyHasSeenOnboarding) ?? false;
@@ -123,5 +125,19 @@ class SharedPreferenceHelper {
     return data == null
         ? null
         : Feature.fromJson(json.decode(data));
+  }
+
+  static Future<void> saveSupport(SupportData supportData) async {
+    await _prefs.setString(
+      _supportCache,
+      json.encode( supportData.toJson()),
+    );
+  }
+
+  static SupportData? getSupport() {
+    final data = _prefs.getString(_supportCache);
+    return data == null
+        ? null
+        : SupportData.fromJson(json.decode(data));
   }
 }

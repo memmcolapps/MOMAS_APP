@@ -51,5 +51,5 @@ class MoImage{
   static String playStore =  "$root/google-play-store.png";
   static String appStore =  "$root/app-store.png";
 
-
+  static String checkedCircle = "$root/checked.png";
 }

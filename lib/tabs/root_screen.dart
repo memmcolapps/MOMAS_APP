@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/bloc/auth_bloc/auth_cubit.dart';
+import 'package:momaspayplus/bloc/dashboard_bloc/dashboard_bloc.dart';
+import 'package:momaspayplus/bloc/dashboard_bloc/dashboard_event.dart';
+import 'package:momaspayplus/bloc/setting_bloc/setting_bloc.dart';
 import 'package:momaspayplus/domain/data/response/user_model.dart';
+import 'package:momaspayplus/domain/repository/dashboard_repository.dart';
+import 'package:momaspayplus/domain/repository/setting_repository.dart';
+import 'package:momaspayplus/domain/service/dashboard_service.dart';
 import 'package:momaspayplus/tabs/nav_destination.dart';
 import 'package:momaspayplus/utils/colors.dart';
 import 'nav_config.dart';
@@ -50,28 +56,56 @@ class _RootScreenState extends State<RootScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true,
-      body: _tabScreens[_selectedIndex],
-      backgroundColor: MoColors.whiteColor,
-      bottomNavigationBar: NavigationBar(
-        elevation: 8,
-        shadowColor: MoColors.mainColor.withValues(alpha: 0.75),
-        height: 60,
-        backgroundColor: Colors.white,
-        labelPadding: EdgeInsets.zero,
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (int index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        indicatorColor: Colors.transparent,
-        indicatorShape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.zero,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<WalletBloc>(
+          create: (BuildContext context) =>
+          WalletBloc(DashboardService(DashboardRepository()))
+            ..add(WalletDashboardEvent()),
         ),
-        destinations: _buildDestinations(),
+        BlocProvider<PromoBloc>(
+          create: (BuildContext context) =>
+          PromoBloc(DashboardService(DashboardRepository()))
+            ..add(PromotionEvent()),
+        ),
+        BlocProvider<DashboardBloc>(
+          create: (BuildContext context) =>
+          DashboardBloc(DashboardService(DashboardRepository()))
+            ..add(FeatureDashboardEvent()),
+        ),
+        BlocProvider<UserBloc>(
+          create: (BuildContext context) =>
+          UserBloc(DashboardService(DashboardRepository()))
+            ..add(GetUserDashboardEvent()),
+        ),
+        BlocProvider<SettingsBloc>(
+            create: (BuildContext context) =>
+            SettingsBloc(SettingRepository())
+        )
+      ],
+      child: Scaffold(
+        extendBody: true,
+        body: _tabScreens[_selectedIndex],
+        backgroundColor: MoColors.whiteColor,
+        bottomNavigationBar: NavigationBar(
+          elevation: 8,
+          shadowColor: MoColors.mainColor.withValues(alpha: 0.75),
+          height: 60,
+          backgroundColor: Colors.white,
+          labelPadding: EdgeInsets.zero,
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+          selectedIndex: _selectedIndex,
+          onDestinationSelected: (int index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+          indicatorColor: Colors.transparent,
+          indicatorShape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero,
+          ),
+          destinations: _buildDestinations(),
+        ),
       ),
     );
   }

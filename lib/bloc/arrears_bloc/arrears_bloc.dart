@@ -83,7 +83,7 @@ class CustomerArrearsBloc
       final response = await repository.payArrear({
         "type": "single",
         "id": event.id.toString(),
-        "service_type": event.serviceType.toString(),
+        "service_type": event.serviceType.name,
         "ref": event.paymentRef,
       });
 

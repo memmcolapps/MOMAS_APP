@@ -59,30 +59,30 @@ class _PowerUsageSectionState extends State<PowerUsageSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "Power Usage",
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
-            color: Colors.black87,
-          ),
-        ),
-        Text(
-          "Your power consumption insights",
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w400,
-            color: Colors.grey.shade700,
-          ),
-        ),
-        const SizedBox(height: 20),
-        FilterPills(
-          selected: _selected,
-          onFilterChanged: (filter) {
-            setState(() => _selected = filter);
-          },
-        ),
-        const SizedBox(height: 20),
+        // const Text(
+        //   "Power Usage",
+        //   style: TextStyle(
+        //     fontSize: 22,
+        //     fontWeight: FontWeight.w800,
+        //     color: Colors.black87,
+        //   ),
+        // ),
+        // Text(
+        //   "Your power consumption insights",
+        //   style: TextStyle(
+        //     fontSize: 13,
+        //     fontWeight: FontWeight.w400,
+        //     color: Colors.grey.shade700,
+        //   ),
+        // ),
+        // const SizedBox(height: 20),
+        // FilterPills(
+        //   selected: _selected,
+        //   onFilterChanged: (filter) {
+        //     setState(() => _selected = filter);
+        //   },
+        // ),
+        // const SizedBox(height: 20),
         // Daily
         if (_selected == AnalyticsFilter.daily) DailyUsageChart(data: _dummyDailyData),
         if (_selected == AnalyticsFilter.weekly) WeeklyUsageChart(data: _dummyWeeklyData),
