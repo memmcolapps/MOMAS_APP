@@ -56,156 +56,66 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final EdgeInsets safePadding = MediaQuery.paddingOf(context);
     final double headerHeight = safePadding.top + 170;
-    final bool userActive = user?.meterStatus == 2;
 
     return Scaffold(
         backgroundColor: MoColors.mainColorII,
-        body: Column(
-          children: [
-            // ----- Header Section ------
-            Stack(
-              clipBehavior: Clip.none,
-              alignment: AlignmentGeometry.bottomCenter,
-              children: [
-                Column(
-                  children: [
-                    HomePageHeader(
-                      safePadding: safePadding,
-                      height: headerHeight,
-                      // promoDivHeight: promoDivHeight,
-                      name: name,
-                    ),
-                    Container(
-                      height: 55,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius:
-                            BorderRadius.only(topLeft: Radius.circular(50)),
-                      ),
-                    ),
-                  ],
-                ),
-                Positioned(
-                  top: headerHeight - 40,
-                  child: QuickWidgets(
-                    active: userActive,
-                  ),
-                ),
-              ],
-            ),
-
-            // ----- Body Section ------
-            Expanded(
-                child: Container(
-              color: Colors.white,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        body: RefreshIndicator(
+          onRefresh: () async {
+            debugPrint("Refreshing state");
+            context.read<WalletBloc>().add(WalletDashboardEvent());
+            context.read<PromoBloc>().add(PromotionEvent());
+            context.read<DashboardBloc>().add(FeatureDashboardEvent());
+            context.read<UserBloc>().add(GetUserDashboardEvent());
+          },
+          child: Column(
+            children: [
+              // ----- Header Section ------
+              Stack(
+                clipBehavior: Clip.none,
+                alignment: AlignmentGeometry.bottomCenter,
                 children: [
-                  const PromoSection(),
-                  const SizedBox(height: 10),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 45,
-                    ),
-                    child: Text("What will you like to do?"),
+                  Column(
+                    children: [
+                      HomePageHeader(
+                        safePadding: safePadding,
+                        height: headerHeight,
+                        // promoDivHeight: promoDivHeight,
+                        name: name,
+                      ),
+                      Container(
+                        height: 55,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius:
+                              BorderRadius.only(topLeft: Radius.circular(50)),
+                        ),
+                      ),
+                    ],
                   ),
-                  RefreshIndicator(
-                    child: const FeaturesGrid(),
-                    onRefresh: () async {
-                      debugPrint("Refreshing state");
-                      context.read<WalletBloc>().add(WalletDashboardEvent());
-                      context.read<PromoBloc>().add(PromotionEvent());
-                      context
-                          .read<DashboardBloc>()
-                          .add(FeatureDashboardEvent());
-                    },
-                  )
+                  Positioned(
+                    top: headerHeight - 40,
+                    child: const QuickWidgets(),
+                  ),
                 ],
               ),
-            )),
-          ],
+
+              // ----- Body Section ------
+              Expanded(
+                child: Container(
+                  color: Colors.white,
+                  child: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      PromoSection(),
+                      SizedBox(height: 10),
+                      FeaturesGrid()
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         )
-        // CustomScrollView(
-        //   slivers: [
-        //     CupertinoSliverRefreshControl(
-        //       onRefresh: () async {
-        //         debugPrint("Refreshing state");
-        //         context.read<WalletBloc>().add(WalletDashboardEvent());
-        //         context.read<PromoBloc>().add(PromotionEvent());
-        //         context.read<DashboardBloc>().add(FeatureDashboardEvent());
-        //       },
-        //     ),
-        //     SliverPersistentHeader(
-        //       pinned: true,
-        //       floating: false,
-        //       delegate: _HomeHeaderDelegate(
-        //         safePadding: safePadding,
-        //         headerHeight: headerHeight,
-        //         promoDivHeight: promoDivHeight,
-        //         name: name,
-        //       ),
-        //     ),
-        //     SliverToBoxAdapter(
-        //       child: ConstrainedBox(
-        //         constraints: BoxConstraints(
-        //           minHeight: MediaQuery.sizeOf(context).height
-        //         ),
-        //         child: FeaturesGrid(user: user),
-        //       ),
-        //     ),
-        //   ],
-        // )
-        );
+    );
   }
 }
-
-// class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
-//   final EdgeInsets safePadding;
-//   final double headerHeight;
-//   final double promoDivHeight;
-//   final String name;
-//
-//   _HomeHeaderDelegate({
-//     required this.safePadding,
-//     required this.headerHeight,
-//     required this.promoDivHeight,
-//     required this.name,
-//   });
-//
-//   @override
-//   double get minExtent => headerHeight;
-//
-//   @override
-//   double get maxExtent => headerHeight + promoDivHeight;
-//
-//   @override
-//   Widget build(
-//     BuildContext context,
-//     double shrinkOffset,
-//     bool overlapsContent,
-//   ) {
-//     return Stack(
-//       clipBehavior: Clip.none,
-//       alignment: AlignmentGeometry.bottomCenter,
-//       children: [
-//         HomePageHeader(
-//           safePadding: safePadding,
-//           height: headerHeight,
-//           // promoDivHeight: promoDivHeight,
-//           name: name,
-//         ),
-//         Positioned(
-//           top: headerHeight - 40,
-//           child: const QuickWidgets(),
-//         ),
-//       ],
-//     );
-//   }
-//
-//   @override
-//   bool shouldRebuild(_HomeHeaderDelegate old) {
-//     return old.name != name ||
-//         old.headerHeight != headerHeight + promoDivHeight ||
-//         old.safePadding != safePadding;
-//   }
-// }

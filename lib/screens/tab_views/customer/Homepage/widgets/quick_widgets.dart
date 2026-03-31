@@ -9,67 +9,65 @@ import 'package:momaspayplus/utils/screen_utils.dart';
 import 'package:momaspayplus/utils/images.dart';
 
 class QuickWidgets extends StatelessWidget {
-  final bool active;
-
-  //TODO: implement state update for this
-
   const QuickWidgets({
     super.key,
-    this.active = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DashboardBloc, DashboardState>(
-        builder: (context, state) {
-        return Container(
-          width: MediaQuery.of(context).size.width * 0.8,
-          height: 80,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(15.0),
-            boxShadow: const [
-              BoxShadow(
-                  color: Color.fromRGBO(0, 0, 0, 0.1),
-                  offset: Offset(4, 4),
-                  blurRadius: 15),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              quickWidget(
-                  context: context,
-                  title: "Buy Units",
-                  image: MoImage.momasPayment,
-                  active: active,
-                  onTap: active
-                      ? () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (builder) => const MomasPaymentScreen(
-                                        momasPaymentType: MomasPaymentType.self,
-                                      )));
-                        }
-                      : () {}),
-              // quickWidget(
-              //     title: "Fund Wallet",
-              //     image: MoImage.topUpWallet),
-              quickWidget(
-                  context: context,
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (builder) => const ServiceScreen()));
-                  },
-                  title: "Services",
-                  image: MoImage.services),
-            ],
-          ),
-        );
-      }
+    final meterStatus = context.select((UserBloc bloc) {
+      final state = bloc.state;
+      return state is GetUserSuccessful ? state.user.meter?.status : null;
+    });
+
+    final bool meterActive = meterStatus == 2 ? true : false;
+
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.8,
+      height: 80,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15.0),
+        boxShadow: const [
+          BoxShadow(
+              color: Color.fromRGBO(0, 0, 0, 0.1),
+              offset: Offset(4, 4),
+              blurRadius: 15),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          quickWidget(
+              context: context,
+              title: "Buy Units",
+              image: MoImage.momasPayment,
+              active: meterActive,
+              onTap: meterActive
+                  ? () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (builder) => const MomasPaymentScreen(
+                                    momasPaymentType: MomasPaymentType.self,
+                                  )));
+                    }
+                  : () {}),
+          // quickWidget(
+          //     title: "Fund Wallet",
+          //     image: MoImage.topUpWallet),
+          quickWidget(
+              context: context,
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (builder) => const ServiceScreen()));
+              },
+              title: "Services",
+              image: MoImage.services),
+        ],
+      ),
     );
   }
 
@@ -97,15 +95,15 @@ class QuickWidgets extends StatelessWidget {
         child: ColorFiltered(
           colorFilter: active
               ? const ColorFilter.mode(
-            Colors.transparent,
-            BlendMode.multiply,
-          )
+                  Colors.transparent,
+                  BlendMode.multiply,
+                )
               : const ColorFilter.matrix(<double>[
-            0.2126, 0.7152, 0.0722, 0, 0, // R
-            0.2126, 0.7152, 0.0722, 0, 0, // G
-            0.2126, 0.7152, 0.0722, 0, 0, // B
-            0,      0,      0,      1, 0, // A
-          ]),
+                  0.2126, 0.7152, 0.0722, 0, 0, // R
+                  0.2126, 0.7152, 0.0722, 0, 0, // G
+                  0.2126, 0.7152, 0.0722, 0, 0, // B
+                  0, 0, 0, 1, 0, // A
+                ]),
           child: Padding(
             padding: context.isTablet
                 ? const EdgeInsets.symmetric(horizontal: 20)

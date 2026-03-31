@@ -75,7 +75,7 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
   load() async {
     user = await SharedPreferenceHelper.getUser();
     if (widget.momasPaymentType == MomasPaymentType.self) {
-      if (user!.meterNo == null) {
+      if (user!.meter?.meterNo == null) {
         showErrorBottomSheet(NavigationService.navigatorKey.currentContext!,
             "Please user have no active meter");
         return;
@@ -84,7 +84,7 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
       setState(() => isLoading = true);
 
       bloc.add(MomasVerification(
-          meterNo: user!.meterNo!, estateId: user!.estateId!));
+          meterNo: user!.meter!.meterNo!, estateId: user!.estateId!));
     }
   }
 
@@ -645,7 +645,7 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
 
     print("tariffID>>>>:: " + selectedTariff!.id.toString());
 
-    showPaymentModal(context, user!.meterNo!, () {
+    showPaymentModal(context, user!.meter!.meterNo!, () {
       MoBottomSheet().payment(context,
           amount: totalPayableAmount.toString(),
           serviceType: ServiceType.credit_token, onPayment: (String ref) {
@@ -669,8 +669,8 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                 .toString(),
             tariffId: selectedTariff!.id.toString(),
             vendingAmount: receivableAmount.toString(),
-            meterNo: user!.meterNo!,
-            meterType: user!.meterType ?? "",
+            meterNo: user!.meter!.meterNo!,
+            meterType: user!.meter!.meterType ?? "",
             trxref: ref,
             paymentType: MomasPaymentType.self));
       });
@@ -717,8 +717,8 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
       return;
     }
 
-    showPaymentModal(context, user!.meterNo!, () {
-      print("meter number" + user!.meterNo!);
+    showPaymentModal(context, user!.meter!.meterNo!, () {
+      print("meter number" + user!.meter!.meterNo!);
       MoBottomSheet().payment(context,
           amount: totalPayableAmount.toString(),
           serviceType: ServiceType.credit_token, onPayment: (String ref) {

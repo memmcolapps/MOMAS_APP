@@ -66,7 +66,7 @@ class PaymentWalletSuccess extends PaymentState {
   const PaymentWalletSuccess({required this.message, required this.ref});
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [message, ref];
 }
 
 class PaymentFailure extends PaymentFailureState {

@@ -102,7 +102,6 @@ class _BottomSheetContentState extends State<_BottomSheetContent> {
           return AdminChargeUI(onReturnFromArrears: _recheckAdminFee);
         }
 
-        // All good — show payment sheet
         return SingleChildScrollView(
           child: PaymentBottomSheet(
             amount: widget.amount,

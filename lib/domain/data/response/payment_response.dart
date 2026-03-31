@@ -8,7 +8,7 @@ class PaymentResponse {
 
   PaymentResponse.fromJson(Map<String, dynamic> json) {
     status = json['status'] == "success" ? true : json['status'];
-    url = json['data']['url'];
+    url = json['data'] != null ? json['data']['url'] : null;
     ref = json['ref'];
     message = json['message'];
   }

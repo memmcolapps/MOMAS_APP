@@ -40,12 +40,12 @@ class User {
   String? city;
   String? state;
   String? lga;
-  String? meterNo;
-  String? meterType;
-  int? meterStatus;
+  // String? meterNo;
+  // String? meterType;
+  // int? meterStatus;
   int? status;
   String? token;
-  String? meter;
+  Meter? meter;
   String? estateId;
   String? estateName;
   String? hno;
@@ -73,8 +73,8 @@ class User {
     this.city,
     this.state,
     this.lga,
-    this.meterNo,
-    this.meterType,
+    // this.meterNo,
+    // this.meterType,
     this.status,
     this.token,
     this.meter,
@@ -105,9 +105,10 @@ class User {
     city = json['city'];
     state = json['state'];
     lga = json['lga'];
-    meterNo = json['meterNo'];
-    meterType = json['meterType'];
-    meterStatus = json['meter_status'];
+    // meterNo = json['meterNo'];
+    // meterType = json['meterType'];
+    // meterStatus =  json['meter_status'];
+    meter = json['meter'] != null ? Meter.fromJson(json['meter']) : null;
     status = json['status'];
     token = json['token'];
     estateId = json['estate_id'];
@@ -149,9 +150,10 @@ class User {
     data['city'] = city;
     data['state'] = state;
     data['lga'] = lga;
-    data['meterNo'] = meterNo;
-    data['meterType'] = meterType;
-    data['meter_status'] = meterStatus;
+    // data['meterNo'] = meterNo;
+    // data['meterType'] = meterType;
+    // data['meter_status'] = meterStatus;
+    data['meter'] = meter;
     data['status'] = status;
     data['token'] = token;
     data['estate_id'] = estateId;
@@ -169,6 +171,28 @@ class User {
     // if (payStackKeys != null) {
     //   data['paystack_keys'] = payStackKeys!.toJson();
     // }
+    return data;
+  }
+}
+
+class Meter {
+  String? meterNo;
+  String? meterType;
+  int? status;
+
+  Meter({this.meterNo, this.meterType, this.status});
+
+  Meter.fromJson(Map<String, dynamic> json) {
+    meterNo = json['meterNo'];
+    meterType = json['meterType'];
+    status = json['status'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['meterNo'] = meterNo;
+    data['meterType'] = meterType;
+    data['status'] = status;
     return data;
   }
 }

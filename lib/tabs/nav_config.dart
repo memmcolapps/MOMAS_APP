@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/bloc/dashboard_bloc/dashboard_bloc.dart';
 import 'package:momaspayplus/bloc/dashboard_bloc/dashboard_event.dart';
@@ -78,12 +79,14 @@ class NavConfig {
               filledIcon: Icons.history,
               outlinedIcon: Icons.history_outlined,
               label: 'History',
-              screen: Transactions()), 
-          const NavItem(
-              filledIcon: Icons.analytics,
-              outlinedIcon: Icons.analytics_outlined,
-              label: 'Analytics',
-              screen: Analytics()),
+              screen: Transactions()),
+          if (appFlavor == 'development') ...[
+            const NavItem(
+                filledIcon: Icons.analytics,
+                outlinedIcon: Icons.analytics_outlined,
+                label: 'Analytics',
+                screen: Analytics()),
+          ],
           const NavItem(
               filledIcon: Icons.settings,
               outlinedIcon: Icons.settings_outlined,

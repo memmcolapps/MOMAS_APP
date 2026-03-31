@@ -49,7 +49,7 @@ class _ProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDisConnected = user != null && user?.meterStatus != 2;
+    final bool isDisConnected = user != null && user?.meter?.status != 2;
 
     return Container(
       margin: const EdgeInsets.all(16),
@@ -88,7 +88,7 @@ class _ProfileCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 5),
                   Text(
-                    isDisConnected ? "Disconnected" : "Connected",
+                    isDisConnected ? "Inactive" : "Active",
                     style: TextStyle(
                       color: isDisConnected
                           ? const Color(0xFFFF5252)
@@ -176,7 +176,7 @@ class _ProfileCard extends StatelessWidget {
                       icon: isDisConnected
                           ? Icons.power_off_outlined
                           : Icons.electric_meter_outlined,
-                      label: user?.meterNo ?? "—",
+                      label: user?.meter?.meterNo ?? "—",
                     ),
                   ],
                 ),

@@ -176,12 +176,12 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
                 // _buildPaymentOption(context, 'Enkpay payment', null,
                 //     onTap: () => _onPaymentOptionTap(PaymentType.enkpay),
                 //     additionalInfo: "Flat NGN100"),
-                const SizedBox(height: 10),
-                _buildPaymentOption(
-                    context, 'Pay with Flutterwave', MoImage.flutterWave,
-                    additionalInfo: "2.0%",
-                    onTap: () => _onPaymentOptionTap(PaymentType.flutterwave)),
-                const SizedBox(height: 10),
+                // const SizedBox(height: 10),
+                // _buildPaymentOption(
+                //     context, 'Pay with Flutterwave', MoImage.flutterWave,
+                //     additionalInfo: "2.0%",
+                //     onTap: () => _onPaymentOptionTap(PaymentType.flutterwave)),
+                const SizedBox(height: 10),   
                 _buildPaymentOption(
                     context, 'Pay with wallet', MoImage.walletPayment,
                     additionalInfo: isNotEmpty(user?.mainWallet.toString())
@@ -216,6 +216,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
               showErrorBottomSheet(context, "Payment Failed");
             }
           } else if (state is PaymentWalletSuccess) {
+            debugPrint("Padi with wallet");
             widget.onPayment!(state.ref);
             Navigator.pop(context);
           } else if (state is PaymentFailure) {
