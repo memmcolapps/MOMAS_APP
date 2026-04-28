@@ -1,6 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:momaspayplus/screens/tab_views/customer/analytics/chart_data.dart';
+import 'package:momaspayplus/domain/data/model/analytics_data/chart_data.dart';
 import 'package:momaspayplus/utils/colors.dart';
 
 class DailyUsageChart extends StatefulWidget {

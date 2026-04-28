@@ -68,64 +68,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
               SliverToBoxAdapter(
                 child: Column(
                   children: [
-                    // const SizedBox(height: 20),
-                    // Center(
-                    //   child: ShadowContainer(
-                    //     child: Padding(
-                    //       padding: const EdgeInsets.symmetric(
-                    //           vertical: 10, horizontal: 8),
-                    //       child: SizedBox(
-                    //         height: 40,
-                    //         width: MediaQuery.of(context).size.width - 15,
-                    //         child: Row(
-                    //           children: [
-                    //             PopButton().pop(context),
-                    //             const SizedBox(
-                    //               width: 20,
-                    //             ),
-                    //             const Text("Service")
-                    //           ],
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-                    // EPDropdownButton<Estate>(
-                    //   itemsListTitle: "Choose Estate",
-                    //   iconSize: 22,
-                    //   value: selectedEstate,
-                    //   hint: const Text(""),
-                    //   isExpanded: true,
-                    //   underline: const Divider(),
-                    //   searchMatcher: (item, text) {
-                    //     return item.title!
-                    //         .toLowerCase()
-                    //         .contains(text.toLowerCase());
-                    //   },
-                    //   onChanged: (v) {
-                    //     setState(() {
-                    //       selectedEstate = v;
-                    //     });
-                    //   },
-                    //   items: (serviceDataResponse?.data?.estate ?? [])
-                    //       .map(
-                    //         (e) => DropdownMenuItem(
-                    //           value: e,
-                    //           child: Row(
-                    //             children: [
-                    //               Text(e.title.toString(),
-                    //                   style: Theme.of(context)
-                    //                       .textTheme
-                    //                       .labelMedium!
-                    //                       .copyWith(
-                    //                           fontWeight: FontWeight.w400,
-                    //                           color: Colors.black)),
-                    //             ],
-                    //           ),
-                    //         ),
-                    //       )
-                    //       .toList(),
-                    // ),
                     Padding(
                       padding: context.isTablet
                           ? EdgeInsets.symmetric(

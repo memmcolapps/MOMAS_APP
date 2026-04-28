@@ -3,7 +3,7 @@ description: "Mobile vending application"
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.2+7
+version: 1.1.0+8
 
 environment:
   sdk: '>=3.4.3 <4.0.0'
@@ -37,6 +37,8 @@ dependencies:
   flutter_rating_bar: ^4.0.1
   package_info_plus: ^9.0.0
   collection: ^1.19.1
+  get_it: ^9.2.1
+  flutter_native_splash: ^2.4.7
 #  upgrader: ^11.5.0
 #  webview_flutter: ^4.10.0
 #  shared_preferences: ^2.5.3

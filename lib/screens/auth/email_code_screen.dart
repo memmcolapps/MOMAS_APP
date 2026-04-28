@@ -190,12 +190,13 @@ class _EmailCodeScreenState extends State<EmailCodeScreen> {
                 case EmailVerificationFail():
                   showErrorBottomSheet(context, state.error);
                 case EmailVerificationSuccess():
-                  if (widget.passCode == PassCode.register) {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (_) => AccountSetupScreen(
-                              email: widget.email,
-                            )));
-                  } else if (widget.passCode == PassCode.resetPassword) {
+                  // if (widget.passCode == PassCode.register) {
+                  //   Navigator.of(context).push(MaterialPageRoute(
+                  //       builder: (_) => AccountSetupScreen(
+                  //             email: widget.email,
+                  //           )));
+                  // } else
+                    if (widget.passCode == PassCode.resetPassword) {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (_) => ResetPasswordScreen(
                               email: widget.email,

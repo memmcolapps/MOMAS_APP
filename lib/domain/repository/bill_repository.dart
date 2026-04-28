@@ -31,10 +31,9 @@ class BillRepository {
     return GenericResponse.fromJson(response.data);
   }
 
-  Future<DataResponse> getData() async {
-    var response = await _request.getData(
-      path: Routes.getData,
-    );
+  Future<DataResponse> getData(String network) async {
+    var response = await _request
+        .getData(path: Routes.getData, dataToSend: {'service_id': network});
     return DataResponse.fromJson(response.data);
   }
 

@@ -28,11 +28,11 @@ class HomePageHeader extends StatelessWidget {
       children: [
         Container(
           height: height,
-          color: Colors.white,
+          color: MoColors.scaffoldWhite,
           child: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
-                stops: const [0.5, 0.8],
+                stops: [0.5, 0.8],
                 colors: [
                   MoColors.mainColor,
                   MoColors.mainColorII,
@@ -41,7 +41,7 @@ class HomePageHeader extends StatelessWidget {
                 end: Alignment.bottomCenter,
               ),
               borderRadius:
-                  const BorderRadius.only(bottomRight: Radius.circular(50)),
+              BorderRadius.only(bottomRight: Radius.circular(50)),
             ),
             child: Padding(
               padding: EdgeInsetsGeometry.only(

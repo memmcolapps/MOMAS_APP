@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:momaspayplus/reuseable/card/mo_option_card.dart';
 import 'package:momaspayplus/screens/stack_screens/stack_screen_skeleton.dart';
+import 'package:momaspayplus/utils/colors.dart';
 import 'package:momaspayplus/utils/screen_utils.dart';
 
 import '../../../reuseable/pop_button.dart';
 import '../../../reuseable/shadow_container.dart';
-import 'actions/airtime_screen.dart';
-import 'actions/cable_tv_screen.dart';
-import 'actions/data_screen.dart';
+import 'actions/airtime_screen/airtime_screen.dart';
+import 'actions/cable_tv_screen/cable_tv_screen.dart';
+import 'actions/data_screen/data_screen.dart';
 
 class BillPaymentOptionsScreen extends StatelessWidget {
   const BillPaymentOptionsScreen({super.key});
-
-  void _onCardTap(BuildContext context, String title) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$title selected')),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,28 +20,6 @@ class BillPaymentOptionsScreen extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // const SizedBox(height: 20),
-          // Center(
-          //   child: ShadowContainer(
-          //     child: Padding(
-          //       padding:
-          //           const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-          //       child: SizedBox(
-          //         height: 40,
-          //         width: MediaQuery.of(context).size.width - 15,
-          //         child: Row(
-          //           children: [
-          //             PopButton().pop(context),
-          //             const SizedBox(
-          //               width: 20,
-          //             ),
-          //             const Text("Bills Payment")
-          //           ],
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // ),
           const SizedBox(
             height: 20,
           ),
@@ -53,32 +27,37 @@ class BillPaymentOptionsScreen extends StatelessWidget {
             padding: context.isTablet
                 ? EdgeInsets.symmetric(
                     horizontal: MediaQuery.of(context).size.width * 0.15)
-                : const EdgeInsets.all(0.0),
+                : const EdgeInsets.all(8.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Reach out to us for any issues, we are always here to support you',
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  'Select a service below to get started with your payment.',
+                  style: TextStyle(fontSize: 14),
                 ),
                 const SizedBox(height: 20),
-                _buildPaymentOptionCard(context, 'Airtime',
-                    'Buy airtime for all Networks', Icons.phone_android,
+                MoOptionCard(
+                    title: 'Airtime',
+                    description: 'Buy airtime for all Networks',
+                    icon: Icons.phone_android,
                     onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (builder) => const AirtimeScreen()))),
                 const SizedBox(height: 10),
-                _buildPaymentOptionCard(context, 'Data Bundle',
-                    'Buy data for all Networks', Icons.data_usage,
-                    isSelected: false,
+                MoOptionCard(
+                    title: 'Data Bundle',
+                    description: 'Buy data for all Networks',
+                    icon: Icons.data_usage,
                     onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (builder) => const DataScreen()))),
                 const SizedBox(height: 10),
-                _buildPaymentOptionCard(context, 'Cable',
-                    'Subscribe for  your cable', Icons.tv_outlined,
-                    isSelected: false,
+                MoOptionCard(
+                    title: 'Cable',
+                    description: 'Subscribe for  your cable',
+                    icon: Icons.tv_outlined,
                     onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -87,43 +66,6 @@ class BillPaymentOptionsScreen extends StatelessWidget {
             ),
           )
         ],
-      ),
-    );
-  }
-
-  Widget _buildPaymentOptionCard(
-      BuildContext context, String title, String description, IconData icon,
-      {bool isSelected = false, VoidCallback? onTap}) {
-    return GestureDetector(
-      onTap: () {
-        onTap!();
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey[200],
-          // color: isSelected ? Colors.blue[50] : Colors.white,
-          border: Border.all(
-            color: isSelected ? Colors.blue : Colors.grey[300]!,
-            width: 1,
-          ),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: ListTile(
-          leading: CircleAvatar(
-            backgroundColor: Colors.green[100],
-            child: Icon(icon, color: Colors.green),
-          ),
-          title: Text(
-            title,
-            style: const TextStyle(
-                color: Colors.black, fontWeight: FontWeight.bold),
-          ),
-          subtitle: Text(description,
-              style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 12)),
-        ),
       ),
     );
   }

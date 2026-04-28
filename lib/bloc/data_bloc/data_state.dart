@@ -14,6 +14,8 @@ class DataInitial extends DataState {}
 
 class DataLoading extends DataState {}
 
+class DataPlansLoading extends DataState {}
+
 class DataSuccess extends DataState {
   final DataResponse response;
 

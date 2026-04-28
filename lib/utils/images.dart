@@ -27,8 +27,8 @@ class MoImage{
   static String error =  "$root/error.json";
 
 
-  static String mtn =  "$root/mtn.png";
-  static String n9mobile =  "$root/9mobile.png";
+  static String mtn =  "$root/mtn_stable.png";
+  static String n9mobile =  "$root/nine_mobile.png";
   static String airtel =  "$root/airtel.png";
   static String glo =  "$root/glo.png";
   static String dstv =  "$root/dstv_icon.png";

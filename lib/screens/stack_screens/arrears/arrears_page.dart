@@ -132,6 +132,7 @@ class _CustomerArrearsPageState extends State<CustomerArrearsPage> {
           ? ServiceType.admin_fee
           : ServiceType.utilities,
       onPayment: (String ref) {
+        debugPrint("<<<<>>>: $ref");
         if (single) {
           context.read<CustomerArrearsBloc>().add(PaySingleArrear(
               id: arrearsId, paymentRef: ref, serviceType: arrearsType));

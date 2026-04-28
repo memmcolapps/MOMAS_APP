@@ -27,11 +27,6 @@ class NavDestination extends StatelessWidget {
                 size: 24,
                 color: isSelected ? MoColors.mainColor : Colors.grey,
               ),
-              // ImageIcon(
-              //   AssetImage(imageUrl),
-              //   size: 24,
-              //   color: isSelected ? MoColors.mainColor : Colors.grey,
-              // ),
               const SizedBox(
                 height: 8,
               ),

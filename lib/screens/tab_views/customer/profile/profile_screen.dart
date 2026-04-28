@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/bloc/setting_bloc/setting_event.dart';
+import 'package:momaspayplus/core/cubit/auth_cubit/auth_cubit.dart';
+import 'package:momaspayplus/core/cubit/tab_cubit/tab_cubit.dart';
 import 'package:momaspayplus/screens/profile/request_meter_screen.dart';
 import 'package:momaspayplus/screens/tab_views/customer/profile/widgets/profile_info_card.dart';
 import 'package:momaspayplus/screens/tab_views/shared/tabview_skeleton.dart';
@@ -168,9 +170,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   icon: Icons.logout,
                   title: 'Log out',
                   onTap: () {
-                    SharedPreferenceHelper.clearUser();
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, "/", (route) => false);
+                    context.read<AuthCubit>().logout();
+                    // SharedPreferenceHelper.clearUser();
+                    // Navigator.pushNamedAndRemoveUntil(
+                    //     context, "/", (route) => false);
                   },
                 ),
                 OptionTile(

@@ -1,16 +1,17 @@
-import 'dart:ffi';
-
+import 'package:momaspayplus/domain/data/response/feature.dart';
 import 'package:momaspayplus/domain/data/response/tariff.dart';
 
 class UserModel {
   bool? status;
   User? user;
+  Feature? features;
   String? message;
-  UserModel({this.status, this.user});
+  UserModel({this.status, this.user, this.features});
 
   UserModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     user = json['user'] != null ? User.fromJson(json['user']) : null;
+    features = json['features'] != null ? Feature.fromJson(json['features']) : null;
     message = json['message'];
   }
 
@@ -19,6 +20,9 @@ class UserModel {
     data['status'] = status;
     if (user != null) {
       data['user'] = user!.toJson();
+    }
+    if (features != null) {
+      data['features'] = features!.toJson();
     }
     return data;
   }
@@ -196,6 +200,56 @@ class Meter {
     return data;
   }
 }
+
+// class Features {
+//   int? buyToken;
+//   int? buyTokenOthers;
+//   int? printToken;
+//   int? accessToken;
+//   int? services;
+//   int? billPayment;
+//   int? support;
+//   int? topUp;
+//   int? analysis;
+//
+//   Features(
+//       {this.buyToken,
+//       this.buyTokenOthers,
+//       this.printToken,
+//       this.accessToken,
+//       this.services,
+//       this.billPayment,
+//       this.support,
+//       this.topUp,
+//       this.analysis});
+//
+//   Features.fromJson(Map<String, dynamic> json) {
+//     buyToken = json['momas_meter'];
+//     buyTokenOthers = json['other_meter'];
+//     printToken = json['print_token'];
+//     accessToken = json['access_token'];
+//     services = json['services'];
+//     billPayment = json['bill_payment'];
+//     support = json['support'];
+//     topUp = json['top_up'];
+//     analysis = json['analysis'];
+//   }
+//
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = <String, dynamic>{};
+//     data['momas_meter'] = buyToken;
+//     data['other_meter'] = buyTokenOthers;
+//     data['print_token'] = printToken;
+//     data['access_token'] = accessToken;
+//     data['services'] = services;
+//     data['bill_payment'] = billPayment;
+//     data['support'] = support;
+//     data['top_up'] = topUp;
+//     data['analysis'] = analysis;
+//
+//     return data;
+//   }
+// }
 
 // class PayStackKeys {
 //   String? paystackSecret;

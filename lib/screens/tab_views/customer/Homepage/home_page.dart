@@ -85,7 +85,7 @@ class _HomePageState extends State<HomePage> {
                       Container(
                         height: 55,
                         decoration: const BoxDecoration(
-                          color: Colors.white,
+                          color: MoColors.scaffoldWhite,
                           borderRadius:
                               BorderRadius.only(topLeft: Radius.circular(50)),
                         ),
@@ -102,7 +102,7 @@ class _HomePageState extends State<HomePage> {
               // ----- Body Section ------
               Expanded(
                 child: Container(
-                  color: Colors.white,
+                  color: MoColors.scaffoldWhite,
                   child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

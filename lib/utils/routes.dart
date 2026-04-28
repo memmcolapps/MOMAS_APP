@@ -1,4 +1,4 @@
-import 'package:momaspayplus/config/app_config.dart';
+import 'package:momaspayplus/app/app_config.dart';
 
 class Routes {
   // static const String _url = "https://momaspay.memmserve.com/api";
@@ -53,4 +53,10 @@ class Routes {
   static String adminFeeCheck = "$_baseURL/admin-fee-check";
 
   static String checkAppUpdate = "$_baseURL/check-app-version";
+
+  /// Analytics
+  static String getAnalysis = "$_baseURL/get-analysis";
+  static String getTransactionAnalysis = "$_baseURL/get-trx-chart";
+  static String getUtilityMetrics = "$_baseURL/get-utility-metrics";
+  static String getAccessTokenReport = "$_baseURL/get-token-report";
 }

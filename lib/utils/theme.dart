@@ -27,10 +27,10 @@ class ThemeConfig {
       ),
       colorScheme: colorScheme,
       primaryColor: MoColors.mainColor,
-      scaffoldBackgroundColor: Colors.grey[200],
-      appBarTheme: AppBarTheme(
+      scaffoldBackgroundColor: MoColors.scaffoldWhite,
+      appBarTheme: const AppBarTheme(
         backgroundColor: MoColors.mainColor,
-        systemOverlayStyle:  const SystemUiOverlayStyle (
+        systemOverlayStyle: SystemUiOverlayStyle (
           statusBarColor: Colors.transparent,
           statusBarIconBrightness: Brightness.light,
           statusBarBrightness: Brightness.dark,
@@ -39,7 +39,7 @@ class ThemeConfig {
           color: MoColors.whiteColor,
         ),
       ),
-      buttonTheme: ButtonThemeData(
+      buttonTheme: const ButtonThemeData(
         buttonColor: MoColors.mainColor,
         textTheme: ButtonTextTheme.primary,
       ),

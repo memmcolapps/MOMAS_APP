@@ -6,6 +6,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:momaspayplus/core/cubit/auth_cubit/auth_cubit.dart';
+import 'package:momaspayplus/main.dart';
 
 import '../screens/auth/login.dart';
 import '../utils/navigation.dart';
@@ -47,20 +49,21 @@ class ServerRequest {
       var data = jsonDecode(response.body);
       log("$data  route: $path  status: ${response.statusCode}");
 
-      // log("route: $path  status: ${response.statusCode}");
-      // log("data>>>: $data");
-      //62124022443
-      //62310072192
-
       if (response.statusCode == 401) {
-        Navigator.of(NavigationService.navigatorKey.currentContext!)
-            .pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-                (route) => false);
+        getIt<AuthCubit>().sessionExpired();
+        // Navigator.of(NavigationService.navigatorKey.currentContext!)
+        //     .pushAndRemoveUntil(
+        //         MaterialPageRoute(builder: (context) => const LoginScreen()),
+        //         (route) => false);
         //  return  TimeoutException('process time out');
         // return;
         throw HttpException({
           "message": 'Sessions expired',
+        });
+      }
+      if (response.statusCode == 404 ) {
+        throw HttpException({
+          "message": 'Route not found',
         });
       }
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -119,10 +122,11 @@ class ServerRequest {
       log("${response.statusCode} status code");
       log("${response.body}");
       if (response.statusCode == 401) {
-        Navigator.of(NavigationService.navigatorKey.currentContext!)
-            .pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-                (route) => false);
+        getIt<AuthCubit>().sessionExpired();
+        // Navigator.of(NavigationService.navigatorKey.currentContext!)
+        //     .pushAndRemoveUntil(
+        //         MaterialPageRoute(builder: (context) => const LoginScreen()),
+        //         (route) => false);
         throw HttpException({
           "message": 'Sessions expired',
         });
@@ -179,10 +183,11 @@ class ServerRequest {
       log(response.statusCode.toString());
 
       if (response.statusCode == 401) {
-        Navigator.of(NavigationService.navigatorKey.currentContext!)
-            .pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-                (route) => false);
+        getIt<AuthCubit>().sessionExpired();
+        // Navigator.of(NavigationService.navigatorKey.currentContext!)
+        //     .pushAndRemoveUntil(
+        //         MaterialPageRoute(builder: (context) => const LoginScreen()),
+        //         (route) => false);
 
         throw HttpException({
           "message": 'Sessions expired',
@@ -268,10 +273,11 @@ class ServerRequest {
     // print("MIMI3 $data}");
 
     if (response.statusCode == 401) {
-      Navigator.of(NavigationService.navigatorKey.currentContext!)
-          .pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const LoginScreen()),
-              (route) => false);
+      getIt<AuthCubit>().sessionExpired();
+      // Navigator.of(NavigationService.navigatorKey.currentContext!)
+      //     .pushAndRemoveUntil(
+      //         MaterialPageRoute(builder: (context) => const LoginScreen()),
+      //         (route) => false);
       throw HttpException({"message": 'Sessions expired', "error": true});
     }
     log(data.toString());

@@ -261,30 +261,98 @@ class _ModalBottomSheetState extends State<ModalBottomSheet>
   VelocityTracker? _velocityTracker;
   DateTime? _startTime;
 
+  // void _handleScrollUpdate(ScrollNotification notification) {
+  //   if (!context.mounted) return;
+  //
+  //   //Check if scrollController is used
+  //   if (!_scrollController.hasClients) return;
+  //   //Check if there is more than 1 attached ScrollController e.g. swiping page in PageView
+  //   // ignore: invalid_use_of_protected_member
+  //   if (_scrollController.positions.length > 1) return;
+  //
+  //   if (_scrollController !=
+  //       Scrollable.of(notification.context!)!.widget.controller) return;
+  //
+  //   final scrollPosition = _scrollController.position;
+  //
+  //   if (scrollPosition.axis == Axis.horizontal) return;
+  //
+  //   final isScrollReversed = scrollPosition.axisDirection == AxisDirection.down;
+  //   final offset = isScrollReversed
+  //       ? scrollPosition.pixels
+  //       : scrollPosition.maxScrollExtent - scrollPosition.pixels;
+  //
+  //   if (offset <= 0) {
+  //     // Clamping Scroll Physics end with a ScrollEndNotification with a DragEndDetail class
+  //     // while Bouncing Scroll Physics or other physics that Overflow don't return a drag end info
+  //
+  //     // We use the velocity from DragEndDetail in case it is available
+  //     if (notification is ScrollEndNotification &&
+  //         notification.dragDetails != null) {
+  //       _handleDragEnd(notification.dragDetails!.primaryVelocity!);
+  //       _velocityTracker = null;
+  //       _startTime = null;
+  //       return;
+  //     }
+  //
+  //     // Otherwise the calculate the velocity with a VelocityTracker
+  //     if (_velocityTracker == null) {
+  //       //final pointerKind = defaultPointerDeviceKind(context);
+  //       // ignore: deprecated_member_use
+  //       _velocityTracker = VelocityTracker.withKind(PointerDeviceKind.touch);
+  //       _startTime = DateTime.now();
+  //     }
+  //     DragUpdateDetails? dragDetails;
+  //     if (notification is ScrollUpdateNotification) {
+  //       dragDetails = notification.dragDetails!;
+  //     }
+  //     if (notification is OverscrollNotification) {
+  //       dragDetails = notification.dragDetails!;
+  //     }
+  //     if (dragDetails != null) {
+  //       final duration = _startTime!.difference(DateTime.now());
+  //       _velocityTracker!.addPosition(duration, Offset(0, offset));
+  //       _handleDragUpdate(dragDetails.delta.dy);
+  //     } else if (isDragging) {
+  //       final velocity = _velocityTracker!.getVelocity().pixelsPerSecond.dy;
+  //       _velocityTracker = null;
+  //       _startTime = null;
+  //       _handleDragEnd(velocity);
+  //     }
+  //   }
+  // }
+
+
   void _handleScrollUpdate(ScrollNotification notification) {
-    //Check if scrollController is used
+    // Guard 1: widget is gone
+    if (!mounted) return;
+
+    // Guard 2: scrollController was disposed or has no clients
     if (!_scrollController.hasClients) return;
-    //Check if there is more than 1 attached ScrollController e.g. swiping page in PageView
+
+    // Guard 3: more than 1 attached controller (e.g. PageView)
     // ignore: invalid_use_of_protected_member
     if (_scrollController.positions.length > 1) return;
 
-    if (_scrollController !=
-        Scrollable.of(notification.context!)!.widget.controller) return;
+    // Guard 4: notification.context is null — happens during ballistic
+    // scroll animation after sheet starts dismissing
+    if (notification.context == null) return;
+
+    // Guard 5: Scrollable.of can return null
+    final scrollable = Scrollable.of(notification.context!);
+    if (scrollable == null) return;
+    if (_scrollController != scrollable.widget.controller) return;
 
     final scrollPosition = _scrollController.position;
-
     if (scrollPosition.axis == Axis.horizontal) return;
 
-    final isScrollReversed = scrollPosition.axisDirection == AxisDirection.down;
+    final isScrollReversed =
+        scrollPosition.axisDirection == AxisDirection.down;
     final offset = isScrollReversed
         ? scrollPosition.pixels
         : scrollPosition.maxScrollExtent - scrollPosition.pixels;
 
     if (offset <= 0) {
-      // Clamping Scroll Physics end with a ScrollEndNotification with a DragEndDetail class
-      // while Bouncing Scroll Physics or other physics that Overflow don't return a drag end info
-
-      // We use the velocity from DragEndDetail in case it is available
       if (notification is ScrollEndNotification &&
           notification.dragDetails != null) {
         _handleDragEnd(notification.dragDetails!.primaryVelocity!);
@@ -293,26 +361,27 @@ class _ModalBottomSheetState extends State<ModalBottomSheet>
         return;
       }
 
-      // Otherwise the calculate the velocity with a VelocityTracker
       if (_velocityTracker == null) {
-        //final pointerKind = defaultPointerDeviceKind(context);
         // ignore: deprecated_member_use
         _velocityTracker = VelocityTracker.withKind(PointerDeviceKind.touch);
         _startTime = DateTime.now();
       }
+
       DragUpdateDetails? dragDetails;
       if (notification is ScrollUpdateNotification) {
-        dragDetails = notification.dragDetails!;
+        dragDetails = notification.dragDetails;  // removed ! — can be null
       }
       if (notification is OverscrollNotification) {
-        dragDetails = notification.dragDetails!;
+        dragDetails = notification.dragDetails;  // removed !
       }
+
       if (dragDetails != null) {
         final duration = _startTime!.difference(DateTime.now());
         _velocityTracker!.addPosition(duration, Offset(0, offset));
         _handleDragUpdate(dragDetails.delta.dy);
       } else if (isDragging) {
-        final velocity = _velocityTracker!.getVelocity().pixelsPerSecond.dy;
+        final velocity =
+            _velocityTracker!.getVelocity().pixelsPerSecond.dy;
         _velocityTracker = null;
         _startTime = null;
         _handleDragEnd(velocity);

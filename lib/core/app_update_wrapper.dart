@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:momaspayplus/bloc/app_version_bloc/update_bloc.dart';
-import 'package:momaspayplus/bloc/app_version_bloc/update_state.dart';
+import 'package:momaspayplus/core/cubit/app_version_cubit/update_state.dart';
+import 'package:momaspayplus/core/cubit/app_version_cubit/update_cubit.dart';
 import 'package:momaspayplus/reuseable/bottom_sheet/update_modal/update_modal.dart';
 
 class AppUpdateWrapper extends StatefulWidget {
@@ -36,7 +36,7 @@ class _AppUpdateWrapperState extends State<AppUpdateWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AppUpdateBloc, AppUpdateState>(
+    return BlocListener<AppUpdateCubit, AppUpdateState>(
         listener: (context, state) {
           if (state is AppUpdateRequired) {
             WidgetsBinding.instance.addPostFrameCallback((_) {

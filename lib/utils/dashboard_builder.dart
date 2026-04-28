@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/bloc/momas_bloc/momas_bloc.dart';
@@ -22,6 +24,7 @@ class DashboardBuilder {
       Feature future, BuildContext context, User? user) {
 
     // TODO(DON): Come back and fix this code
+    log("features: ${future}");
     List<GridItemModel> value = [];
     if (future.momasMeter != 0) {
       value.add(

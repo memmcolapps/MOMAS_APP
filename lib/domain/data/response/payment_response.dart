@@ -9,7 +9,7 @@ class PaymentResponse {
   PaymentResponse.fromJson(Map<String, dynamic> json) {
     status = json['status'] == "success" ? true : json['status'];
     url = json['data'] != null ? json['data']['url'] : null;
-    ref = json['ref'];
+    ref = json['data'] != null ? json['data']['ref'] : null;
     message = json['message'];
   }
 

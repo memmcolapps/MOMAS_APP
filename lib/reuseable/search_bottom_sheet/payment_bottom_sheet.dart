@@ -82,7 +82,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
 
             return SizedBox(
               height: deviceHeight * 0.5,
-              child: Column(
+              child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -172,7 +172,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
                     context, 'Pay with Paystack', MoImage.payStack,
                     onTap: () => _onPaymentOptionTap(PaymentType.paystack),
                     additionalInfo: "2.5% + NGN100"),
-                // const SizedBox(height: 10),
+                // const SizedBox(height: 10),F
                 // _buildPaymentOption(context, 'Enkpay payment', null,
                 //     onTap: () => _onPaymentOptionTap(PaymentType.enkpay),
                 //     additionalInfo: "Flat NGN100"),

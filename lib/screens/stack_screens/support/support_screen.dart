@@ -36,7 +36,7 @@ class SupportScreen extends StatelessWidget {
             return SizedBox(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
-              child: Center(
+              child: const Center(
                 child: SpinKitFadingCircle(
                   color: MoColors.mainColor,
                   size: 30.0,
@@ -51,7 +51,7 @@ class SupportScreen extends StatelessWidget {
                     right: MediaQuery.of(context).size.width * 0.15,
                     left: MediaQuery.of(context).size.width * 0.15,
                   )
-                : const EdgeInsets.all(0.0),
+                : const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -59,8 +59,8 @@ class SupportScreen extends StatelessWidget {
                   height: 20,
                 ),
                 const Text(
-                  'Reach out to us for any issues, we are always here to support you',
-                  style: TextStyle(fontSize: 16),
+                  "We're here to help. Reach out to us anytime, and we'll get back to you shortly.",
+                  style: TextStyle(fontSize: 14),
                 ),
                 const SizedBox(height: 20),
                 SupportOption(
@@ -72,7 +72,7 @@ class SupportScreen extends StatelessWidget {
                         Uri.parse(supportData?.paymentSupport ?? ""));
                   },
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 SupportOption(
                   icon: Icons.electric_meter,
                   title: 'Meter Issues',
@@ -82,7 +82,7 @@ class SupportScreen extends StatelessWidget {
                         Uri.parse(supportData?.meterSupport ?? ""));
                   },
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 SupportOption(
                   icon: Icons.help_outline,
                   title: 'Other Issues',

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/bloc/dashboard_bloc/dashboard_bloc.dart';
 import 'package:momaspayplus/bloc/dashboard_bloc/dashboard_event.dart';
+import 'package:momaspayplus/domain/data/response/feature.dart';
 import 'package:momaspayplus/domain/data/response/user_model.dart';
 import 'package:momaspayplus/domain/repository/dashboard_repository.dart';
 import 'package:momaspayplus/domain/service/dashboard_service.dart';
@@ -16,82 +17,51 @@ import 'package:momaspayplus/utils/images.dart';
 import 'nav_item.dart';
 
 class NavConfig {
-  static List<NavItem> getTabsForRole(UserRole? role) {
+  static List<NavItem> getTabsForRole(UserRole? role, Feature? features) {
     switch (role) {
       case UserRole.estateStaff:
         return [
           const NavItem(
-              filledIcon: Icons.home,
-              outlinedIcon: Icons.home_outlined,
-              label: 'Home',
-              screen: AccessTokenVerification()),
+            filledIcon: Icons.home,
+            outlinedIcon: Icons.home_outlined,
+            label: 'Home',
+            screen: AccessTokenVerification(),
+          ),
           const NavItem(
-              filledIcon: Icons.settings,
-              outlinedIcon: Icons.settings_outlined,
-              label: 'Settings',
-              screen: ProfileScreen()),
+            filledIcon: Icons.settings,
+            outlinedIcon: Icons.settings_outlined,
+            label: 'Settings',
+            screen: ProfileScreen(),
+          ),
         ];
-
-      // case UserRole.admin:
-      //   return [
-      //     NavItem(imageUrl: MoImage.home, label: 'Home'),
-      //     NavItem(imageUrl: MoImage.history, label: 'History'),
-      //     NavItem(imageUrl: MoImage.analyticsTab, label: 'Analytics'),
-      //     NavItem(imageUrl: MoImage.settingsIcon, label: 'Settings'),
-      //   ];
-
-      // case UserRole.customer:
-      //   return [
-      //     NavItem(imageUrl: MoImage.home, label: 'Home'),
-      //     NavItem(imageUrl: MoImage.analyticsTab, label: 'Analytics'),
-      //   ];
 
       default:
         return [
           const NavItem(
-              filledIcon: Icons.home,
-              outlinedIcon: Icons.home_outlined,
-              label: 'Home',
-              screen:
-                  // MultiBlocProvider (
-                  //               providers: [
-                  //   BlocProvider<WalletBloc>(
-                  //     create: (BuildContext context) =>
-                  //     WalletBloc(DashboardService(DashboardRepository()))
-                  //       ..add(WalletDashboardEvent()),
-                  //   ),
-                  //   BlocProvider<PromoBloc>(
-                  //     create: (BuildContext context) =>
-                  //     PromoBloc(DashboardService(DashboardRepository()))
-                  //       ..add(PromotionEvent()),
-                  //   ),
-                  //   BlocProvider<DashboardBloc>(
-                  //     create: (BuildContext context) =>
-                  //     DashboardBloc(DashboardService(DashboardRepository()))
-                  //       ..add(FeatureDashboardEvent()),
-                  //   ),
-                  // ],
-                  // child:
-                  const HomePage()
-              // )
-              ),
+            filledIcon: Icons.home,
+            outlinedIcon: Icons.home_outlined,
+            label: 'Home',
+            screen: HomePage(),
+          ),
           const NavItem(
-              filledIcon: Icons.history,
-              outlinedIcon: Icons.history_outlined,
-              label: 'History',
-              screen: Transactions()),
-          if (appFlavor == 'development') ...[
+            filledIcon: Icons.history,
+            outlinedIcon: Icons.history_outlined,
+            label: 'History',
+            screen: Transactions(),
+          ),
+          if (features?.analysis == 1)
             const NavItem(
-                filledIcon: Icons.analytics,
-                outlinedIcon: Icons.analytics_outlined,
-                label: 'Analytics',
-                screen: Analytics()),
-          ],
+              filledIcon: Icons.analytics,
+              outlinedIcon: Icons.analytics_outlined,
+              label: 'Analytics',
+              screen: Analytics(),
+            ),
           const NavItem(
-              filledIcon: Icons.settings,
-              outlinedIcon: Icons.settings_outlined,
-              label: 'Settings',
-              screen: ProfileScreen()),
+            filledIcon: Icons.settings,
+            outlinedIcon: Icons.settings_outlined,
+            label: 'Settings',
+            screen: ProfileScreen(),
+          ),
         ];
     }
   }

@@ -100,7 +100,7 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
   @override
   Widget build(BuildContext context) {
     return StackScreenSkeleton(
-      heading: "Pay for MOMAS Meter",
+      heading: "Buy Credit Token",
       body: BlocConsumer<MomasPaymentBloc, MomasPaymentState>(
         bloc: bloc,
         builder: (context, state) {

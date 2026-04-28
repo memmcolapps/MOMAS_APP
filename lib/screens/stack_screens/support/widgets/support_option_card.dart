@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:momaspayplus/reuseable/card/mo_option_card.dart';
 
 class SupportOption extends StatelessWidget {
   final IconData icon;
@@ -16,35 +17,43 @@ class SupportOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          color: Colors.grey[200],
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        child: Row(
-          children: [
-            CircleAvatar(
-              backgroundColor: Colors.green[100],
-              child: Icon(icon, color: Colors.green),
-            ),
-            const SizedBox(width: 16),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 4),
-                Text(subtitle, style: const TextStyle(fontSize: 14)),
-              ],
-            ),
-          ],
-        ),
-      ),
+    return MoOptionCard(
+        title: title,
+        description: subtitle,
+        icon: icon,
+        onTap: onTap,
+        trailing: MoCardTrailing.external,
     );
+
+    // return GestureDetector(
+    //   onTap: onTap,
+    //   child: Container(
+    //     padding: const EdgeInsets.all(16.0),
+    //     decoration: BoxDecoration(
+    //       color: Colors.grey[200],
+    //       borderRadius: BorderRadius.circular(8.0),
+    //     ),
+    //     child: Row(
+    //       children: [
+    //         CircleAvatar(
+    //           backgroundColor: Colors.green[100],
+    //           child: Icon(icon, color: Colors.green),
+    //         ),
+    //         const SizedBox(width: 16),
+    //         Column(
+    //           crossAxisAlignment: CrossAxisAlignment.start,
+    //           children: [
+    //             Text(
+    //               title,
+    //               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    //             ),
+    //             const SizedBox(height: 4),
+    //             Text(subtitle, style: const TextStyle(fontSize: 14)),
+    //           ],
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 }

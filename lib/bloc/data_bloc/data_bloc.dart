@@ -1,6 +1,7 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/domain/data/response/data_response.dart';
+import 'package:momaspayplus/utils/network_enum.dart';
 
 import '../../domain/data/request/data_request.dart';
 import '../../domain/data/response/generic_response.dart';
@@ -51,9 +52,9 @@ class DataBloc extends Bloc<DataEvent, DataState> {
 
   Future getData(DataEvent event,  Emitter<DataState> emit) async {
     if (event is GetData) {
-      emit(DataLoading());
+      emit(DataPlansLoading());
       try {
-        final DataResponse response = await repository.getData();
+        final DataResponse response = await repository.getData(event.network.displayName);
         if(response.status ==true){
           emit(DataSuccess(response: response));
         }else{
