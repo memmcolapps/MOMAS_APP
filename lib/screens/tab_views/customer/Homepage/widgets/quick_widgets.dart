@@ -6,6 +6,7 @@ import 'package:momaspayplus/bloc/momas_bloc/momas_bloc.dart';
 import 'package:momaspayplus/screens/stack_screens/service/service_screen.dart';
 import 'package:momaspayplus/screens/stack_screens/momos_payment/momas_payment_screen.dart';
 import 'package:momaspayplus/utils/colors.dart';
+import 'package:momaspayplus/utils/dashboard_builder.dart';
 import 'package:momaspayplus/utils/screen_utils.dart';
 import 'package:momaspayplus/utils/images.dart';
 
@@ -30,18 +31,22 @@ import 'package:momaspayplus/screens/stack_screens/momos_payment/momas_payment_s
 import 'package:momaspayplus/utils/colors.dart';
 import 'package:momaspayplus/utils/screen_utils.dart';
 import 'package:momaspayplus/utils/images.dart';
+
 
 class QuickWidgets extends StatelessWidget {
   const QuickWidgets({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final meterStatus = context.select((UserBloc bloc) {
+    final feature = context.select((DashboardBloc bloc) {
       final state = bloc.state;
-      return state is GetUserSuccessful ? state.user.meter?.status : null;
+      return state is FeaturesSuccessful ? state.feature : null;
     });
 
-    final bool meterActive = meterStatus == 2;
+    final buyUnitsActive = (feature?.momasMeter ?? 1) == 1;
+    final slot2 = feature != null
+        ? DashboardBuilder.quickSlot2(feature, context)
+        : null;
 
     return Container(
       width: MediaQuery.of(context).size.width * 0.8,
@@ -52,58 +57,105 @@ class QuickWidgets extends StatelessWidget {
         border: Border.all(color: MoColors.borderIdle, width: 1),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _QuickButton(
-            context: context,
             title: "Buy Units",
             image: MoImage.momasPayment,
-            active: meterActive,
-            onTap: meterActive
-                ? () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const MomasPaymentScreen(
-                  momasPaymentType: MomasPaymentType.self,
-                ),
+            active: buyUnitsActive,
+            onTap: buyUnitsActive
+                ? () => Navigator.push(context, MaterialPageRoute(
+              builder: (_) => const MomasPaymentScreen(
+                momasPaymentType: MomasPaymentType.self,
               ),
-            )
+            ))
                 : null,
           ),
-          // divider between buttons
-          Container(
-            width: 1,
-            height: 40,
-            color: MoColors.borderIdle,
-          ),
-          _QuickButton(
-            context: context,
-            title: "Services",
-            image: MoImage.services,
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const ServiceScreen()),
+          if (slot2 != null) ...[
+            Container(width: 1, height: 40, color: MoColors.borderIdle),
+            _QuickButton(
+              title: slot2.title,
+              image: slot2.image,
+              active: slot2.active,
+              onTap: slot2.onTap,
             ),
-          ),
+          ],
         ],
       ),
     );
   }
 }
 
+// class QuickWidgets extends StatelessWidget {
+//   const QuickWidgets({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final meterStatus = context.select((UserBloc bloc) {
+//       final state = bloc.state;
+//       return state is GetUserSuccessful ? state.user.meter?.status : null;
+//     });
+//
+//     final bool meterActive = meterStatus == 2;
+//
+//     return Container(
+//       width: MediaQuery.of(context).size.width * 0.8,
+//       height: 80,
+//       decoration: BoxDecoration(
+//         color: MoColors.cardBgAlt,
+//         borderRadius: BorderRadius.circular(12),
+//         border: Border.all(color: MoColors.borderIdle, width: 1),
+//       ),
+//       child: Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//         children: [
+//           _QuickButton(
+//             context: context,
+//             title: "Buy Units",
+//             image: MoImage.momasPayment,
+//             active: meterActive,
+//             onTap: meterActive
+//                 ? () => Navigator.push(
+//               context,
+//               MaterialPageRoute(
+//                 builder: (_) => const MomasPaymentScreen(
+//                   momasPaymentType: MomasPaymentType.self,
+//                 ),
+//               ),
+//             )
+//                 : null,
+//           ),
+//           // divider between buttons
+//           Container(
+//             width: 1,
+//             height: 40,
+//             color: MoColors.borderIdle,
+//           ),
+//           _QuickButton(
+//             title: "Services",
+//             image: MoImage.services,
+//             onTap: () => Navigator.push(
+//               context,
+//               MaterialPageRoute(builder: (_) => const ServiceScreen()),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
 class _QuickButton extends StatelessWidget {
   final String image;
   final String title;
   final bool active;
   final VoidCallback? onTap;
-  final BuildContext context;
 
   const _QuickButton({
-    required this.context,
     required this.image,
     required this.title,
     this.active = true,
     this.onTap,
+    super.key
   });
 
   @override

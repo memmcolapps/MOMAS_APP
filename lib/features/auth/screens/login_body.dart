@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:momaspayplus/core/cubit/tab_cubit/tab_cubit.dart';
 import 'package:momaspayplus/features/auth/bloc/login/login_bloc.dart';
 
 import 'package:momaspayplus/core/cubit/auth_cubit/auth_cubit.dart';
@@ -156,6 +157,7 @@ class _LoginBodyState extends State<LoginBody> {
                 case LoginFailure():
                   showErrorBottomSheet(context, state.error);
                 case LoginSuccess():
+                  context.read<TabCubit>().changeTab(0);
                   getIt<AuthCubit>().loginSuccess(state.user, state.features);
                   // Navigator.pushAndRemoveUntil(
                   //     context,

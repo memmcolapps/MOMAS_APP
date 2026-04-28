@@ -10,7 +10,6 @@ import 'package:momaspayplus/core/cubit/auth_cubit/auth_cubit.dart';
 import 'package:momaspayplus/core/cubit/auth_cubit/auth_state.dart';
 import 'package:momaspayplus/core/cubit/tab_cubit/tab_cubit.dart';
 
-import 'package:momaspayplus/app/app_entry.dart';
 import 'package:momaspayplus/core/app_update_wrapper.dart';
 import 'package:momaspayplus/features/auth/screens/auth_screen.dart';
 import 'package:momaspayplus/main.dart';
@@ -19,7 +18,6 @@ import 'package:momaspayplus/tabs/root_screen.dart';
 import 'package:momaspayplus/utils/navigation.dart';
 import 'package:momaspayplus/utils/theme.dart';
 
-import 'package:momaspayplus/features/auth/screens/auth_screen.dart';
 import 'package:momaspayplus/features/onboarding/screens/intro_page.dart';
 
 import 'package:momaspayplus/utils/shared_pref.dart';
@@ -39,7 +37,7 @@ class MomasPayApp extends StatelessWidget {
         BlocProvider<TabCubit>(create: (_) => TabCubit()),
         BlocProvider.value(value: getIt<AuthCubit>()),
       ],
-      child: _MomasPayView(),
+      child: const _MomasPayView(),
     );
   }
 }
@@ -65,7 +63,7 @@ class _MomasPayViewState extends State<_MomasPayView> {
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, state) {
         final home = switch (state) {
-          AuthAuthenticated() => AppUpdateWrapper(child: const RootScreen()),
+          AuthAuthenticated() => const AppUpdateWrapper(child: RootScreen()),
           AuthUnauthenticated() => const AuthScreen(),
           _ => SharedPreferenceHelper.hasSeenOnboarding
               ? const AuthScreen()
@@ -84,30 +82,3 @@ class _MomasPayViewState extends State<_MomasPayView> {
     );
   }
 }
-
-// class _MomasPayView extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return BlocBuilder<AuthCubit, AuthState>(
-//       builder: (context, state) {
-//         log(" >>>>> log ${state.toString()}");
-//         final home = switch (state) {
-//           AuthAuthenticated() => AppUpdateWrapper(child: const RootScreen()),
-//           AuthUnauthenticated() => const AuthScreen(),
-//           _ => SharedPreferenceHelper.hasSeenOnboarding
-//               ? const AuthScreen()
-//               : const IntroPage(),
-//         };
-//
-//         return MaterialApp(
-//           navigatorObservers: [routeObserver],
-//           navigatorKey: NavigationService.navigatorKey,
-//           debugShowCheckedModeBanner: false,
-//           title: 'Momas Pay',
-//           theme: ThemeConfig.buildCustomTheme(),
-//           home: home,
-//         );
-//       },
-//     );
-//   }
-// }
