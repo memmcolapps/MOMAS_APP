@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:momaspayplus/features/auth/data/models/reset_request.dart';
+import 'package:momaspayplus/features/auth/data/models/verify_otp_request.dart';
 
 import '../../../../domain/data/request/register.dart';
 
@@ -24,14 +25,14 @@ abstract class ResetEvent extends Equatable {
 //   List<Object> get props => [email];
 // }
 
-class VerifyEmailEvent extends ResetEvent {
-  final String email;
-  final String code;
-  const VerifyEmailEvent(this.email, this.code);
-
-  @override
-  List<Object> get props => [email, code];
-}
+// class VerifyEmailEvent extends ResetEvent {
+//   final String email;
+//   final String code;
+//   const VerifyEmailEvent(this.email, this.code);
+//
+//   @override
+//   List<Object> get props => [email, code];
+// }
 
 class ResetAccountEvent extends ResetEvent {
   final ResetRequest resetData;
@@ -41,15 +42,22 @@ class ResetAccountEvent extends ResetEvent {
   List<Object> get props => [resetData];
 }
 
-class ResetPasswordEvent extends ResetEvent {
-  final String email;
-  final String password;
-  final String confirmPassword;
-
-  const ResetPasswordEvent(this.email, this.password, this.confirmPassword);
+class VerifyOtpEvent extends ResetEvent {
+  final VerifyOtpRequest otpData;
+  const VerifyOtpEvent(this.otpData);
 
   @override
-  List<Object> get props => [email, password, confirmPassword];
+  List<Object> get props => [otpData];
+}
+
+class ResetPasswordEvent extends ResetEvent {
+  final String resetToken;
+  final String password;
+
+  const ResetPasswordEvent(this.resetToken, this.password);
+
+  @override
+  List<Object> get props => [resetToken, password];
 }
 
 enum CheckEmail { register, reset }

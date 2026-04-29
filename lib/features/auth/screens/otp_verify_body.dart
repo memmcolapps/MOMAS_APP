@@ -6,10 +6,12 @@ import 'package:momaspayplus/features/auth/bloc/reset/reset_bloc.dart';
 import 'package:momaspayplus/features/auth/bloc/reset/reset_event.dart';
 import 'package:momaspayplus/features/auth/bloc/reset/reset_state.dart';
 import 'package:momaspayplus/features/auth/cubit/auth_view_cubit.dart';
+import 'package:momaspayplus/features/auth/data/models/verify_otp_request.dart';
 import 'package:momaspayplus/reuseable/error_modal.dart';
 import 'package:momaspayplus/reuseable/mo_button.dart';
 import 'package:momaspayplus/reuseable/mo_passcode.dart';
 import 'package:momaspayplus/utils/colors.dart';
+import 'package:momaspayplus/utils/validators.dart';
 
 class OtpVerifyBody extends StatefulWidget {
   final TextEditingController emailController;
@@ -27,10 +29,12 @@ class _OtpVerifyBodyState extends State<OtpVerifyBody> {
     return BlocListener<ResetBloc, ResetState>(
       listener: (context, state) {
         switch (state) {
-          // case OtpVerifyFailure():
-          //   showErrorBottomSheet(context, state.error);
-          // case OtpVerifySuccess():
-          //   context.read<AuthViewCubit>().showResetPassword();
+          case OtpVerifyFailure():
+            showErrorBottomSheet(context, state.error);
+          case OtpVerifySuccess():
+            context.read<AuthViewCubit>().showResetPassword(
+                  token: state.resetToken,
+                );
           default:
             log("state not implemented");
         }
@@ -74,16 +78,24 @@ class _OtpVerifyBodyState extends State<OtpVerifyBody> {
             child: Row(
               children: [
                 Expanded(
+                  // TODO(DON): Extract this later
                   child: MoButton(
                     isLoading: context.watch<ResetBloc>().state is ResetLoading,
                     title: "VERIFY",
                     onTap: () {
-                      // context.read<ResetBloc>().add(
-                      //   VerifyOtpEvent(
-                      //     widget.emailController.text,
-                      //     _code,
-                      //   ),
-                      // );
+                      var meterNo = "";
+                      var email = "";
+                      if (FormValidators.isValidEmail(
+                          widget.emailController.text)) {
+                        email = widget.emailController.text;
+                      } else {
+                        meterNo = widget.emailController.text;
+                      }
+                      final resetRequest = VerifyOtpRequest(
+                          meterNo: meterNo, email: email, code: _code);
+                      context
+                          .read<ResetBloc>()
+                          .add(VerifyOtpEvent(resetRequest));
                     },
                   ),
                 ),
@@ -92,8 +104,7 @@ class _OtpVerifyBodyState extends State<OtpVerifyBody> {
           ),
           const SizedBox(height: 25),
           TextButton(
-            onPressed: () =>
-                context.read<AuthViewCubit>().showForgotPassword(),
+            onPressed: () => context.read<AuthViewCubit>().showForgotPassword(),
             child: const Text('Back'),
           ),
         ],

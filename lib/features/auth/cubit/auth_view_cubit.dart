@@ -10,8 +10,13 @@ enum AuthView {
 class AuthViewCubit extends Cubit<AuthView> {
   AuthViewCubit() : super(AuthView.login);
 
+  String? resetToken;
+
   void showLogin() => emit(AuthView.login);
   void showForgotPassword() => emit(AuthView.forgotPassword);
   void showOtpVerify() => emit(AuthView.otpVerify);
-  void showResetPassword() => emit(AuthView.resetPassword);
+  void showResetPassword({String? token}) {
+    resetToken = token;
+    emit(AuthView.resetPassword);
+  }
 }

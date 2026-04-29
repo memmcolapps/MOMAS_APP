@@ -3,6 +3,8 @@ import 'package:momaspayplus/domain/data/response/user_model.dart';
 import 'package:momaspayplus/domain/request.dart';
 import 'package:momaspayplus/features/auth/data/models/login_request.dart';
 import 'package:momaspayplus/features/auth/data/models/reset_request.dart';
+import 'package:momaspayplus/features/auth/data/models/verify_otp_request.dart';
+import 'package:momaspayplus/features/auth/data/models/verify_otp_response.dart';
 
 import '../../../../utils/routes.dart';
 
@@ -21,24 +23,33 @@ class AuthRepository {
   //   return GenericResponse.fromJson(response.data);
   // }
 
-  Future<GenericResponse> checkEmail(ResetRequest data) async {
-    var response = await _request.postData(
-        path: Routes.checkEmail, body: data.toJson());
+  // Future<GenericResponse> confirmPassword(
+  //     String email, String password, String confirmPassword) async {
+  //   var response = await _request.postData(path: Routes.resetPassword, body: {
+  //     "email": email,
+  //     "password": password,
+  //     "confirm_password": confirmPassword
+  //   });
+  //   return GenericResponse.fromJson(response.data);
+  // }
+
+  Future<GenericResponse> requestReset(ResetRequest data) async {
+    var response =
+        await _request.postData(path: Routes.checkEmail, body: data.toJson());
     return GenericResponse.fromJson(response.data);
   }
 
-  Future<GenericResponse> verifyEmail(String email, String code) async {
-    var response = await _request.postData(
-        path: Routes.verifyEmail, body: {"email": email, "code": code});
-    return GenericResponse.fromJson(response.data);
+  Future<VerifyOtpResponse> verifyOtp(VerifyOtpRequest data) async {
+    var response =
+        await _request.postData(path: Routes.verifyEmail, body: data.toJson());
+    return VerifyOtpResponse.fromJson(response.data);
   }
 
-  Future<GenericResponse> confirmPassword(
-      String email, String password, String confirmPassword) async {
+  Future<GenericResponse> resetPassword(
+      String resetToken, String password) async {
     var response = await _request.postData(path: Routes.resetPassword, body: {
-      "email": email,
+      "reset_token": resetToken,
       "password": password,
-      "confirm_password": confirmPassword
     });
     return GenericResponse.fromJson(response.data);
   }

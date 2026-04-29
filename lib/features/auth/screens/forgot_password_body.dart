@@ -28,9 +28,9 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
     return BlocConsumer<ResetBloc, ResetState>(
       listener: (context, state) {
         switch (state) {
-          case EmailCheckSuccess():
+          case ResetRequestSuccess():
             context.read<AuthViewCubit>().showOtpVerify();
-          case EmailCheckFail():
+          case ResetRequestFail():
             showErrorBottomSheet(context, state.error);
           default:
             log("state not implemented");
@@ -55,14 +55,6 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
                     child: MoButton(
                       isLoading: state is ResetLoading,
                       title: "CONTINUE",
-                      // onTap: () {
-                      //   context.read<ResetBloc>().add(
-                      //     CheckEmailEvent(
-                      //       widget.emailController.text,
-                      //       CheckEmail.forget,
-                      //     ),
-                      //   );
-                      // },
                       onTap: () {
                         var meterNo = "";
                         var email = "";

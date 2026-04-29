@@ -50,27 +50,28 @@ class _AuthScaffoldState extends State<_AuthScaffold> {
     final view = context.watch<AuthViewCubit>().state;
 
     final headerTitle = switch (view) {
-      AuthView.login          => 'Welcome Back',
+      AuthView.login => 'Welcome Back',
       AuthView.forgotPassword => 'Forgot Password',
-      AuthView.otpVerify      => 'Verify OTP',
-      AuthView.resetPassword  => 'Reset Password',
+      AuthView.otpVerify => 'Verify OTP',
+      AuthView.resetPassword => 'Reset Password',
     };
 
     final headerSubtitle = switch (view) {
-      AuthView.login          => 'Login',
+      AuthView.login => 'Login',
       AuthView.forgotPassword => 'Enter your email',
-      AuthView.otpVerify      => 'Enter the code sent to your email',
-      AuthView.resetPassword  => 'Enter your new password',
+      AuthView.otpVerify => 'Enter the code sent to your email',
+      AuthView.resetPassword => 'Enter your new password',
     };
 
     return MultiBlocProvider(
       providers: [
         BlocProvider<LoginBloc>(
-          create: (BuildContext context) => LoginBloc(AuthService(AuthRepository())),
+          create: (BuildContext context) =>
+              LoginBloc(AuthService(AuthRepository())),
         ),
         BlocProvider<ResetBloc>(
-          create: (BuildContext context) => ResetBloc(AuthService(AuthRepository()))
-        ),
+            create: (BuildContext context) =>
+                ResetBloc(AuthService(AuthRepository()))),
       ],
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
@@ -137,15 +138,26 @@ class _AuthScaffoldState extends State<_AuthScaffold> {
                   ),
                   padding: context.isTablet
                       ? EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.width * 0.2)
+                          horizontal: MediaQuery.of(context).size.width * 0.2)
                       : const EdgeInsets.all(0.0),
                   child: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 300),
                     child: switch (view) {
-                      AuthView.login          => LoginBody(key: const ValueKey('login'), emailController: emailController),
-                      AuthView.forgotPassword => ForgotPasswordBody(key: const ValueKey('forgot'), emailController: emailController),
-                      AuthView.otpVerify      => OtpVerifyBody(key: const ValueKey('otp'), emailController: emailController),
-                      AuthView.resetPassword  => const ResetPasswordBody(key: ValueKey('reset')),
+                      AuthView.login => LoginBody(
+                          key: const ValueKey('login'),
+                          emailController: emailController),
+                      AuthView.forgotPassword => ForgotPasswordBody(
+                          key: const ValueKey('forgot'),
+                          emailController: emailController),
+                      AuthView.otpVerify => OtpVerifyBody(
+                          key: const ValueKey('otp'),
+                          emailController: emailController),
+                      AuthView.resetPassword => ResetPasswordBody(
+                          key: const ValueKey('reset'),
+                          resetToken:
+                              context.read<AuthViewCubit>().resetToken ?? '',
+                          isFirstLogin: false,
+                        ),
                     },
                   ),
                 ),

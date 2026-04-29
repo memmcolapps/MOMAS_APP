@@ -11,7 +11,14 @@ import 'package:momaspayplus/reuseable/mo_button.dart';
 import 'package:momaspayplus/reuseable/mo_form.dart';
 
 class ResetPasswordBody extends StatefulWidget {
-  const ResetPasswordBody({super.key});
+  final String? resetToken;
+  final bool isFirstLogin;
+
+  const ResetPasswordBody({
+    super.key,
+    this.resetToken,
+    this.isFirstLogin = false,
+  });
 
   @override
   State<ResetPasswordBody> createState() => _ResetPasswordBodyState();
@@ -34,11 +41,11 @@ class _ResetPasswordBodyState extends State<ResetPasswordBody> {
     return BlocListener<ResetBloc, ResetState>(
       listener: (context, state) {
         switch (state) {
-          // case ResetPasswordFailure():
-          //   showErrorBottomSheet(context, state.error);
-          // case ResetPasswordSuccess():
-          // // go back to login — password reset complete
-          //   context.read<AuthViewCubit>().showLogin();
+          case ResetPasswordFailure():
+            showErrorBottomSheet(context, state.error);
+          case ResetPasswordSuccess():
+          // go back to login — password reset complete
+            context.read<AuthViewCubit>().showLogin();
           default:
             log("state not implemented");
         }
@@ -58,7 +65,7 @@ class _ResetPasswordBodyState extends State<ResetPasswordBody> {
             title: "Confirm Password",
             isPassword: true,
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: 30),  
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Row(
@@ -75,11 +82,12 @@ class _ResetPasswordBodyState extends State<ResetPasswordBody> {
                             context, "Passwords do not match");
                         return;
                       }
-                      // context.read<ResetBloc>().add(
-                      //   ResetPasswordEvent(
-                      //     passwordController.text,
-                      //   ),
-                      // );
+                      context.read<ResetBloc>().add(
+                        ResetPasswordEvent(
+                          widget.resetToken ?? '',
+                          passwordController.text,
+                        ),
+                      );
                     },
                   ),
                 ),

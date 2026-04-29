@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:momaspayplus/domain/data/response/generic_response.dart';
 import 'package:momaspayplus/features/auth/data/models/login_request.dart';
 import 'package:momaspayplus/features/auth/data/models/reset_request.dart';
+import 'package:momaspayplus/features/auth/data/models/verify_otp_request.dart';
+import 'package:momaspayplus/features/auth/data/models/verify_otp_response.dart';
 import 'package:momaspayplus/features/auth/data/repositories/auth_repository.dart';
 import 'package:momaspayplus/utils/validators.dart';
 
@@ -43,19 +45,27 @@ class AuthService {
   //   return await repository.register(data);
   // }
 
-  Future<GenericResponse> checkEmail(ResetRequest data) async {
-    // if (!FormValidators.isValidEmail(email)) {
-    //   throw Exception("This email is not valid");
-    // }
-    return await repository.checkEmail(data);
+  // Future<GenericResponse> checkEmail(ResetRequest data) async {
+  //   // if (!FormValidators.isValidEmail(email)) {
+  //   //   throw Exception("This email is not valid");
+  //   // }
+  //   return await repository.checkEmail(data);
+  // }
+
+  // Future<GenericResponse> verifyEmail(String email, String code) async {
+  //   return await repository.verifyEmail(email, code);
+  // }
+
+  Future<GenericResponse> requestReset(ResetRequest data) async {
+    return await repository.requestReset(data);
   }
 
-  Future<GenericResponse> verifyEmail(String email, String code) async {
-    return await repository.verifyEmail(email, code);
+  Future<VerifyOtpResponse> verifyOtp(VerifyOtpRequest data) async {
+    return await repository.verifyOtp(data);
   }
 
   Future<GenericResponse> resetPassword(
-      String email, String passWord, conFirmPassword) async {
-    return await repository.confirmPassword(email, passWord, conFirmPassword);
+      String resetToken, String password) async {
+    return await repository.resetPassword(resetToken, password);
   }
 }
