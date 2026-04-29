@@ -53,4 +53,13 @@ class AuthRepository {
     });
     return GenericResponse.fromJson(response.data);
   }
+
+  Future<GenericResponse> updatePassword(
+      String currentPassword, String newPassword) async {
+    var response = await _request.postData(path: Routes.updatePassword, body: {
+      "current_password": currentPassword,
+      "password": newPassword,
+    });
+    return GenericResponse.fromJson(response.data);
+  }
 }

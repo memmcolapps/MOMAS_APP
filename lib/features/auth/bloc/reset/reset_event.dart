@@ -60,4 +60,15 @@ class ResetPasswordEvent extends ResetEvent {
   List<Object> get props => [resetToken, password];
 }
 
+
+class SetFirstPasswordEvent extends ResetEvent {
+  final String currentPassword;
+  final String newPassword;
+
+  const SetFirstPasswordEvent(this.currentPassword, this.newPassword);
+
+  @override
+  List<Object> get props => [currentPassword, newPassword];
+}
+
 enum CheckEmail { register, reset }

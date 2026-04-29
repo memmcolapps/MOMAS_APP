@@ -337,6 +337,8 @@ enum ServiceType {
   airtimeTopUp,
   dataTopUp,
   creditToken,
+  creditTokenOthers,
+  cableSubscription,
   unknown;
 
   static ServiceType fromString(String value) {
@@ -347,6 +349,10 @@ enum ServiceType {
         return ServiceType.dataTopUp;
       case 'credit_token':
         return ServiceType.creditToken;
+      case 'credit_token_others':
+        return ServiceType.creditTokenOthers;
+      case 'cable_subscription':
+        return ServiceType.cableSubscription;
       default:
         return ServiceType.unknown;
     }
@@ -360,6 +366,10 @@ enum ServiceType {
         return 'data_top_up';
       case ServiceType.creditToken:
         return 'credit_token';
+      case ServiceType.creditTokenOthers:
+        return 'credit_token_others';
+      case ServiceType.cableSubscription:
+        return 'cable_subscription';
       case ServiceType.unknown:
         return 'unknown';
     }
@@ -373,6 +383,10 @@ enum ServiceType {
         return 'Data';
       case ServiceType.creditToken:
         return 'Credit Token';
+      case ServiceType.creditTokenOthers:
+        return 'Credit(Others)';
+      case ServiceType.cableSubscription:
+        return 'Cable';
       case ServiceType.unknown:
         return 'Unknown';
     }

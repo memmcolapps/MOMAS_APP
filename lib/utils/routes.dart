@@ -49,6 +49,7 @@ class Routes {
   static String payArrears = "$_baseURL/pay_arrears";
   static String arrears = "$_baseURL/arrears";
   static String resetPassword = "$_baseURL/reset-password";
+  static String updatePassword = "$_baseURL/update-password";
   static String getAccount = "$_baseURL/get-account";
   static String adminFeeCheck = "$_baseURL/admin-fee-check";
 

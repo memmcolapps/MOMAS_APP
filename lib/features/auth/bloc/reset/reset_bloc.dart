@@ -14,6 +14,7 @@ class ResetBloc extends Bloc<ResetEvent, ResetState> {
     on<ResetAccountEvent>(_onRequestReset);
     on<VerifyOtpEvent>(_onVerifyOtp);
     on<ResetPasswordEvent>(_onResetPassword);
+    on<SetFirstPasswordEvent>(_onSetFirstPasswordEvent);
   }
 
 Future<void> _onRequestReset(ResetAccountEvent event, Emitter<ResetState> emit) async {
@@ -48,6 +49,21 @@ Future<void> _onRequestReset(ResetAccountEvent event, Emitter<ResetState> emit) 
     try {
       emit(ResetLoading());
       final response = await authService.resetPassword(event.resetToken, event.password);
+      if (response.status == true) {
+        emit(ResetPasswordSuccess(response.message ?? ''));
+      } else {
+        emit(ResetPasswordFailure(response.message ?? ""));
+      }
+    } catch (e) {
+      emit(ResetPasswordFailure(e.toString()));
+    }
+  }
+
+
+  Future<void> _onSetFirstPasswordEvent(SetFirstPasswordEvent event, Emitter<ResetState> emit) async {
+    try {
+      emit(ResetLoading());
+      final response = await authService.updatePassword(event.currentPassword, event.newPassword);
       if (response.status == true) {
         emit(ResetPasswordSuccess(response.message ?? ''));
       } else {

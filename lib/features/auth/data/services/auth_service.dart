@@ -68,4 +68,9 @@ class AuthService {
       String resetToken, String password) async {
     return await repository.resetPassword(resetToken, password);
   }
+
+  Future<GenericResponse> updatePassword(
+      String currentPassword, String newPassword) async {
+    return await repository.updatePassword(currentPassword, newPassword);
+  }
 }

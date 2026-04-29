@@ -155,8 +155,7 @@ class _AuthScaffoldState extends State<_AuthScaffold> {
                       AuthView.resetPassword => ResetPasswordBody(
                           key: const ValueKey('reset'),
                           resetToken:
-                              context.read<AuthViewCubit>().resetToken ?? '',
-                          isFirstLogin: false,
+                              context.read<AuthViewCubit>().resetToken ?? ''
                         ),
                     },
                   ),

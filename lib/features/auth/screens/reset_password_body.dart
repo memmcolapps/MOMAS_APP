@@ -2,22 +2,22 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:momaspayplus/core/cubit/auth_cubit/auth_cubit.dart';
 import 'package:momaspayplus/features/auth/bloc/reset/reset_bloc.dart';
 import 'package:momaspayplus/features/auth/bloc/reset/reset_event.dart';
 import 'package:momaspayplus/features/auth/bloc/reset/reset_state.dart';
 import 'package:momaspayplus/features/auth/cubit/auth_view_cubit.dart';
+import 'package:momaspayplus/main.dart';
 import 'package:momaspayplus/reuseable/error_modal.dart';
 import 'package:momaspayplus/reuseable/mo_button.dart';
 import 'package:momaspayplus/reuseable/mo_form.dart';
 
 class ResetPasswordBody extends StatefulWidget {
-  final String? resetToken;
-  final bool isFirstLogin;
+  final String resetToken;
 
   const ResetPasswordBody({
     super.key,
-    this.resetToken,
-    this.isFirstLogin = false,
+    required this.resetToken,
   });
 
   @override
@@ -27,7 +27,7 @@ class ResetPasswordBody extends StatefulWidget {
 class _ResetPasswordBodyState extends State<ResetPasswordBody> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
-  TextEditingController();
+      TextEditingController();
 
   @override
   void dispose() {
@@ -44,7 +44,6 @@ class _ResetPasswordBodyState extends State<ResetPasswordBody> {
           case ResetPasswordFailure():
             showErrorBottomSheet(context, state.error);
           case ResetPasswordSuccess():
-          // go back to login — password reset complete
             context.read<AuthViewCubit>().showLogin();
           default:
             log("state not implemented");
@@ -65,29 +64,27 @@ class _ResetPasswordBodyState extends State<ResetPasswordBody> {
             title: "Confirm Password",
             isPassword: true,
           ),
-          const SizedBox(height: 30),  
+          const SizedBox(height: 30),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Row(
               children: [
                 Expanded(
                   child: MoButton(
-                    isLoading:
-                    context.watch<ResetBloc>().state is ResetLoading,
+                    isLoading: context.watch<ResetBloc>().state is ResetLoading,
                     title: "RESET PASSWORD",
                     onTap: () {
                       if (passwordController.text !=
                           confirmPasswordController.text) {
-                        showErrorBottomSheet(
-                            context, "Passwords do not match");
+                        showErrorBottomSheet(context, "Passwords do not match");
                         return;
                       }
                       context.read<ResetBloc>().add(
-                        ResetPasswordEvent(
-                          widget.resetToken ?? '',
-                          passwordController.text,
-                        ),
-                      );
+                            ResetPasswordEvent(
+                              widget.resetToken,
+                              passwordController.text,
+                            ),
+                          );
                     },
                   ),
                 ),
