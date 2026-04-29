@@ -1,7 +1,7 @@
 
 import 'package:equatable/equatable.dart';
+import 'package:momaspayplus/features/auth/data/models/login_request.dart';
 
-import '../../../../domain/data/request/login.dart';
 
 abstract class LoginEvent extends Equatable {
   const LoginEvent();

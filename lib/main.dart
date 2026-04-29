@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get_it/get_it.dart';
 
 import 'package:momaspayplus/app/app.dart';
 import 'package:momaspayplus/core/cubit/auth_cubit/auth_cubit.dart';
-
 import 'package:momaspayplus/utils/shared_pref.dart';
 
 final getIt = GetIt.instance;

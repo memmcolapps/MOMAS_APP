@@ -3,43 +3,44 @@
 
 import 'package:equatable/equatable.dart';
 
-abstract class RegisterState extends Equatable {
-  const RegisterState();
+abstract class ResetState extends Equatable {
+  const ResetState();
 
   @override
   List<Object> get props => [];
 }
 
 
-class RegisterInitial extends RegisterState {}
 
-class RegisterLoading extends RegisterState {}
+class ResetInitial extends ResetState {}
 
-class RegisterSuccess extends RegisterState {
+class ResetLoading extends ResetState {}
+
+class ResetSuccess extends ResetState {
   final String message;
-  const RegisterSuccess(this.message);
+  const ResetSuccess(this.message);
 
   @override
   List<Object> get props => [message];
 }
 
-class RegisterProcessFailure extends RegisterState {
+class ResetProcessFailure extends ResetState {
   final String error;
-  const RegisterProcessFailure(this.error);
+  const ResetProcessFailure(this.error);
 
   @override
   List<Object> get props => [error];
 }
 
 
-class EmailCheckSuccess extends RegisterState {
+class EmailCheckSuccess extends ResetState {
   final String email;
   const EmailCheckSuccess(this.email);
 
   @override
   List<Object> get props => [email];
 }
-class EmailCheckFail extends RegisterState {
+class EmailCheckFail extends ResetState {
   final String error;
   const EmailCheckFail(this.error);
 
@@ -48,9 +49,9 @@ class EmailCheckFail extends RegisterState {
 }
 
 
-class EmailVerificationSuccess extends RegisterState {
+class EmailVerificationSuccess extends ResetState {
 }
-class  EmailVerificationFail extends RegisterState {
+class  EmailVerificationFail extends ResetState {
   final String error;
   const EmailVerificationFail(this.error);
 

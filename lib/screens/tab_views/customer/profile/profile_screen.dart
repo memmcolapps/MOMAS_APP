@@ -15,9 +15,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../bloc/setting_bloc/setting_bloc.dart';
 import '../../../../bloc/setting_bloc/setting_state.dart';
 import '../../../../domain/data/response/user_model.dart';
-import '../../../../domain/repository/auth_repository.dart';
+import '../../../../features/auth/data/repositories/auth_repository.dart';
 import '../../../../domain/repository/setting_repository.dart';
-import '../../../../domain/service/auth_service.dart';
+import '../../../../features/auth/data/services/auth_service.dart';
 import '../../../../reuseable/error_modal.dart';
 import '../../../../utils/alert_dialog-view.dart';
 import '../../../../utils/shared_pref.dart';
@@ -89,31 +89,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 10,
                 ),
                 const ProfileInfoCard(),
+
+                // TODO(DON): Work on forgot password
                 // Options
-                OptionTile(
-                  icon: Icons.lock,
-                  title: 'Reset Password',
-                  onTap: () {
-                    if (isNotEmpty(user?.email)) {
-                      AuthService(AuthRepository())
-                          .checkEmail(user!.email!, "reset")
-                          .then((value) {
-                        if (value.status == true) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => EmailCodeScreen(
-                                        email: user?.email ?? "",
-                                        passCode: PassCode.resetPassword,
-                                      )));
-                        } else {
-                          showErrorBottomSheet(
-                              context, value.message ?? "Error occurred!");
-                        }
-                      });
-                    }
-                  },
-                ),
+                // OptionTile(
+                //   icon: Icons.lock,
+                //   title: 'Reset Password',
+                //   onTap: () {
+                //     if (isNotEmpty(user?.email)) {
+                //       AuthService(AuthRepository())
+                //           .checkEmail(user!.email!, "reset")
+                //           .then((value) {
+                //         if (value.status == true) {
+                //           Navigator.push(
+                //               context,
+                //               MaterialPageRoute(
+                //                   builder: (_) => EmailCodeScreen(
+                //                         email: user?.email ?? "",
+                //                         passCode: PassCode.resetPassword,
+                //                       )));
+                //         } else {
+                //           showErrorBottomSheet(
+                //               context, value.message ?? "Error occurred!");
+                //         }
+                //       });
+                //     }
+                //   },
+                // ),
                 OptionTile(
                   icon: Icons.electric_meter,
                   title: 'Request for a meter',

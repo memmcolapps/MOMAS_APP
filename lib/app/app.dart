@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,17 +7,13 @@ import 'package:momaspayplus/core/cubit/app_version_cubit/update_cubit.dart';
 import 'package:momaspayplus/core/cubit/auth_cubit/auth_cubit.dart';
 import 'package:momaspayplus/core/cubit/auth_cubit/auth_state.dart';
 import 'package:momaspayplus/core/cubit/tab_cubit/tab_cubit.dart';
-
-import 'package:momaspayplus/core/app_update_wrapper.dart';
-import 'package:momaspayplus/features/auth/screens/auth_screen.dart';
 import 'package:momaspayplus/main.dart';
 import 'package:momaspayplus/tabs/root_screen.dart';
-
+import 'package:momaspayplus/core/app_update_wrapper.dart';
+import 'package:momaspayplus/features/auth/screens/auth_screen.dart';
+import 'package:momaspayplus/features/onboarding/screens/intro_page.dart';
 import 'package:momaspayplus/utils/navigation.dart';
 import 'package:momaspayplus/utils/theme.dart';
-
-import 'package:momaspayplus/features/onboarding/screens/intro_page.dart';
-
 import 'package:momaspayplus/utils/shared_pref.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();

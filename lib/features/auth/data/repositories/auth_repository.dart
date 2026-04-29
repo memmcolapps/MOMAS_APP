@@ -1,10 +1,10 @@
-import 'package:momaspayplus/domain/data/request/register.dart';
 import 'package:momaspayplus/domain/data/response/generic_response.dart';
 import 'package:momaspayplus/domain/data/response/user_model.dart';
 import 'package:momaspayplus/domain/request.dart';
+import 'package:momaspayplus/features/auth/data/models/login_request.dart';
+import 'package:momaspayplus/features/auth/data/models/reset_request.dart';
 
-import '../../utils/routes.dart';
-import '../data/request/login.dart';
+import '../../../../utils/routes.dart';
 
 class AuthRepository {
   final ServerRequest _request = ServerRequest();
@@ -15,15 +15,15 @@ class AuthRepository {
     return UserModel.fromJson(response.data);
   }
 
-  Future<GenericResponse> register(Register data) async {
-    var response =
-        await _request.postData(path: Routes.register, body: data.toJson());
-    return GenericResponse.fromJson(response.data);
-  }
+  // Future<GenericResponse> register(Register data) async {
+  //   var response =
+  //       await _request.postData(path: Routes.register, body: data.toJson());
+  //   return GenericResponse.fromJson(response.data);
+  // }
 
-  Future<GenericResponse> checkEmail(String email, action) async {
+  Future<GenericResponse> checkEmail(ResetRequest data) async {
     var response = await _request.postData(
-        path: Routes.checkEmail, body: {"email": email, "action": action});
+        path: Routes.checkEmail, body: data.toJson());
     return GenericResponse.fromJson(response.data);
   }
 
