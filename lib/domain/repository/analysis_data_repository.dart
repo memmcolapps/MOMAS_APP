@@ -16,6 +16,15 @@ class AnalysisDataRepository {
     return AnalysisResponse.fromJson(response.data);
   }
 
+  Future<AnalysisResponse> getAnalysisSummary(String year) async {
+    var response = await _request.getData(
+      path: Routes.getAnalysisSummary,
+      dataToSend:  {'year': _resolveYear(year)}
+    );
+
+    return AnalysisResponse.fromJson(response.data);
+  }
+
   Future<TransactionAnalysisResponse> getTransactionAnalysis(
       String year) async {
     var response = await _request.getData(

@@ -21,7 +21,8 @@ class MoColors {
 
   // Surfaces
   static const Color scaffoldBg     = Color(0xFFF4F6F5);
-  static const Color scaffoldWhite = Color(0xFFF0FAF2);
+  // static const Color scaffoldWhite = Color(0xFFF0FAF2);
+  static const Color scaffoldWhite = Color(0xFFFFFFFF);
   static const Color cardBg         = Color(0xFFFFFFFF);
   static const Color cardBgAlt      = Color(0xFFF9FBF9);   // slightly tinted white for inner sections
 

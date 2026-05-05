@@ -106,7 +106,7 @@ class _HomePageState extends State<HomePage> {
                   child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      PromoSection(),
+                      // PromoSection(),
                       SizedBox(height: 10),
                       FeaturesGrid()
                     ],

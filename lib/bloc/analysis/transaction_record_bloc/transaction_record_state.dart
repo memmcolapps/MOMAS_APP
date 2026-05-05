@@ -1,11 +1,11 @@
 import 'package:equatable/equatable.dart';
 import 'package:momaspayplus/domain/data/response/analytics_data_response.dart';
 
-abstract class UtilityMetricsState extends Equatable {
+abstract class TransactionRecordState extends Equatable {
   final String selectedYear;
   final List<String> availableYears;
 
-  const UtilityMetricsState({
+  const TransactionRecordState({
     required this.selectedYear,
     required this.availableYears,
   });
@@ -14,37 +14,39 @@ abstract class UtilityMetricsState extends Equatable {
   List<Object?> get props => [selectedYear, availableYears];
 }
 
-class UtilityMetricsInitial extends UtilityMetricsState {
-  const UtilityMetricsInitial()
+class TransactionRecordInitial extends TransactionRecordState {
+  const TransactionRecordInitial()
       : super(selectedYear: 'This year', availableYears: const ['This year']);
 }
 
-class UtilityMetricsLoading extends UtilityMetricsState {
-  const UtilityMetricsLoading(
-      {
+class TransactionRecordLoading extends TransactionRecordState {
+  const TransactionRecordLoading({
     required super.selectedYear,
     required super.availableYears,
-  }
-  );
+  });
 }
 
-class UtilityMetricsSuccess extends UtilityMetricsState {
-  final List<ServiceTypeMetric> data;
+class TransactionRecordSuccess extends TransactionRecordState {
+  final double totalMonthAmount;
+  final double monthChangePercent;
 
-  const UtilityMetricsSuccess({
-    required this.data,
+  const TransactionRecordSuccess({
+    required this.totalMonthAmount,
+    required this.monthChangePercent,
     required super.selectedYear,
     required super.availableYears,
   });
 
   @override
-  List<Object?> get props => [...super.props, data];
+  List<Object?> get props => [...super.props,
+    totalMonthAmount,
+    monthChangePercent,];
 }
 
-class UtilityMetricsFailure extends UtilityMetricsState {
+class TransactionRecordFailure extends TransactionRecordState {
   final String error;
 
-  const UtilityMetricsFailure({
+  const TransactionRecordFailure({
     required this.error,
     required super.selectedYear,
     required super.availableYears,

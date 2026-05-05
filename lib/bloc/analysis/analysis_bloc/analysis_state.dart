@@ -17,25 +17,10 @@ class AnalysisLoading extends AnalysisState {
 }
 
 class AnalysisSuccess extends AnalysisState {
-  final String selectedYear;
-  final List<String> availableYears;
-  final double totalMonthAmount;
-  final double monthChangePercent;
-
-  const AnalysisSuccess({
-    required this.selectedYear,
-    required this.availableYears,
-    required this.totalMonthAmount,
-    required this.monthChangePercent,
-  });
+  const AnalysisSuccess();
 
   @override
-  List<Object> get props => [
-    selectedYear,
-    availableYears,
-    totalMonthAmount,
-    monthChangePercent,
-  ];
+  List<Object> get props => [];
 }
 
 class AnalysisFailure extends AnalysisState {

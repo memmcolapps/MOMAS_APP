@@ -39,7 +39,7 @@ class FeaturesGrid extends StatelessWidget {
             const SizedBox(height: 12),
             GridView.count(
               crossAxisCount: context.isTablet ? 4 : 3,
-              childAspectRatio: context.isTablet ? 1.0 : 0.95,
+              childAspectRatio: context.isTablet ? 1.0 : 0.8,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
               shrinkWrap: true,

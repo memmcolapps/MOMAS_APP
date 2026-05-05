@@ -59,8 +59,8 @@ class AnalysisData {
 
     return AnalysisData(
       selectedYear: json['year'] == currentYear ? 'This year' : json['year'],
-      totalMonthAmount: (json['total_month_amount'] ?? 0).toDouble(),
-      monthChangePercent: (json['month_change_percent'] ?? 0).toDouble(),
+      totalMonthAmount: (json['total_year_amount'] ?? 0).toDouble(),
+      monthChangePercent: (json['year_change_percent'] ?? 0).toDouble(),
       byYear: (json['months'] as List<dynamic>? ?? [])
           .map((e) => MonthlyTransaction.fromJson(e))
           .where((t) => t.month <= DateTime.now().month)
@@ -78,8 +78,8 @@ class AnalysisData {
 
   Map<String, dynamic> toJson() => {
     'selectedYear': selectedYear,
-    'total_month_amount': totalMonthAmount,
-    'month_change_percent': monthChangePercent,
+    'total_year_amount': totalMonthAmount,
+    'year_change_percent': monthChangePercent,
     'months': byYear.map((e) => e.toJson()).toList(),
     'services': byServiceType.map((e) => e.toJson()).toList(),
     'token_breakdown':

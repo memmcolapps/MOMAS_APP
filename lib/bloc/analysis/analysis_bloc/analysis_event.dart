@@ -8,4 +8,3 @@ class GetAnalysis extends AnalysisEvent {
   @override
   List<Object?> get props => [];
 }
-

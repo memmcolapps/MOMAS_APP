@@ -5,6 +5,16 @@ abstract class UtilityMetricsEvent extends Equatable {
   const UtilityMetricsEvent();
 }
 
+class LoadingUtilityMetrics extends UtilityMetricsEvent {
+  final String selectedYear;
+  final List<String> availableYears;
+
+  const LoadingUtilityMetrics({required this.selectedYear, required this.availableYears});
+  @override
+  List<Object?> get props => [selectedYear, availableYears];
+}
+
+
 class SeedUtilityMetrics extends UtilityMetricsEvent {
   final AnalysisData data;
 
@@ -14,10 +24,12 @@ class SeedUtilityMetrics extends UtilityMetricsEvent {
   List<Object?> get props => [data];
 }
 
-class FilterUtilityMetrics extends UtilityMetricsEvent {
-  final String selectedYear;
-  const FilterUtilityMetrics({required this.selectedYear});
 
-  @override
-  List<Object?> get props => [selectedYear];
-}
+
+// class FilterUtilityMetrics extends UtilityMetricsEvent {
+//   final String selectedYear;
+//   const FilterUtilityMetrics({required this.selectedYear});
+//
+//   @override
+//   List<Object?> get props => [selectedYear];
+// }

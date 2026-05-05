@@ -87,6 +87,7 @@ class TransactionData {
 
 enum PaymentStatus {
   pending(0),
+  failed(1),
   successful(2),
   declined(3),
   none(4);
@@ -99,6 +100,8 @@ enum PaymentStatus {
     switch (value) {
       case 0:
         return PaymentStatus.pending;
+      case 1:
+        return PaymentStatus.failed;
       case 2:
         return PaymentStatus.successful;
       case 3:
@@ -129,6 +132,8 @@ enum PaymentStatus {
     switch (this) {
       case PaymentStatus.pending:
         return 'Pending';
+      case PaymentStatus.failed:
+        return 'Failed';
       case PaymentStatus.successful:
         return 'Successful';
       case PaymentStatus.declined:

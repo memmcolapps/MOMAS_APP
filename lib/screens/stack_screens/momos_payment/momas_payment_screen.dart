@@ -3,8 +3,13 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:momaspayplus/bloc/access_token_bloc/access_token_bloc.dart';
+import 'package:momaspayplus/bloc/access_token_bloc/access_token_event.dart';
+import 'package:momaspayplus/bloc/access_token_bloc/access_token_state.dart';
+import 'package:momaspayplus/domain/data/response/estate_response.dart';
 import 'package:momaspayplus/domain/data/response/tariff.dart';
 import 'package:momaspayplus/domain/data/response/user_model.dart';
+import 'package:momaspayplus/domain/repository/access_token_repository.dart';
 import 'package:momaspayplus/domain/repository/bill_repository.dart';
 import 'package:momaspayplus/screens/stack_screens/stack_screen_skeleton.dart';
 import 'package:momaspayplus/utils/amount_formatter.dart';
@@ -45,12 +50,13 @@ class MomasPaymentScreen extends StatefulWidget {
 
 class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
   late MomasPaymentBloc bloc;
+  late AccessTokenBloc accessTokenBloc;
   MomasVerificationResponse? verificationResponse;
   final meterTextFormController = TextEditingController();
   final amountFormController = TextEditingController();
-  Estate? selectedEstate;
+  EstateData? selectedEstate;
   late ServiceBloc serviceBloc;
-  ServiceDataResponse? serviceDataResponse;
+  List<EstateData>? serviceDataResponse;
   bool isLoading = false;
   User? user;
   num minPurchase = 0;
@@ -67,8 +73,10 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
     bloc = MomasPaymentBloc(repository: BillRepository());
     load();
     if (widget.momasPaymentType == MomasPaymentType.others) {
-      serviceBloc = ServiceBloc(ServiceRepository())
-        ..add(const ServicePropertiesEvent());
+      // serviceBloc = ServiceBloc(ServiceRepository())
+      //   ..add(const ServicePropertiesEvent());
+      accessTokenBloc = AccessTokenBloc(repository: AccessTokenRepository())
+        ..add(const GetAccessToken());
     }
   }
 
@@ -124,10 +132,10 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                   widget.momasPaymentType == MomasPaymentType.others
                       ? Column(
                           children: [
-                            BlocConsumer<ServiceBloc, ServiceState>(
-                              bloc: serviceBloc,
+                            BlocConsumer<AccessTokenBloc, AccessTokenState>(
+                              bloc: accessTokenBloc,
                               builder: (context, state) {
-                                return EPDropdownButton<Estate>(
+                                return EPDropdownButton<EstateData>(
                                   itemsListTitle: "Choose Estate",
                                   iconSize: 22,
                                   value: selectedEstate,
@@ -145,7 +153,7 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                                       verificationResponse = null;
                                     });
                                   },
-                                  items: (serviceDataResponse?.data?.estate ??
+                                  items: (serviceDataResponse ??
                                           [])
                                       .map(
                                         (e) => DropdownMenuItem(
@@ -169,17 +177,17 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                                 );
                               },
                               listener:
-                                  (BuildContext context, ServiceState state) {
+                                  (BuildContext context, AccessTokenState state) {
                                 switch (state) {
-                                  case ServiceStateLoading():
+                                  case AccessTokenLoading():
                                     setState(() => isLoading = true);
-                                  case ServiceStateFailed():
+                                  case AccessTokenFailed():
                                     setState(() => isLoading = false);
                                     showErrorBottomSheet(
                                         context, state.error);
-                                  case ServiceStateSuccess():
+                                  case AccessTokenSuccess():
                                     setState(() => isLoading = false);
-                                    serviceDataResponse = state.dataResponse;
+                                    serviceDataResponse = state.estateData;
 
                                   default:
                                     log("state not implemented");
@@ -273,7 +281,7 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                         )
                       : Container(),
                   MoFormWidget(
-                    enable: editable,
+                    // enable: editable,
                     controller: amountFormController,
                     keyboardType: TextInputType.number,
                     inputFormatters: [
@@ -578,7 +586,7 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                   ),
 
                   MoButton(
-                    isNotActive: state is MomasPaymentFailure || !editable,
+                    // isNotActive: state is MomasPaymentFailure,
                     isLoading: state is MomasPaymentLoading || isLoading,
                     title: "CONTINUE",
                     onTap: () {
@@ -587,6 +595,7 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                           : payForOther();
                     },
                   ),
+                  SizedBox(height: 100,)
                 ],
               ),
             ),

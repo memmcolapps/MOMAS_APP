@@ -5,6 +5,8 @@ import 'package:momaspayplus/bloc/analysis/token_report_bloc/token_report_bloc.d
 import 'package:momaspayplus/bloc/analysis/token_report_bloc/token_report_event.dart';
 import 'package:momaspayplus/bloc/analysis/transaction_analysis_bloc/transaction_analysis_bloc.dart';
 import 'package:momaspayplus/bloc/analysis/transaction_analysis_bloc/transaction_analysis_event.dart';
+import 'package:momaspayplus/bloc/analysis/transaction_record_bloc/transaction_record_bloc.dart';
+import 'package:momaspayplus/bloc/analysis/transaction_record_bloc/transaction_record_event.dart';
 import 'package:momaspayplus/bloc/analysis/utility_metrics_bloc/utility_metrics_bloc.dart';
 import 'package:momaspayplus/bloc/analysis/utility_metrics_bloc/utility_metrics_event.dart';
 import 'package:momaspayplus/domain/data/response/analytics_data_response.dart';
@@ -13,17 +15,20 @@ import 'package:momaspayplus/domain/repository/analysis_data_repository.dart';
 class AnalysisBloc extends Bloc<AnalysisEvent, AnalysisState> {
   final AnalysisDataRepository repository;
 
+  final TransactionRecordBloc transactionRecordBloc;
   final TransactionAnalysisBloc transactionAnalysisBloc;
   final UtilityMetricsBloc utilityMetricsBloc;
   final TokenReportBloc tokenReportBloc;
 
   AnalysisBloc({
     required this.repository,
+    required this.transactionRecordBloc,
     required this.transactionAnalysisBloc,
     required this.utilityMetricsBloc,
     required this.tokenReportBloc,
   }) : super(const AnalysisInitial()) {
     on<GetAnalysis>(_onGetAnalysis);
+    // on<GetAnalysisSummary>(_onGetAnalysisSummary);
   }
 
   Future<void> _onGetAnalysis(
@@ -35,19 +40,15 @@ class AnalysisBloc extends Bloc<AnalysisEvent, AnalysisState> {
       if (response.status) {
         final data = response.data;
 
-        // Seed each section BLoC with its slice of the combined response
+        transactionRecordBloc
+            .add(SeedTransactionRecord(data: data));
         transactionAnalysisBloc.add(SeedTransactionAnalysis(data: data));
         utilityMetricsBloc
             .add(SeedUtilityMetrics(data: data));
         tokenReportBloc
             .add(SeedTokenReport(data: data));
 
-        emit(AnalysisSuccess(
-          selectedYear: data.selectedYear,
-          availableYears: data.availableYears,
-          totalMonthAmount: data.totalMonthAmount,
-          monthChangePercent: data.monthChangePercent,
-        ));
+        emit( const AnalysisSuccess());
       } else {
         emit(AnalysisFailure(error: response.message ?? 'Network error'));
       }
@@ -55,4 +56,27 @@ class AnalysisBloc extends Bloc<AnalysisEvent, AnalysisState> {
       emit(AnalysisFailure(error: e.toString()));
     }
   }
+
+  // Future<void> _onGetAnalysisSummary(
+  //     GetAnalysisSummary event, Emitter<AnalysisState> emit) async {
+  //
+  //   emit(const AnalysisSuccess());
+  //
+  //   try {
+  //     final response = await repository.getAnalysisSummary(event.selectedYear);
+  //
+  //     if (response.status) {
+  //       final data = response.data;
+  //
+  //       transactionRecordBloc.add(SeedTransactionRecord(data: data));
+  //       utilityMetricsBloc.add(SeedUtilityMetrics(data: data));
+  //       tokenReportBloc.add(SeedTokenReport(data: data));
+  //
+  //     } else {
+  //
+  //     }
+  //   } catch (e) {
+  //
+  //   }
+  // }
 }

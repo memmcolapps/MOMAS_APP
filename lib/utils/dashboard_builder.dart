@@ -22,16 +22,25 @@ import 'images.dart';
 class DashboardBuilder {
   static List<GridItemModel> builder(Feature feature, BuildContext context, User? user) {
     return [
-      if (feature.isVisible(feature.momasMeter))
-        GridItemModel(
-          image: MoImage.momasPayment,
-          title: "Buy Units",
-          subtitle: "Buy more unit for your momas meter",
-          active: feature.isActive(feature.momasMeter),
-          onTap: () => Navigator.push(context, MaterialPageRoute(
-            builder: (_) => const MomasPaymentScreen(momasPaymentType: MomasPaymentType.self),
-          )),
-        ),
+      GridItemModel(
+        image: MoImage.momasPayment,
+        title: "Buy Units",
+        subtitle: "Buy more unit for your momas meter",
+        active: feature.isActive(feature.momasMeter),
+        onTap: () => Navigator.push(context, MaterialPageRoute(
+          builder: (_) => const MomasPaymentScreen(momasPaymentType: MomasPaymentType.self),
+        )),
+      ),
+      // if (feature.isVisible(feature.momasMeter))
+      //   GridItemModel(
+      //     image: MoImage.momasPayment,
+      //     title: "Buy Units",
+      //     subtitle: "Buy more unit for your momas meter",
+      //     active: feature.isActive(feature.momasMeter),
+      //     onTap: () => Navigator.push(context, MaterialPageRoute(
+      //       builder: (_) => const MomasPaymentScreen(momasPaymentType: MomasPaymentType.self),
+      //     )),
+      //   ),
       if (feature.isVisible(feature.otherMeter))
         GridItemModel(
           image: MoImage.meterPayment,
@@ -42,16 +51,16 @@ class DashboardBuilder {
             builder: (_) => const MomasPaymentScreen(momasPaymentType: MomasPaymentType.others),
           )),
         ),
-      if (feature.isVisible(feature.printToken))
-        GridItemModel(
-          image: MoImage.reprintToken,
-          title: "Reprint Token",
-          subtitle: "Reprint your purchased token",
-          active: feature.isActive(feature.printToken),
-          onTap: () => Navigator.push(context, MaterialPageRoute(
-            builder: (_) => ReprintTokenScreen(),
-          )),
-        ),
+      // if (feature.isVisible(feature.printToken))
+      //   GridItemModel(
+      //     image: MoImage.reprintToken,
+      //     title: "Reprint Token",
+      //     subtitle: "Reprint your purchased token",
+      //     active: feature.isActive(feature.printToken),
+      //     onTap: () => Navigator.push(context, MaterialPageRoute(
+      //       builder: (_) => ReprintTokenScreen(),
+      //     )),
+      //   ),
       if (feature.isVisible(feature.accessToken))
         GridItemModel(
           image: MoImage.accessToken,
@@ -99,16 +108,16 @@ class DashboardBuilder {
             ));
           },
         ),
-      if (feature.isVisible(feature.analysis))
-        GridItemModel(
-          image: MoImage.analytics,
-          title: "Analytics",
-          subtitle: "View your usage analytics",
-          active: feature.isActive(feature.analysis),
-          onTap: () => Navigator.push(context, MaterialPageRoute(
-            builder: (_) => const MetricsScreen(),
-          )),
-        ),
+      // if (feature.isVisible(feature.analysis))
+      //   GridItemModel(
+      //     image: MoImage.analytics,
+      //     title: "Analytics",
+      //     subtitle: "View your usage analytics",
+      //     active: feature.isActive(feature.analysis),
+      //     onTap: () => Navigator.push(context, MaterialPageRoute(
+      //       builder: (_) => const MetricsScreen(),
+      //     )),
+      //   ),
       // Arrears is always visible
       GridItemModel(
         image: MoImage.analytics,
@@ -122,9 +131,13 @@ class DashboardBuilder {
   }
 
   static GridItemModel? quickSlot2(Feature feature, BuildContext context) {
-    return builder(feature, context, null)
-        .skip(1)
-        .firstOrNull;
+    final items = builder(feature, context, null);
+
+    if (feature.isVisible(feature.services)) {
+      return items.firstWhere((item) => item.title == "Services");
+    }
+
+    return items.firstWhere((item) => item.title == "Arrears");
   }
 }
 

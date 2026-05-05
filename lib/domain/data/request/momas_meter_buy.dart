@@ -42,7 +42,7 @@ class MomasMeterBuy {
     data['trxref'] = trxref;//
     data['meter_type'] = meterType; //
     data['estate_id'] = estateId; //
-    data['meter_no'] = meterNo; //
+    data['receiver_meterNo'] = meterNo; //
     data['tariff_id'] = tariffId;
     data['vend_amount_kw_per_naira'] = vendValueKWPerNaira;
     data['total_paid_amount'] = totalPaidAmount;
