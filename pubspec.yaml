@@ -39,6 +39,8 @@ dependencies:
   collection: ^1.19.1
   get_it: ^9.2.1
   flutter_native_splash: ^2.4.7
+  pdf: ^3.12.0
+  printing: ^5.14.3
 #  upgrader: ^11.5.0
 #  webview_flutter: ^4.10.0
 #  shared_preferences: ^2.5.3

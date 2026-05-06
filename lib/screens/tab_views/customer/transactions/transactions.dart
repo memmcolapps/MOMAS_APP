@@ -84,7 +84,7 @@ class _TransactionsState extends State<Transactions> {
                     vertical: 16.0,
                   ),
                   child: MoFormWidget(
-                    prefixIcon: Icon(Icons.search, color: MoColors.mainColor),
+                    prefixIcon: const Icon(Icons.search, color: MoColors.mainColor),
                     hintText: "Search",
                     onChange: (value) {
                       _filterData(value);
@@ -106,9 +106,9 @@ class _TransactionsState extends State<Transactions> {
                               },
                               child: TransactionCard(
                                 data: filteredTransactionDataList![index],
-                                retry: (transRef) {
-                                  paymentBloc.add(RetryPayment(transRef));
-                                },
+                                // retry: (transRef) {
+                                //   paymentBloc.add(RetryPayment(transRef));
+                                // },
                               ),
                             );
                           },

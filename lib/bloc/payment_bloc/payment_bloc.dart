@@ -134,6 +134,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
 
 enum PaymentType { paystack, wallet, flutterwave, remita, enkpay }
 
+// For Payment request
 enum ServiceType {
   credit_token,
   data,

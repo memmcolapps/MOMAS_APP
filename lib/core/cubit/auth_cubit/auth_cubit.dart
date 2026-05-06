@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/core/cubit/auth_cubit/auth_state.dart';
 import 'package:momaspayplus/domain/data/response/feature.dart';
 import 'package:momaspayplus/domain/data/response/user_model.dart';
+import 'package:momaspayplus/utils/navigation.dart';
 import 'package:momaspayplus/utils/shared_pref.dart';
 
 class AuthCubit extends Cubit<AuthState> {
@@ -25,11 +26,13 @@ class AuthCubit extends Cubit<AuthState> {
   void sessionExpired() {
     if (state is AuthUnauthenticated) return;
     SharedPreferenceHelper.clearUser();
+    NavigationService.navigatorKey.currentState?.popUntil((route) => route.isFirst);
     emit(AuthUnauthenticated());
   }
 
   void logout() {
     SharedPreferenceHelper.clearUser();
+    NavigationService.navigatorKey.currentState?.popUntil((route) => route.isFirst);
     emit(AuthUnauthenticated());
   }
 
