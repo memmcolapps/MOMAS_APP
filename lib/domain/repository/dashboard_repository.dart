@@ -3,10 +3,10 @@ import 'dart:developer';
 import 'package:momaspayplus/domain/data/response/promo.dart';
 import 'package:momaspayplus/domain/data/response/wallet.dart';
 
-import '../../utils/routes.dart';
+import '../../core/network/routes.dart';
 import '../data/response/feature.dart';
 import '../data/response/user_model.dart';
-import '../request.dart';
+import '../../core/network/request.dart';
 
 class DashboardRepository {
   final ServerRequest _request = ServerRequest();

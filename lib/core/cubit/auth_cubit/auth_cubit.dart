@@ -3,7 +3,7 @@ import 'package:momaspayplus/core/cubit/auth_cubit/auth_state.dart';
 import 'package:momaspayplus/domain/data/response/feature.dart';
 import 'package:momaspayplus/domain/data/response/user_model.dart';
 import 'package:momaspayplus/utils/navigation.dart';
-import 'package:momaspayplus/utils/shared_pref.dart';
+import 'package:momaspayplus/core/storage/shared_pref.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());

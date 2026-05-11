@@ -1,12 +1,12 @@
 import 'package:momaspayplus/domain/data/response/generic_response.dart';
 import 'package:momaspayplus/domain/data/response/user_model.dart';
-import 'package:momaspayplus/domain/request.dart';
+import 'package:momaspayplus/core/network/request.dart';
 import 'package:momaspayplus/features/auth/data/models/login_request.dart';
 import 'package:momaspayplus/features/auth/data/models/reset_request.dart';
 import 'package:momaspayplus/features/auth/data/models/verify_otp_request.dart';
 import 'package:momaspayplus/features/auth/data/models/verify_otp_response.dart';
 
-import '../../../../utils/routes.dart';
+import '../../../../core/network/routes.dart';
 
 class AuthRepository {
   final ServerRequest _request = ServerRequest();

@@ -20,7 +20,7 @@ import '../../../../domain/repository/setting_repository.dart';
 import '../../../../features/auth/data/services/auth_service.dart';
 import '../../../../reuseable/error_modal.dart';
 import '../../../../utils/alert_dialog-view.dart';
-import '../../../../utils/shared_pref.dart';
+import '../../../../core/storage/shared_pref.dart';
 import '../../../../utils/strings.dart';
 import '../../../auth/email_code_screen.dart';
 import '../../../stack_screens/support/support_screen.dart';

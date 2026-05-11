@@ -20,7 +20,7 @@ import '../../../domain/data/response/service_response.dart';
 import '../../../domain/data/response/user_model.dart';
 import '../../../reuseable/error_modal.dart';
 import '../../../reuseable/search_bottom_sheet/ka_dropdown.dart';
-import '../../../utils/shared_pref.dart';
+import '../../../core/storage/shared_pref.dart';
 
 class ServiceScreen extends StatefulWidget {
   const ServiceScreen({super.key});

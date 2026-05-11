@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:momaspayplus/core/cubit/app_version_cubit/update_state.dart';
+import 'package:momaspayplus/features/app_update/bloc/update_state.dart';
 import 'package:momaspayplus/reuseable/bottom_sheet/update_modal/modal_content.dart';
 import 'package:momaspayplus/utils/colors.dart';
 

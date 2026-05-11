@@ -377,92 +377,122 @@ class _TransactionSuccessPageState extends State<TransactionSuccessPage> {
     pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a4,
-        margin: const pw.EdgeInsets.all(32),
-        build: (pw.Context context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.center,
+        margin: const pw.EdgeInsets.all(40),
+        build: (pw.Context ctx) {
+          return pw.Stack(
             children: [
-              pw.Image(logoImage, width: 80, height: 80),
-              pw.SizedBox(height: 8),
-              pw.Text(
-                'MOMASPay',
-                style: pw.TextStyle(
-                  fontSize: 18,
-                  fontWeight: pw.FontWeight.bold,
-                  color: PdfColor.fromHex('#28B446'),
-                ),
-              ),
-              pw.SizedBox(height: 24),
-              pw.Container(
-                padding: const pw.EdgeInsets.symmetric(
-                    horizontal: 16, vertical: 8),
-                decoration: pw.BoxDecoration(
-                  color: widget.failed
-                      ? PdfColor.fromHex('#FFEBEE')
-                      : PdfColor.fromHex('#E8F8EC'),
-                  borderRadius: pw.BorderRadius.circular(20),
-                ),
-                child: pw.Text(
-                  widget.failed ? 'Payment Failed' : 'Payment Successful',
-                  style: pw.TextStyle(
-                    fontSize: 16,
-                    fontWeight: pw.FontWeight.bold,
-                    color: widget.failed
-                        ? PdfColor.fromHex('#D32F2F')
-                        : PdfColor.fromHex('#28B446'),
+              // failed watermark diagonal text
+              if (widget.failed)
+                pw.Center(
+                  child: pw.Transform.rotate(
+                    angle: -0.5,
+                    child: pw.Text(
+                      'FAILED',
+                      style: pw.TextStyle(
+                        fontSize: 80,
+                        fontWeight: pw.FontWeight.bold,
+                        color: PdfColor.fromHex('#D32F2F').shade(0.08),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              pw.SizedBox(height: 24),
-              pw.Text(
-                widget.receiptHeading ?? 'Purchase Details',
-                style: pw.TextStyle(
-                  fontSize: 14,
-                  fontWeight: pw.FontWeight.bold,
-                ),
-              ),
-              pw.SizedBox(height: 8),
-              pw.Divider(color: PdfColor.fromHex('#E0E0E0')),
-              pw.SizedBox(height: 8),
-              ...details
-                  .where((d) => isNotEmpty(d.value))
-                  .map(
-                    (d) => pw.Padding(
-                  padding: const pw.EdgeInsets.symmetric(vertical: 5),
-                  child: pw.Row(
-                    mainAxisAlignment:
-                    pw.MainAxisAlignment.spaceBetween,
+
+              // main content
+              pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.center,
+                children: [
+                  // logo + name
+                  pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.center,
                     children: [
+                      pw.Image(logoImage, width: 32, height: 32),
+                      pw.SizedBox(width: 8),
                       pw.Text(
-                        d.label ?? '',
-                        style: const pw.TextStyle(
-                          color: PdfColors.grey600,
-                          fontSize: 12,
-                        ),
-                      ),
-                      pw.Text(
-                        d.value ?? '',
+                        'MOMASPay',
                         style: pw.TextStyle(
-                          fontSize: 12,
+                          fontSize: 15,
                           fontWeight: pw.FontWeight.bold,
+                          color: PdfColor.fromHex('#28B446'),
                         ),
                       ),
                     ],
                   ),
-                ),
-              ),
-              pw.SizedBox(height: 16),
-              pw.Divider(color: PdfColor.fromHex('#E0E0E0')),
-              pw.SizedBox(height: 8),
-              pw.Text(
-                'Thank you for choosing Momas Pay',
-                style: pw.TextStyle(
-                  fontStyle: pw.FontStyle.italic,
-                  color: PdfColors.grey,
-                  fontSize: 11,
-                ),
+                  pw.SizedBox(height: 20),
+                  pw.Divider(color: PdfColor.fromHex('#E0E0E0')),
+                  pw.SizedBox(height: 12),
+
+                  // heading
+                  pw.Text(
+                    widget.receiptHeading ?? 'Purchase Details',
+                    style: pw.TextStyle(
+                      fontSize: 13,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
+                  pw.SizedBox(height: 12),
+
+                  // detail rows
+                  ...details
+                      .where((d) => isNotEmpty(d.value))
+                      .map((d) => pw.Padding(
+                    padding:
+                    const pw.EdgeInsets.symmetric(vertical: 6),
+                    child: pw.Row(
+                      mainAxisAlignment:
+                      pw.MainAxisAlignment.spaceBetween,
+                      children: [
+                        pw.Text(
+                          d.label ?? '',
+                          style: const pw.TextStyle(
+                            color: PdfColors.grey600,
+                            fontSize: 11,
+                          ),
+                        ),
+                        pw.Text(
+                          d.value ?? '',
+                          style: pw.TextStyle(
+                            fontSize: 11,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )),
+
+                  pw.SizedBox(height: 16),
+                  pw.Divider(color: PdfColor.fromHex('#E0E0E0')),
+                  pw.SizedBox(height: 10),
+
+                  pw.Text(
+                    'Thank you for choosing Momas Pay',
+                    style: pw.TextStyle(
+                      fontStyle: pw.FontStyle.italic,
+                      color: PdfColors.grey,
+                      fontSize: 10,
+                    ),
+                  ),
+                ],
               ),
             ],
+          );
+        },
+      ),
+    );
+
+    return pdf.save();
+  }
+
+  Future<Uint8List> _imageToPdf(Uint8List imageBytes) async {
+    final pdf = pw.Document();
+    final image = pw.MemoryImage(imageBytes);
+
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        margin: pw.EdgeInsets.zero,
+        build: (pw.Context ctx) {
+          return pw.Center(
+            child: pw.Image(image, fit: pw.BoxFit.contain),
           );
         },
       ),
@@ -474,11 +504,16 @@ class _TransactionSuccessPageState extends State<TransactionSuccessPage> {
   Future<void> _shareAsPdf() async {
     setState(() => _isSharing = true);
     try {
-      final pdfBytes = await _buildPdf();
-      final dir = await path.getApplicationDocumentsDirectory();
-      final file = File('${dir.path}/receipt.pdf');
-      await file.writeAsBytes(pdfBytes);
-      await Share.shareXFiles([XFile(file.path)]);
+      // capture the same screenshot used for image share
+      final imageBytes = await _screenshotController.capture(
+          delay: const Duration(milliseconds: 10));
+      if (imageBytes != null) {
+        final pdfBytes = await _imageToPdf(imageBytes);
+        final dir = await path.getApplicationDocumentsDirectory();
+        final file = File('${dir.path}/receipt.pdf');
+        await file.writeAsBytes(pdfBytes);
+        await Share.shareXFiles([XFile(file.path)]);
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -489,6 +524,25 @@ class _TransactionSuccessPageState extends State<TransactionSuccessPage> {
       if (mounted) setState(() => _isSharing = false);
     }
   }
+
+  // Future<void> _shareAsPdf() async {
+  //   setState(() => _isSharing = true);
+  //   try {
+  //     final pdfBytes = await _buildPdf();
+  //     final dir = await path.getApplicationDocumentsDirectory();
+  //     final file = File('${dir.path}/receipt.pdf');
+  //     await file.writeAsBytes(pdfBytes);
+  //     await Share.shareXFiles([XFile(file.path)]);
+  //   } catch (e) {
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('Failed to share PDF: $e')),
+  //       );
+  //     }
+  //   } finally {
+  //     if (mounted) setState(() => _isSharing = false);
+  //   }
+  // }
 
   Future<void> _shareAsImage() async {
     setState(() => _isSharing = true);
@@ -543,14 +597,13 @@ class _TransactionSuccessPageState extends State<TransactionSuccessPage> {
               ),
             ),
 
-            // scrollable content
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 16, vertical: 8),
                 child: Column(
                   children: [
-                    // animation — outside Screenshot, won't be captured
+                    // animation — outside Screenshot
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.12,
                       child: widget.failed
@@ -582,12 +635,13 @@ class _TransactionSuccessPageState extends State<TransactionSuccessPage> {
                     ),
                     const SizedBox(height: 20),
 
-                    // Screenshot only wraps the receipt card
+                    // Screenshot wraps only the receipt card
                     Screenshot(
                       controller: _screenshotController,
                       child: _ReceiptCard(
                         details: widget.details ?? [],
                         receiptHeading: widget.receiptHeading,
+                        failed: widget.failed,
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -612,15 +666,15 @@ class _TransactionSuccessPageState extends State<TransactionSuccessPage> {
               child: _isSharing
                   ? Center(
                 child: CircularProgressIndicator(
-                  color: MoColors.mainColor,
-                ),
+                    color: MoColors.mainColor),
               )
                   : Row(
                 children: [
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: _shareAsImage,
-                      icon: const Icon(Icons.image_outlined, size: 18),
+                      icon: const Icon(Icons.image_outlined,
+                          size: 18),
                       label: const Text("Share Image"),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: MoColors.mainColor,
@@ -667,8 +721,13 @@ class _TransactionSuccessPageState extends State<TransactionSuccessPage> {
 class _ReceiptCard extends StatelessWidget {
   final List<TransactionDetail> details;
   final String? receiptHeading;
+  final bool failed;
 
-  const _ReceiptCard({required this.details, this.receiptHeading});
+  const _ReceiptCard({
+    required this.details,
+    required this.failed,
+    this.receiptHeading,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -677,79 +736,118 @@ class _ReceiptCard extends StatelessWidget {
       child: Container(
         width: double.infinity,
         color: Colors.white,
-        padding: const EdgeInsets.fromLTRB(20, 28, 20, 28),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Stack(
           children: [
-            Image.asset(MoImage.logoTransparent, height: 48),
-            const SizedBox(height: 4),
-            const Text(
-              'MOMASPay',
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: MoColors.mainColor,
-                letterSpacing: 0.5,
+            // failed diagonal watermark
+            if (failed)
+              Positioned.fill(
+                child: Center(
+                  child: Transform.rotate(
+                    angle: -0.5,
+                    child: Text(
+                      'FAILED',
+                      style: TextStyle(
+                        fontSize: 72,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.red.withOpacity(0.06),
+                        letterSpacing: 8,
+                      ),
+                    ),
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Divider(color: Colors.grey.shade200),
-            const SizedBox(height: 12),
-            Text(
-              receiptHeading ?? 'Purchase Details',
-              style: const TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 15,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 16),
-            ...details
-                .where((d) => isNotEmpty(d.value))
-                .map((d) => _buildRow(d.label ?? '', d.value ?? '')),
-            const SizedBox(height: 16),
-            Divider(color: Colors.grey.shade200),
-            const SizedBox(height: 8),
-            Text(
-              'Thank you for choosing Momas Pay',
-              style: TextStyle(
-                fontStyle: FontStyle.italic,
-                fontSize: 11,
-                color: Colors.grey.shade400,
+
+            // receipt content
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 28, 20, 28),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // logo + name
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(MoImage.logoTransparent, height: 30),
+                      const SizedBox(width: 6),
+                      const Text(
+                        'MOMASPay',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: MoColors.mainColor,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Divider(color: Colors.grey.shade200),
+                  const SizedBox(height: 12),
+
+                  // heading
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      receiptHeading ?? 'Purchase Details',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // detail rows
+                  ...details
+                      .where((d) => isNotEmpty(d.value))
+                      .map((d) => Padding(
+                    padding:
+                    const EdgeInsets.symmetric(vertical: 6),
+                    child: Row(
+                      crossAxisAlignment:
+                      CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          d.label ?? '',
+                          style: TextStyle(
+                            color: Colors.grey.shade500,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            d.value ?? '',
+                            textAlign: TextAlign.end,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )),
+
+                  const SizedBox(height: 16),
+                  Divider(color: Colors.grey.shade200),
+                  const SizedBox(height: 8),
+
+                  Text(
+                    'Thank you for choosing Momas Pay',
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontSize: 11,
+                      color: Colors.grey.shade400,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: Colors.grey.shade500,
-              fontSize: 13,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              value,
-              textAlign: TextAlign.end,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -780,4 +878,4 @@ class ReceiptClipper extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
-}  
+}

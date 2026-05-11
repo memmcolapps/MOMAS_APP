@@ -8,6 +8,7 @@ import 'package:momaspayplus/bloc/dashboard_bloc/dashboard_state.dart';
 import 'package:momaspayplus/utils/colors.dart';
 import 'package:momaspayplus/utils/images.dart';
 import '../../../../../domain/data/response/user_model.dart';
+import './initials_avatar.dart';
 
 class ProfileInfoCard extends StatefulWidget {
   const ProfileInfoCard({super.key});
@@ -121,10 +122,7 @@ class _ProfileCard extends StatelessWidget {
                           width: 1.5,
                         ),
                       ),
-                      child: CircleAvatar(
-                        radius: 26,
-                        backgroundImage: AssetImage(MoImage.profilePic),
-                      ),
+                        child: InitialsAvatar(user: user)
                     ),
                     const SizedBox(width: 14),
                     Expanded(

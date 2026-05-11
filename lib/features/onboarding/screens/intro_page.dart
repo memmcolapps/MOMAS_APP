@@ -5,7 +5,7 @@ import 'package:momaspayplus/features/auth/screens/auth_screen.dart';
 import 'package:momaspayplus/features/onboarding/screens/intro_dot.dart';
 import 'package:momaspayplus/reuseable/buttons/secondary_button.dart';
 import 'package:momaspayplus/screens/auth/login.dart';
-import 'package:momaspayplus/utils/shared_pref.dart';
+import 'package:momaspayplus/core/storage/shared_pref.dart';
 
 class IntroPage extends StatefulWidget {
   const IntroPage({super.key});

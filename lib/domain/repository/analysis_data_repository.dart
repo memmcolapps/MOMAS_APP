@@ -1,6 +1,6 @@
 import 'package:momaspayplus/domain/data/response/analytics_data_response.dart';
-import 'package:momaspayplus/domain/request.dart';
-import 'package:momaspayplus/utils/routes.dart';
+import 'package:momaspayplus/core/network/request.dart';
+import 'package:momaspayplus/core/network/routes.dart';
 
 class AnalysisDataRepository {
   final ServerRequest _request = ServerRequest();

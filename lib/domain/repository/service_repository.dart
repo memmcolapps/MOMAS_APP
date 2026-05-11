@@ -2,11 +2,11 @@ import 'package:momaspayplus/domain/data/response/artisan_list_response.dart';
 import 'package:momaspayplus/domain/data/response/generic_response.dart';
 import 'package:momaspayplus/domain/data/response/service_type_response.dart';
 
-import '../../utils/routes.dart';
+import '../../core/network/routes.dart';
 import '../data/response/comment_response.dart';
 import '../data/response/service_data_response.dart';
 import '../data/response/service_response.dart';
-import '../request.dart';
+import '../../core/network/request.dart';
 
 class ServiceRepository {
   final ServerRequest _request = ServerRequest();

@@ -10,7 +10,7 @@ import 'package:momaspayplus/screens/tab_views/customer/Homepage/widgets/promo_s
 import 'package:momaspayplus/screens/tab_views/customer/Homepage/widgets/quick_widgets.dart';
 import 'package:momaspayplus/utils/colors.dart';
 import 'package:momaspayplus/utils/images.dart';
-import 'package:momaspayplus/utils/shared_pref.dart';
+import 'package:momaspayplus/core/storage/shared_pref.dart';
 import 'package:momaspayplus/utils/strings.dart';
 
 class HomePage extends StatefulWidget {

@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/features/auth/bloc/login/login_event.dart';
 import 'package:momaspayplus/features/auth/bloc/login/login_state.dart';
 import 'package:momaspayplus/features/auth/data/services/auth_service.dart';
-import 'package:momaspayplus/utils/shared_pref.dart';
+import 'package:momaspayplus/core/storage/shared_pref.dart';
 
 import '../../../../domain/data/response/generic_response.dart';
 import '../../../../domain/data/response/user_model.dart';

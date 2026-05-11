@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:momaspayplus/domain/data/response/app_version_response.dart';
+import 'package:momaspayplus/features/app_update/data/models/app_version_response.dart';
 
 abstract class AppUpdateState extends Equatable {
   const AppUpdateState();

@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/bloc/setting_bloc/setting_event.dart';
 import 'package:momaspayplus/bloc/setting_bloc/setting_state.dart';
-import 'package:momaspayplus/utils/shared_pref.dart';
+import 'package:momaspayplus/core/storage/shared_pref.dart';
 
 import '../../domain/repository/setting_repository.dart';
 

@@ -17,7 +17,7 @@ import 'package:momaspayplus/reuseable/mo_button.dart';
 import 'package:momaspayplus/reuseable/mo_form.dart';
 import 'package:momaspayplus/utils/bio_metric_widget.dart';
 import 'package:momaspayplus/utils/colors.dart';
-import 'package:momaspayplus/utils/shared_pref.dart';
+import 'package:momaspayplus/core/storage/shared_pref.dart';
 import 'package:momaspayplus/utils/validators.dart';
 
 class LoginBody extends StatefulWidget {

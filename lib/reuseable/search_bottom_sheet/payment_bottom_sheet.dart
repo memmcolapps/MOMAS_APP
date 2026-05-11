@@ -18,7 +18,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../domain/data/response/user_model.dart';
 import '../../utils/keyboard_utils.dart';
-import '../../utils/shared_pref.dart';
+import '../../core/storage/shared_pref.dart';
 import '../error_modal.dart';
 
 class PaymentBottomSheet extends StatefulWidget {
