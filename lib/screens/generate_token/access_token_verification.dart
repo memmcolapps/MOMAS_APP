@@ -10,6 +10,7 @@ import '../../bloc/access_token_bloc/access_token_event.dart';
 import '../../bloc/access_token_bloc/access_token_state.dart';
 import '../../domain/data/response/access_token_list_data.dart';
 import '../../domain/repository/access_token_repository.dart';
+import '../../reuseable/app_error_display.dart';
 import '../../reuseable/error_modal.dart';
 import '../../reuseable/mo_form.dart';
 import '../../utils/colors.dart';
@@ -135,7 +136,7 @@ class _AccessTokenVerificationState extends State<AccessTokenVerification> {
         listener: (BuildContext context, AccessTokenState state) {
           switch (state) {
             case AccessTokenFailed():
-              showErrorBottomSheet(context, state.error);
+              AppErrorDisplay.show(context, state.error);
             case GetTokenListSuccess():
               setState(() {
                 tokenList = state.data;
@@ -146,7 +147,6 @@ class _AccessTokenVerificationState extends State<AccessTokenVerification> {
               showSuccessBottomSheet(context, state.message);
               break;
             default:
-              log("state not implemented");
           }
         },
       ),

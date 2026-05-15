@@ -197,7 +197,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         //     case SettingsSupportStateSuccess():
         //       showSuccessBottomSheet(context, state.message);
         //     default:
-        //       log("state not implemented");
         //   }
         // },
         // ),

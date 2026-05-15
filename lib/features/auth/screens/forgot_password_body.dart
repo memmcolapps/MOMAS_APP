@@ -9,6 +9,7 @@ import 'package:momaspayplus/features/auth/bloc/reset/reset_state.dart';
 
 import 'package:momaspayplus/features/auth/cubit/auth_view_cubit.dart';
 import 'package:momaspayplus/features/auth/data/models/reset_request.dart';
+import 'package:momaspayplus/reuseable/app_error_display.dart';
 import 'package:momaspayplus/reuseable/error_modal.dart';
 import 'package:momaspayplus/reuseable/mo_button.dart';
 import 'package:momaspayplus/reuseable/mo_form.dart';
@@ -31,9 +32,8 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
           case ResetRequestSuccess():
             context.read<AuthViewCubit>().showOtpVerify();
           case ResetRequestFail():
-            showErrorBottomSheet(context, state.error);
+            AppErrorDisplay.show(context, state.error);
           default:
-            log("state not implemented");
         }
       },
       builder: (context, state) {

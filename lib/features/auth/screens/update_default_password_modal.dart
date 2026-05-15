@@ -7,6 +7,7 @@ import 'package:momaspayplus/features/auth/bloc/reset/reset_state.dart';
 import 'package:momaspayplus/features/auth/data/repositories/auth_repository.dart';
 import 'package:momaspayplus/features/auth/data/services/auth_service.dart';
 import 'package:momaspayplus/main.dart';
+import 'package:momaspayplus/reuseable/app_error_display.dart';
 import 'package:momaspayplus/reuseable/error_modal.dart';
 import 'package:momaspayplus/reuseable/mo_button.dart';
 import 'package:momaspayplus/reuseable/mo_form.dart';
@@ -44,7 +45,7 @@ class _UpdateDefaultPasswordModalState
               getIt<AuthCubit>().clearDefaultPassword();
               Navigator.pop(context);
             case ResetPasswordFailure():
-              showErrorBottomSheet(context, state.error);
+              AppErrorDisplay.show(context, state.error);
             default:
               break;
           }

@@ -61,7 +61,6 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: MoColors.mainColorII,
         body: RefreshIndicator(
           onRefresh: () async {
-            debugPrint("Refreshing state");
             context.read<WalletBloc>().add(WalletDashboardEvent());
             context.read<PromoBloc>().add(PromotionEvent());
             context.read<DashboardBloc>().add(FeatureDashboardEvent());

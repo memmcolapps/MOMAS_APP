@@ -1,7 +1,9 @@
+import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/domain/data/response/data_response.dart';
 import 'package:momaspayplus/utils/network_enum.dart';
+import 'package:momaspayplus/utils/strings.dart';
 
 import '../../domain/data/request/data_request.dart';
 import '../../domain/data/response/generic_response.dart';
@@ -12,21 +14,17 @@ import 'data_state.dart';
 class DataBloc extends Bloc<DataEvent, DataState> {
   final BillRepository repository;
 
-  DataBloc({required this.repository}) : super(DataInitial()){
+  DataBloc({required this.repository}) : super(DataInitial()) {
     on<BuyData>((event, emit) async {
       await mapEventToState(event, emit);
-
     });
 
     on<GetData>((event, emit) async {
       await getData(event, emit);
-
     });
-
   }
 
-  Future mapEventToState(DataEvent event,  Emitter<DataState> emit) async {
-
+  Future mapEventToState(DataEvent event, Emitter<DataState> emit) async {
     if (event is BuyData) {
       emit(DataLoading());
       try {
@@ -35,32 +33,35 @@ class DataBloc extends Bloc<DataEvent, DataState> {
           amount: event.amount,
           phone: event.phone,
           variationCode: event.variationCode,
-            ref: event.ref
-
+          ref: event.ref,
         );
         final GenericResponse response = await repository.buyData(request);
-        if(response.status ==true){
+        if (response.status == true) {
           emit(BuyDataSuccess(response: response));
-        }else{
-          emit(DataFailure(error: response.message ?? ""));
+        } else {
+          emit(DataFailure(error: extractError(response.message)));
         }
       } catch (e) {
+        log('[DataBloc] buyData error: $e');
         emit(DataFailure(error: e.toString()));
       }
     }
   }
 
-  Future getData(DataEvent event,  Emitter<DataState> emit) async {
+  Future getData(DataEvent event, Emitter<DataState> emit) async {
     if (event is GetData) {
       emit(DataPlansLoading());
       try {
-        final DataResponse response = await repository.getData(event.network.displayName);
-        if(response.status ==true){
+        final DataResponse response =
+            await repository.getData(event.network.displayName);
+        if (response.status == true) {
           emit(DataSuccess(response: response));
-        }else{
-          emit(const DataFailure(error:  "failed request to get data plans"));
+        } else {
+          emit(const DataFailure(
+              error: 'Unable to load data plans. Please try again.'));
         }
       } catch (e) {
+        log('[DataBloc] getData error: $e');
         emit(DataFailure(error: e.toString()));
       }
     }

@@ -12,6 +12,7 @@ import '../../../bloc/setting_bloc/setting_event.dart';
 import '../../../bloc/setting_bloc/setting_state.dart';
 import '../../../domain/data/response/setting_response.dart';
 import '../../../domain/repository/setting_repository.dart';
+import '../../../reuseable/app_error_display.dart';
 import '../../../reuseable/error_modal.dart';
 import '../../../reuseable/pop_button.dart';
 import '../../../reuseable/shadow_container.dart';
@@ -28,9 +29,6 @@ class SupportScreen extends StatelessWidget {
       body: BlocConsumer<SettingsBloc, SettingsState>(
         // bloc: settingsBloc,
         builder: (context, state) {
-          if (state is SettingsSupportStateLoading) {
-            debugPrint("(state is SettingsSupportStateLoading) loading >>>>>");
-          }
           final supportData = (state is SettingsSupportStateLoading) ? state.data : null;
           if (state is SettingsStateLoading) {
             return SizedBox(
@@ -99,11 +97,10 @@ class SupportScreen extends StatelessWidget {
         listener: (BuildContext context, SettingsState state) {
           switch (state) {
             case SettingsStateFailed():
-              showErrorBottomSheet(context, state.error);
+              AppErrorDisplay.show(context, state.error);
             case SettingsSupportStateLoading():
               // supportData = state.data;
             default:
-              log("state not implemented");
           }
         },
       ),

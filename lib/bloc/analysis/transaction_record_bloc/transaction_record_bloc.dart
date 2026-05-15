@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/bloc/analysis/token_report_bloc/token_report_bloc.dart';
+import 'package:momaspayplus/utils/strings.dart';
 import 'package:momaspayplus/bloc/analysis/token_report_bloc/token_report_event.dart';
 import 'package:momaspayplus/bloc/analysis/transaction_record_bloc/transaction_record_event.dart';
 import 'package:momaspayplus/bloc/analysis/transaction_record_bloc/transaction_record_state.dart';
@@ -62,7 +63,7 @@ class TransactionRecordBloc
         ));
       } else {
         emit(TransactionRecordFailure(
-          error: response.message ?? 'Network error',
+          error: extractError(response.message),
           selectedYear: state.selectedYear,
           availableYears: state.availableYears,
         ));

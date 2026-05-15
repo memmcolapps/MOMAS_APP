@@ -204,7 +204,6 @@
 //                   }
 //
 //                 default:
-//                   log("state not implemented");
 //               }
 //             },
 //           ),

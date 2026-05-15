@@ -1,7 +1,9 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/bloc/payment_bloc/payment_event.dart';
 import 'package:momaspayplus/bloc/payment_bloc/payment_state.dart';
+import 'package:momaspayplus/utils/strings.dart';
 
 import '../../domain/repository/payment_repository.dart';
 
@@ -47,9 +49,10 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
             emit(PaymentSuccess(url: response.url ?? ""));
           }
         } else {
-          emit(PaymentFailure(error: response.message ?? 'Network error'));
+          emit(PaymentFailure(error: extractError(response.message)));
         }
       } catch (e) {
+        log('[PaymentBloc] payment error: $e');
         emit(PaymentFailure(error: e.toString()));
       }
     }
@@ -64,9 +67,10 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
             paymentStatus: response.data?.paymentStatus ?? "failure",
             ref: response.data?.ref ?? ''));
       } else {
-        emit(PaymentFailure(error: response.message ?? "Network issue"));
+        emit(PaymentFailure(error: extractError(response.message)));
       }
-    } catch (e, _) {
+    } catch (e) {
+      log('[PaymentBloc] verifyPayment error: $e');
       emit(PaymentFailure(error: e.toString()));
     }
   }
@@ -78,11 +82,11 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
       if (response.status == true) {
         emit(PaymentHistorySuccess(response.data ?? []));
       } else {
-        emit(const PaymentFailure(error: 'Network error'));
+        emit(const PaymentFailure(
+            error: 'Unable to load transactions. Please try again.'));
       }
-    } catch (e, _) {
-      print(_);
-      print(e);
+    } catch (e) {
+      log('[PaymentBloc] searchPayment error: $e');
       emit(PaymentFailure(error: e.toString()));
     }
   }
@@ -94,9 +98,10 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
       if (response.status == true) {
         emit(MomasPaymentSuccess(response));
       } else {
-        emit(RetryFailure(error: response.message ?? "Network issue"));
+        emit(RetryFailure(error: extractError(response.message)));
       }
-    } catch (e, _) {
+    } catch (e) {
+      log('[PaymentBloc] retryPayment error: $e');
       emit(RetryFailure(error: e.toString()));
     }
   }
@@ -108,10 +113,10 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
       if (response.status == true) {
         emit(ViewMomasPaymentSuccess(response));
       } else {
-        emit(ReceiptFailure(error: response.message ?? "Failed to load receipt"));
+        emit(ReceiptFailure(error: extractError(response.message)));
       }
-    } catch (e, _) {
-      print(_);
+    } catch (e) {
+      log('[PaymentBloc] viewPayment error: $e');
       emit(ReceiptFailure(error: e.toString()));
     }
   }
@@ -123,10 +128,11 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
       if (response.status == true) {
         emit(MomasGenerateBank(response));
       } else {
-        emit(const PaymentFailure(error: "Fail to generate bank account"));
+        emit(const PaymentFailure(
+            error: 'Unable to generate bank account. Please try again.'));
       }
-    } catch (e, _) {
-      print(_);
+    } catch (e) {
+      log('[PaymentBloc] generateAccount error: $e');
       emit(PaymentFailure(error: e.toString()));
     }
   }

@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/bloc/analysis/analysis_bloc/analysis_event.dart';
 import 'package:momaspayplus/bloc/analysis/analysis_bloc/analysis_state.dart';
+import 'package:momaspayplus/utils/strings.dart';
 import 'package:momaspayplus/bloc/analysis/token_report_bloc/token_report_bloc.dart';
 import 'package:momaspayplus/bloc/analysis/token_report_bloc/token_report_event.dart';
 import 'package:momaspayplus/bloc/analysis/transaction_analysis_bloc/transaction_analysis_bloc.dart';
@@ -50,7 +51,7 @@ class AnalysisBloc extends Bloc<AnalysisEvent, AnalysisState> {
 
         emit( const AnalysisSuccess());
       } else {
-        emit(AnalysisFailure(error: response.message ?? 'Network error'));
+        emit(AnalysisFailure(error: extractError(response.message)));
       }
     } catch (e) {
       emit(AnalysisFailure(error: e.toString()));

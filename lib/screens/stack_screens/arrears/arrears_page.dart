@@ -12,6 +12,7 @@ import '../../../bloc/payment_bloc/payment_bloc.dart';
 import '../../../domain/data/response/arrears_items.dart';
 import '../../../domain/repository/bill_repository.dart';
 import '../../../reuseable/bottom_sheet.dart';
+import '../../../reuseable/app_error_display.dart';
 import '../../../reuseable/error_modal.dart';
 import '../../../utils/amount_formatter.dart';
 import '../../../utils/colors.dart';
@@ -45,7 +46,7 @@ class _CustomerArrearsPageState extends State<CustomerArrearsPage> {
             showSuccessBottomSheet(context, "Payment of arrears is successful");
             context.read<CustomerArrearsBloc>().add(GetArrears());
           } else if (state is ArrearPaymentFailure) {
-            showErrorBottomSheet(context, "Payment failed");
+            AppErrorDisplay.show(context, state.error);
           }
         },
         child: StackScreenSkeleton(
@@ -132,7 +133,6 @@ class _CustomerArrearsPageState extends State<CustomerArrearsPage> {
           ? ServiceType.admin_fee
           : ServiceType.utilities,
       onPayment: (String ref) {
-        debugPrint("<<<<>>>: $ref");
         if (single) {
           context.read<CustomerArrearsBloc>().add(PaySingleArrear(
               id: arrearsId, paymentRef: ref, serviceType: arrearsType));

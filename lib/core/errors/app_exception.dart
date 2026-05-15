@@ -67,4 +67,7 @@ class AppException implements Exception {
     } catch (_) {}
     return null;
   }
+
+  @override
+  String toString() => message;
 }

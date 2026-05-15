@@ -22,7 +22,6 @@ class ModalContent extends StatelessWidget {
   }
 
   void _onUpdate(bool isIOS) {
-    debugPrint(isIOS.toString());
     Launcher().launchInBrowser(
         Uri.parse(isIOS ? state.appStoreUrl : state.playStoreUrl));
   }

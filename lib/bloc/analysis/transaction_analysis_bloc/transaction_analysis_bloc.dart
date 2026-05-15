@@ -3,6 +3,7 @@ import 'package:momaspayplus/bloc/analysis/transaction_analysis_bloc/transaction
 import 'package:momaspayplus/bloc/analysis/transaction_analysis_bloc/transaction_analysis_state.dart';
 import 'package:momaspayplus/domain/data/response/analytics_data_response.dart';
 import 'package:momaspayplus/domain/repository/analysis_data_repository.dart';
+import 'package:momaspayplus/utils/strings.dart';
 
 class TransactionAnalysisBloc
     extends Bloc<TransactionAnalysisEvent, TransactionAnalysisState> {
@@ -39,7 +40,7 @@ class TransactionAnalysisBloc
             availableYears: response.data.availableYears));
       } else {
         emit(TransactionAnalysisFailure(
-          error: response.message ?? 'Network error',
+          error: extractError(response.message),
           selectedYear: state.selectedYear,
           availableYears: state.availableYears,
         ));

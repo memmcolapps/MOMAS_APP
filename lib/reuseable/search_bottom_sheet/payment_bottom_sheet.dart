@@ -19,6 +19,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import '../../domain/data/response/user_model.dart';
 import '../../utils/keyboard_utils.dart';
 import '../../core/storage/shared_pref.dart';
+import '../app_error_display.dart';
 import '../error_modal.dart';
 
 class PaymentBottomSheet extends StatefulWidget {
@@ -193,7 +194,6 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
           );
         },
         listener: (BuildContext context, PaymentState state) {
-          debugPrint("Listener received state: $state");
           if (state is PaymentSuccess) {
             setState(() {
               isLoading = false;
@@ -208,29 +208,24 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
               }
             });
           } else if (state is PaymentVerified) {
-            Navigator.pop(context);
             if (state.paymentStatus == 'success' && state.ref.isNotEmpty) {
-              debugPrint('ref ${state.ref}');
+              Navigator.pop(context);
               widget.onPayment!(state.ref);
             } else {
-              showErrorBottomSheet(context, "Payment Failed");
+              // Context is still valid — show error directly without delay so the
+              // user sees it before this bottom sheet is dismissed.
+              showErrorBottomSheet(context, "Payment verification failed. Please try again.");
             }
           } else if (state is PaymentWalletSuccess) {
-            debugPrint("Padi with wallet");
             widget.onPayment!(state.ref);
             Navigator.pop(context);
           } else if (state is PaymentFailure) {
             setState(() {
               isLoading = false;
             });
-            // ScaffoldMessenger.of(context).showSnackBar(
-            //   SnackBar(
-            //       content: Text(
-            //     state.error,
-            //     style: const TextStyle(color: Colors.black),
-            //   )),
-            // );
-            Navigator.pop(context);
+            // Context is still valid here — show error directly on the payment
+            // sheet (the user can retry or close manually). Popping first would
+            // unmount the context, making any subsequent error display fail silently.
             showErrorBottomSheet(context, state.error);
           }
         },
@@ -362,7 +357,6 @@ class _PaymentWebViewState extends State<PaymentWebView> {
           onWebResourceError: (WebResourceError error) {},
           onNavigationRequest: (NavigationRequest request) {
             Uri uri = Uri.parse(request.url);
-            debugPrint("Navigating to ${request.url}");
 
             // if (request.url.contains('paystack-check')) {
             //   handleApiRedirect(context, request.url);

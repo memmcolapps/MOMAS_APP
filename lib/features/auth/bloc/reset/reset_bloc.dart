@@ -1,9 +1,9 @@
 import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:momaspayplus/domain/data/response/generic_response.dart';
 import 'package:momaspayplus/features/auth/bloc/reset/reset_event.dart';
 import 'package:momaspayplus/features/auth/bloc/reset/reset_state.dart';
+import 'package:momaspayplus/utils/strings.dart';
 
 import '../../data/services/auth_service.dart';
 
@@ -17,59 +17,69 @@ class ResetBloc extends Bloc<ResetEvent, ResetState> {
     on<SetFirstPasswordEvent>(_onSetFirstPasswordEvent);
   }
 
-Future<void> _onRequestReset(ResetAccountEvent event, Emitter<ResetState> emit) async {
-  try {
-    emit(ResetLoading());
-    final response = await authService.requestReset(event.resetData);
-    if (response.status == true) {
-      emit(ResetRequestSuccess(event.resetData.email ?? event.resetData.meterNo ?? ''));
-    } else {
-      emit(ResetRequestFail(response.message ?? ""));
+  Future<void> _onRequestReset(
+      ResetAccountEvent event, Emitter<ResetState> emit) async {
+    try {
+      emit(ResetLoading());
+      final response = await authService.requestReset(event.resetData);
+      if (response.status == true) {
+        emit(ResetRequestSuccess(
+            event.resetData.email ?? event.resetData.meterNo ?? ''));
+      } else {
+        emit(ResetRequestFail(extractError(response.message)));
+      }
+    } catch (e) {
+      log('[ResetBloc] requestReset error: $e');
+      emit(ResetRequestFail(e.toString()));
     }
-  } catch (e) {
-    emit(ResetRequestFail(e.toString()));
   }
-}
 
-  Future<void> _onVerifyOtp(VerifyOtpEvent event, Emitter<ResetState> emit) async {
+  Future<void> _onVerifyOtp(
+      VerifyOtpEvent event, Emitter<ResetState> emit) async {
     try {
       emit(ResetLoading());
       final response = await authService.verifyOtp(event.otpData);
       if (response.status == true) {
         emit(OtpVerifySuccess(response.resetToken ?? ''));
       } else {
-        emit(OtpVerifyFailure(response.message ?? ""));
+        emit(OtpVerifyFailure(extractError(response.message)));
       }
     } catch (e) {
+      log('[ResetBloc] verifyOtp error: $e');
       emit(OtpVerifyFailure(e.toString()));
     }
   }
 
-  Future<void> _onResetPassword(ResetPasswordEvent event, Emitter<ResetState> emit) async {
+  Future<void> _onResetPassword(
+      ResetPasswordEvent event, Emitter<ResetState> emit) async {
     try {
       emit(ResetLoading());
-      final response = await authService.resetPassword(event.resetToken, event.password);
+      final response =
+          await authService.resetPassword(event.resetToken, event.password);
       if (response.status == true) {
         emit(ResetPasswordSuccess(response.message ?? ''));
       } else {
-        emit(ResetPasswordFailure(response.message ?? ""));
+        emit(ResetPasswordFailure(extractError(response.message)));
       }
     } catch (e) {
+      log('[ResetBloc] resetPassword error: $e');
       emit(ResetPasswordFailure(e.toString()));
     }
   }
 
-
-  Future<void> _onSetFirstPasswordEvent(SetFirstPasswordEvent event, Emitter<ResetState> emit) async {
+  Future<void> _onSetFirstPasswordEvent(
+      SetFirstPasswordEvent event, Emitter<ResetState> emit) async {
     try {
       emit(ResetLoading());
-      final response = await authService.updatePassword(event.currentPassword, event.newPassword);
+      final response = await authService.updatePassword(
+          event.currentPassword, event.newPassword);
       if (response.status == true) {
         emit(ResetPasswordSuccess(response.message ?? ''));
       } else {
-        emit(ResetPasswordFailure(response.message ?? ""));
+        emit(ResetPasswordFailure(extractError(response.message)));
       }
     } catch (e) {
+      log('[ResetBloc] setFirstPassword error: $e');
       emit(ResetPasswordFailure(e.toString()));
     }
   }

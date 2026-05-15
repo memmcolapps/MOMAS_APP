@@ -17,7 +17,7 @@ class BioMetric{
         ),
       );
     } on Exception catch (e) {
-      log(e.toString());
+      log('[BioMetric] authenticate error: $e');
     }
 
     return isAuthenticated;
@@ -31,7 +31,7 @@ class BioMetric{
 
       return canCheckBiometrics && isBiometricSupported && availableBiometrics.isNotEmpty;
     } on Exception catch (e) {
-      log(e.toString());
+      log('[BioMetric] isBiometricAvailable error: $e');
       return false;
     }
   }

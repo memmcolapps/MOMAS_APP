@@ -15,6 +15,7 @@ import '../../../../bloc/service_bloc/service_event.dart';
 import '../../../../bloc/service_bloc/service_state.dart';
 import '../../../../domain/data/response/comment_response.dart';
 import '../../../../domain/repository/service_repository.dart';
+import '../../../../reuseable/app_error_display.dart';
 import '../../../../reuseable/error_modal.dart';
 import '../../../../utils/service_launcher.dart';
 import '../../../../utils/time_util.dart';
@@ -99,11 +100,10 @@ class _ServicePreviewScreenState extends State<ServicePreviewScreen> {
             case ServiceGetChatStateSuccess():
               setState(() => response = state.response);
             case ServiceStateFailed():
-              showErrorBottomSheet(context, state.error);
+              AppErrorDisplay.show(context, state.error);
             case ServiceSaveChatStateSuccess():
               showSuccessBottomSheet(context, state.message);
             default:
-              log("state not implemented");
           }
         },
       ),

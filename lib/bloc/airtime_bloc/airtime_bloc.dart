@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/domain/data/response/generic_response.dart';
 import 'package:momaspayplus/domain/repository/bill_repository.dart';
+import 'package:momaspayplus/utils/strings.dart';
 
 import '../../domain/data/request/airtime_request.dart';
 import 'airtime_event.dart';
@@ -29,9 +32,10 @@ class AirtimeBloc extends Bloc<AirtimeEvent, AirtimeState> {
         if (response.status == true) {
           emit(AirtimeSuccess(response: response));
         } else {
-          emit(AirtimeFailure(error: response.message ?? ""));
+          emit(AirtimeFailure(error: extractError(response.message)));
         }
       } catch (e) {
+        log('[AirtimeBloc] buyAirtime error: $e');
         emit(AirtimeFailure(error: e.toString()));
       }
     }

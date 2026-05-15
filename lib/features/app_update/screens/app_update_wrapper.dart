@@ -20,7 +20,6 @@ class _AppUpdateWrapperState extends State<AppUpdateWrapper> {
   void _showUpdateModal(AppUpdateRequired state) {
     final isMandatory = state.required;
 
-    debugPrint(isMandatory.toString());
     showModalBottomSheet(
       context: context,
       isDismissible: !isMandatory,

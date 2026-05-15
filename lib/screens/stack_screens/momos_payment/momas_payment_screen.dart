@@ -26,6 +26,7 @@ import '../../../domain/data/response/momas_meter_response.dart';
 import '../../../domain/data/response/service_data_response.dart';
 import '../../../domain/repository/service_repository.dart';
 import '../../../reuseable/bottom_sheet.dart';
+import '../../../reuseable/app_error_display.dart';
 import '../../../reuseable/error_modal.dart';
 import '../../../reuseable/mo_button.dart';
 import '../../../reuseable/mo_form.dart';
@@ -183,14 +184,12 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                                     setState(() => isLoading = true);
                                   case AccessTokenFailed():
                                     setState(() => isLoading = false);
-                                    showErrorBottomSheet(
-                                        context, state.error);
+                                    AppErrorDisplay.show(context, state.error);
                                   case AccessTokenSuccess():
                                     setState(() => isLoading = false);
                                     serviceDataResponse = state.estateData;
 
                                   default:
-                                    log("state not implemented");
                                 }
                               },
                             ),
@@ -329,15 +328,12 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                             .contains(text.toLowerCase());
                       },
                       onChanged: (v) {
-                        print(v.toJson());
                         if (v.amount == null) {
                           showErrorBottomSheet(context,
                               "Tariff amount not set, Please contact an admin.");
                           return;
                         }
-                        setState(() {
-                          selectedTariff = v;
-                        });
+                        setState(() => selectedTariff = v);
                       },
                       items: tariff
                           .map(
@@ -606,7 +602,8 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
             case MomasPaymentLoading():
               FocusScope.of(context).unfocus();
             case MomasPaymentFailure():
-              showErrorBottomSheet(context, state.error);
+              log('[MomasPaymentScreen] listener: MomasPaymentFailure → ${state.error}');
+              AppErrorDisplay.show(context, state.error);
               setState(() {
                 isLoading = false;
                 editable = false;
@@ -623,7 +620,6 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                                 state.momasPaymentResponse.data!.receipt!),
                           )));
             default:
-              log("state not implemented");
           }
         },
       ),
@@ -651,8 +647,6 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
           context, "Payable amount can't be less or equal to zero");
       return;
     }
-
-    print("tariffID>>>>:: " + selectedTariff!.id.toString());
 
     showPaymentModal(context, user!.meter!.meterNo!, () {
       MoBottomSheet().payment(context,
@@ -727,7 +721,6 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
     }
 
     showPaymentModal(context, user!.meter!.meterNo!, () {
-      print("meter number" + user!.meter!.meterNo!);
       MoBottomSheet().payment(context,
           amount: totalPayableAmount.toString(),
           serviceType: ServiceType.credit_token, onPayment: (String ref) {

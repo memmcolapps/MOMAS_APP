@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/core/storage/shared_pref.dart';
+import 'package:momaspayplus/utils/strings.dart';
 
 import '../../domain/repository/access_token_repository.dart';
 import 'access_token_event.dart';
@@ -41,9 +44,10 @@ class AccessTokenBloc extends Bloc<AccessTokenEvent, AccessTokenState> {
         if (response.status == true) {
           emit(AccessTokenSuccess(response.data ?? []));
         } else {
-          emit(AccessTokenFailed(response.message ?? ""));
+          emit(AccessTokenFailed(extractError(response.message)));
         }
       } catch (e) {
+        log('[AccessTokenBloc] getEstate error: $e');
         emit(AccessTokenFailed(e.toString()));
       }
     }
@@ -58,10 +62,11 @@ class AccessTokenBloc extends Bloc<AccessTokenEvent, AccessTokenState> {
         if (response.status == true) {
           emit(GetTokenListSuccess(response.data));
         } else {
-          emit(const AccessTokenFailed("Fails to get generated Token"));
+          emit(const AccessTokenFailed(
+              'Unable to load access tokens. Please try again.'));
         }
-      } catch (e, _) {
-        print(_);
+      } catch (e) {
+        log('[AccessTokenBloc] getTokenList error: $e');
         emit(AccessTokenFailed(e.toString()));
       }
     }
@@ -78,9 +83,10 @@ class AccessTokenBloc extends Bloc<AccessTokenEvent, AccessTokenState> {
           SharedPreferenceHelper.saveUser(userModel.user!.toJson());
           emit(SetEstateSuccess(response.message ?? ""));
         } else {
-          emit(AccessTokenFailed(response.message ?? ""));
+          emit(AccessTokenFailed(extractError(response.message)));
         }
       } catch (e) {
+        log('[AccessTokenBloc] setEstate error: $e');
         emit(AccessTokenFailed(e.toString()));
       }
     }
@@ -95,9 +101,10 @@ class AccessTokenBloc extends Bloc<AccessTokenEvent, AccessTokenState> {
         if (response.status == true) {
           emit(GenerateTokenSuccess(response));
         } else {
-          emit(AccessTokenFailed(response.message ?? ""));
+          emit(AccessTokenFailed(extractError(response.message)));
         }
       } catch (e) {
+        log('[AccessTokenBloc] generateToken error: $e');
         emit(AccessTokenFailed(e.toString()));
       }
     }
@@ -111,9 +118,10 @@ class AccessTokenBloc extends Bloc<AccessTokenEvent, AccessTokenState> {
       if (response.status == true) {
         emit(VerifyTokenSuccess(response.message ?? ""));
       } else {
-        emit(AccessTokenFailed(response.message ?? ""));
+        emit(AccessTokenFailed(extractError(response.message)));
       }
     } catch (e) {
+      log('[AccessTokenBloc] verifyToken error: $e');
       emit(AccessTokenFailed(e.toString()));
     }
   }
@@ -126,9 +134,10 @@ class AccessTokenBloc extends Bloc<AccessTokenEvent, AccessTokenState> {
       if (response.status == true) {
         emit(VerifyTokenSuccess(response.message ?? ""));
       } else {
-        emit(AccessTokenFailed(response.message ?? ""));
+        emit(AccessTokenFailed(extractError(response.message)));
       }
     } catch (e) {
+      log('[AccessTokenBloc] disApproveToken error: $e');
       emit(AccessTokenFailed(e.toString()));
     }
   }

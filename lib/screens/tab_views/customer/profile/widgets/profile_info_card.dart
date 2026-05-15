@@ -21,7 +21,6 @@ class _ProfileInfoCardState extends State<ProfileInfoCard> {
   @override
   void initState() {
     super.initState();
-    log("fetching user >>>>");
     context.read<UserBloc>().add(GetUserDashboardEvent());
   }
 

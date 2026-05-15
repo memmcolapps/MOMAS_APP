@@ -11,7 +11,6 @@ class VatCalculator {
 
   num _calculateVatUnit(num vatValue) {
     return (vatValue) * 10;
-    // return (100 + vatValue) / 100;
   }
 
   num _removePaymentCharge(num amount) {
@@ -24,7 +23,6 @@ class VatCalculator {
     required num utilitiesAmount,
     required num? vat,
   }) {
-    print(">>>vat: $vat}");
     double amount = _parseAmount(amountText);
     num vatValue = vat ?? 0;
     num amountReceivable = _calculateAmountReceivable(
@@ -41,11 +39,6 @@ class VatCalculator {
     required num utilitiesAmount,
     required num? vat,
   }) {
-    print("amountText: "+amountText.toString());
-    print("vat: "+vat.toString());
-    print("tariffAmount: "+tariffAmount.toString());
-    print("utilitiesAmount: "+utilitiesAmount.toString());
-
     double amount = _parseAmount(amountText);
     num amountReceivable = _calculateAmountReceivable(
       amount: amount,
@@ -71,9 +64,6 @@ class VatCalculator {
         utilitiesAmount: utilitiesAmount,
         tariffAmount: tariffAmount,
         vat: vat);
-
-    print(tariffAmountValue);
-    print("JJJJ ${costOfUnit / tariffAmountValue}");
     return tariffAmountValue > 0 ? costOfUnit / tariffAmountValue : 0;
   }
 }

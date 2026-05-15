@@ -1,12 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/features/auth/bloc/login/login_event.dart';
 import 'package:momaspayplus/features/auth/bloc/login/login_state.dart';
 import 'package:momaspayplus/features/auth/data/services/auth_service.dart';
 import 'package:momaspayplus/core/storage/shared_pref.dart';
+import 'package:momaspayplus/utils/strings.dart';
 
-import '../../../../domain/data/response/generic_response.dart';
 import '../../../../domain/data/response/user_model.dart';
-import '../../../../utils/strings.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final AuthService authService;
@@ -25,7 +26,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         if (response.status == true) {
           SharedPreferenceHelper.saveUser(response.user!.toJson());
           SharedPreferenceHelper.saveFeature(response.features!);
-          print("MI ${response.user!.monthlyAdminFee}");
           SharedPreferenceHelper.saveLogin(event.login.toJson());
           SharedPreferenceHelper.saveToken(response.user!.token!);
           emit(LoginSuccess(
@@ -34,11 +34,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             features: response.features!,
           ));
         } else {
-          emit(LoginFailure(response.message ?? ""));
+          emit(LoginFailure(extractError(response.message)));
         }
-      } catch (_, e) {
-        print(e);
-        emit(LoginFailure(formatError(_.toString())));
+      } catch (e) {
+        log('[LoginBloc] login error: $e');
+        emit(LoginFailure(e.toString()));
       }
     }
   }

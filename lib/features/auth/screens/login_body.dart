@@ -12,6 +12,7 @@ import 'package:momaspayplus/features/auth/cubit/auth_view_cubit.dart';
 import 'package:momaspayplus/features/auth/data/models/login_request.dart';
 
 import 'package:momaspayplus/main.dart';
+import 'package:momaspayplus/reuseable/app_error_display.dart';
 import 'package:momaspayplus/reuseable/error_modal.dart';
 import 'package:momaspayplus/reuseable/mo_button.dart';
 import 'package:momaspayplus/reuseable/mo_form.dart';
@@ -147,7 +148,7 @@ class _LoginBodyState extends State<LoginBody> {
           listener: (BuildContext context, LoginState state) {
             switch (state) {
               case LoginFailure():
-                showErrorBottomSheet(context, state.error);
+                AppErrorDisplay.show(context, state.error);
               case LoginSuccess():
                 context.read<TabCubit>().changeTab(0);
                 getIt<AuthCubit>().loginSuccess(state.user, state.features);
@@ -156,7 +157,6 @@ class _LoginBodyState extends State<LoginBody> {
               //     MaterialPageRoute(builder: (_) => const RootScreen()),
               //     (v) => false);
               default:
-                log("state not implemented");
             }
           },
         ),

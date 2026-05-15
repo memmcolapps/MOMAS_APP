@@ -26,14 +26,20 @@ class ServerRequest {
   // ─── Core wrapper ────────────────────────────────────────────────────────────
 
   Future<T> _safeCall<T>(Future<http.Response> Function() call,
-      T Function(dynamic body) onSuccess, String debugLabel) async {
+      T Function(dynamic body) onSuccess, String debugLabel,
+      {String? requestBody}) async {
     http.Response? response;
     try {
+      if (requestBody != null) {
+        log('$debugLabel ← $requestBody', name: 'HTTP');
+      } else {
+        log(debugLabel, name: 'HTTP');
+      }
       response = await call().timeout(_kTimeout);
 
       final body = _decode(response.body, debugLabel);
 
-      log('[$debugLabel] ${response.statusCode} → $body');
+      log('$debugLabel ${response.statusCode} → $body', name: 'HTTP');
 
       if (response.statusCode == 401) {
         getIt<AuthCubit>().sessionExpired();
@@ -47,7 +53,7 @@ class ServerRequest {
         try {
           return onSuccess(body);
         } catch (e) {
-          log('[PARSE ERROR] $debugLabel → $e');
+          log('$debugLabel PARSE ERROR: $e', name: 'HTTP');
           throw AppException.parse(e);
         }
       }
@@ -77,10 +83,10 @@ class ServerRequest {
         type: ErrorType.network,
       );
     } on FormatException catch (e) {
-      log('[FORMAT ERROR] $debugLabel → $e');
+      log('$debugLabel FORMAT ERROR: $e', name: 'HTTP');
       throw AppException.parse(e);
     } catch (e) {
-      log('[UNKNOWN ERROR] $debugLabel → $e');
+      log('$debugLabel ERROR: $e', name: 'HTTP');
       throw AppException.unknown(e);
     }
   }
@@ -105,11 +111,13 @@ class ServerRequest {
       {String? path, Map? body, List<Map>? bodyII}) async {
     final header = await getHeader();
     final url = Uri.parse(path!);
+    final encoded = json.encode(body ?? bodyII);
 
     return _safeCall(
-      () => http.post(url, body: json.encode(body ?? bodyII), headers: header),
+      () => http.post(url, body: encoded, headers: header),
       (data) => HttpData(data),
       'POST $path',
+      requestBody: encoded,
     );
   }
 
@@ -117,11 +125,13 @@ class ServerRequest {
       {String? path, Map? body, List<Map>? bodyII}) async {
     final header = await getHeader();
     final url = Uri.parse(path!);
+    final encoded = json.encode(body ?? bodyII);
 
     return _safeCall(
-      () => http.put(url, body: json.encode(body ?? bodyII), headers: header),
+      () => http.put(url, body: encoded, headers: header),
       (data) => HttpData(data),
       'PUT $path',
+      requestBody: encoded,
     );
   }
 
@@ -155,6 +165,7 @@ class ServerRequest {
       }
     }
 
+    log('UPLOAD $path ← fields: ${request.fields}', name: 'HTTP');
     try {
       final streamed = await request.send().timeout(_kTimeout);
       final response = await http.Response.fromStream(streamed);
@@ -168,6 +179,7 @@ class ServerRequest {
       }
 
       final data = _decode(response.body, 'UPLOAD $path');
+      log('UPLOAD $path ${streamed.statusCode} → $data', name: 'HTTP');
 
       if (streamed.statusCode >= 200 && streamed.statusCode < 300) {
         return HttpData(data);
@@ -190,6 +202,7 @@ class ServerRequest {
         type: ErrorType.network,
       );
     } catch (e) {
+      log('UPLOAD $path ERROR: $e', name: 'HTTP');
       throw AppException.unknown(e);
     }
   }

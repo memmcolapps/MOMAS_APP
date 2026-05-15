@@ -18,6 +18,7 @@ import '../../../bloc/service_bloc/service_bloc.dart';
 import '../../../bloc/service_bloc/service_event.dart';
 import '../../../domain/data/response/service_response.dart';
 import '../../../domain/data/response/user_model.dart';
+import '../../../reuseable/app_error_display.dart';
 import '../../../reuseable/error_modal.dart';
 import '../../../reuseable/search_bottom_sheet/ka_dropdown.dart';
 import '../../../core/storage/shared_pref.dart';
@@ -164,13 +165,12 @@ class _ServiceScreenState extends State<ServiceScreen> {
         listener: (BuildContext context, ServiceState state) {
           switch (state) {
             case ServiceStateFailed():
-              showErrorBottomSheet(context, state.error);
+              AppErrorDisplay.show(context, state.error);
             case ServiceTypeSuccess():
               setState(() => serviceTypeResponse = state.dataResponse);
             case ArtisanListSuccess():
               setState(() => artisanListResponse = state.dataResponse);
             default:
-              log("state not implemented");
           }
         },
       ),

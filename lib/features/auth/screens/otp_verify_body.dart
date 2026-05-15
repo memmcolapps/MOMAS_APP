@@ -7,6 +7,7 @@ import 'package:momaspayplus/features/auth/bloc/reset/reset_event.dart';
 import 'package:momaspayplus/features/auth/bloc/reset/reset_state.dart';
 import 'package:momaspayplus/features/auth/cubit/auth_view_cubit.dart';
 import 'package:momaspayplus/features/auth/data/models/verify_otp_request.dart';
+import 'package:momaspayplus/reuseable/app_error_display.dart';
 import 'package:momaspayplus/reuseable/error_modal.dart';
 import 'package:momaspayplus/reuseable/mo_button.dart';
 import 'package:momaspayplus/reuseable/mo_passcode.dart';
@@ -30,13 +31,12 @@ class _OtpVerifyBodyState extends State<OtpVerifyBody> {
       listener: (context, state) {
         switch (state) {
           case OtpVerifyFailure():
-            showErrorBottomSheet(context, state.error);
+            AppErrorDisplay.show(context, state.error);
           case OtpVerifySuccess():
             context.read<AuthViewCubit>().showResetPassword(
                   token: state.resetToken,
                 );
           default:
-            log("state not implemented");
         }
       },
       child: Column(
