@@ -8,6 +8,10 @@ import 'package:momaspayplus/core/storage/shared_pref.dart';
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
 
+  void showAuth() {
+    emit(AuthUnauthenticated());
+  }
+
   void loginSuccess(User user, Feature features) {
     emit(AuthAuthenticated(user, features));
   }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:momaspayplus/core/cubit/auth_cubit/auth_cubit.dart';
 import 'package:momaspayplus/domain/data/model/page_data.dart';
 import 'package:momaspayplus/features/auth/screens/auth_screen.dart';
 import 'package:momaspayplus/features/onboarding/screens/intro_dot.dart';
@@ -49,13 +51,14 @@ class _IntroPageState extends State<IntroPage> {
 
     if (!mounted) return;
 
-    Navigator.pushReplacement(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => const AuthScreen(),
-        transitionDuration: const Duration(milliseconds: 650),
-      ),
-    );
+    context.read<AuthCubit>().showAuth();
+    // Navigator.pushReplacement(
+    //   context,
+    //   PageRouteBuilder(
+    //     pageBuilder: (context, animation, secondaryAnimation) => const AuthScreen(),
+    //     transitionDuration: const Duration(milliseconds: 650),
+    //   ),
+    // );
   }
 
 

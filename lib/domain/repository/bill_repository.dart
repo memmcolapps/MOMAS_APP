@@ -59,11 +59,13 @@ class BillRepository {
   }
 
   Future<MomasVerificationResponse> verifyMomasMeter(
-      String meterNo, String estateId) async {
+      String meterNo,
+      // String estateId
+      ) async {
     var response =
         await _request.postData(path: Routes.vereifyMomasMeter, body: {
       "meterNo": meterNo,
-      "estateId": estateId,
+      // "estateId": estateId,
     });
     return MomasVerificationResponse.fromJson(response.data);
   }

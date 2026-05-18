@@ -36,7 +36,9 @@ class MomasPaymentBloc extends Bloc<MomasPaymentEvent, MomasPaymentState> {
     emit(MomasVerificationLoading());
     try {
       final MomasVerificationResponse response =
-          await repository.verifyMomasMeter(event.meterNo, event.estateId);
+          await repository.verifyMomasMeter(event.meterNo
+              // event.estateId
+          );
       if (response.status == true) {
         emit(MomasMeterVerificationState(response: response));
       } else {

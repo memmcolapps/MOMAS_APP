@@ -12,9 +12,11 @@ abstract class MomasPaymentEvent extends Equatable {
 
 class MomasVerification extends MomasPaymentEvent {
   final String meterNo;
-  final String estateId;
+  // final String estateId;
 
-  const MomasVerification({required this.meterNo, required this.estateId});
+  const MomasVerification({required this.meterNo,
+    // required this.estateId
+  });
 
   @override
   List<Object> get props => [meterNo];
