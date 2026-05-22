@@ -10,7 +10,7 @@ import 'package:momaspayplus/screens/tab_views/customer/Homepage/widgets/promo_s
 import 'package:momaspayplus/screens/tab_views/customer/Homepage/widgets/quick_widgets.dart';
 import 'package:momaspayplus/utils/colors.dart';
 import 'package:momaspayplus/utils/images.dart';
-import 'package:momaspayplus/utils/shared_pref.dart';
+import 'package:momaspayplus/core/storage/shared_pref.dart';
 import 'package:momaspayplus/utils/strings.dart';
 
 class HomePage extends StatefulWidget {
@@ -61,7 +61,6 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: MoColors.mainColorII,
         body: RefreshIndicator(
           onRefresh: () async {
-            debugPrint("Refreshing state");
             context.read<WalletBloc>().add(WalletDashboardEvent());
             context.read<PromoBloc>().add(PromotionEvent());
             context.read<DashboardBloc>().add(FeatureDashboardEvent());
@@ -106,7 +105,7 @@ class _HomePageState extends State<HomePage> {
                   child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      PromoSection(),
+                      // PromoSection(),
                       SizedBox(height: 10),
                       FeaturesGrid()
                     ],

@@ -11,6 +11,7 @@ import '../../bloc/momas_bloc/momas_event.dart';
 import '../../bloc/momas_bloc/momas_state.dart';
 import '../../domain/data/response/meter_payment_response.dart';
 import '../../domain/repository/bill_repository.dart';
+import '../../reuseable/app_error_display.dart';
 import '../../reuseable/error_modal.dart';
 import '../../reuseable/mo_form.dart';
 import '../../reuseable/mo_transaction_success_screen.dart';
@@ -146,12 +147,11 @@ class _ReprintTokenScreenState extends State<ReprintTokenScreen> {
           },
           listener: (BuildContext context, MomasPaymentState state) {
             if (state is MomasPaymentFailure) {
-              showErrorBottomSheet(context, state.error);
+              AppErrorDisplay.show(context, state.error);
             } else if (state is MomasMeterSuccess) {
               meterDataList = state.meterPaymentResponse.data;
               filteredMeterDataList = List.from(meterDataList!);
             } else {
-              log("State not implemented");
             }
           },
         ),

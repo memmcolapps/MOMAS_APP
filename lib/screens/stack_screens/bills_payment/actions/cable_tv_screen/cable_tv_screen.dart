@@ -19,6 +19,7 @@ import 'package:momaspayplus/utils/strings.dart';
 
 import '../../../../../bloc/payment_bloc/payment_bloc.dart';
 import '../../../../../reuseable/bottom_sheet.dart';
+import '../../../../../reuseable/app_error_display.dart';
 import '../../../../../reuseable/error_modal.dart';
 import '../../../../../reuseable/mo_button.dart';
 import '../../../../../reuseable/mo_form.dart';
@@ -87,7 +88,7 @@ class _CableTvScreenState extends State<CableTvScreen> {
           listener: (context, state) {
             switch (state) {
               case CableTvFailure():
-                showErrorBottomSheet(context, state.error);
+                AppErrorDisplay.show(context, state.error);
               case CableTvSuccess():
                 setState(() => _cableTvResponse = state.response);
               case CableTvVerificationSuccess():
@@ -96,7 +97,6 @@ class _CableTvScreenState extends State<CableTvScreen> {
                 showSuccessBottomSheet(
                     context, state.response.message ?? '');
               default:
-                log('state not implemented');
             }
           },
           child: SingleChildScrollView(

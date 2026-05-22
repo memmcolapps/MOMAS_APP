@@ -1,4 +1,4 @@
-import 'package:momaspayplus/core/cubit/app_version_cubit/update_state.dart';
+import 'package:momaspayplus/features/app_update/bloc/update_state.dart';
 import 'package:momaspayplus/reuseable/bottom_sheet/update_modal/app_info.dart';
 import 'package:momaspayplus/reuseable/bottom_sheet/update_modal/modal_content_header.dart';
 import 'package:flutter/cupertino.dart';

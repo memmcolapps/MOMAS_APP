@@ -10,43 +10,45 @@ class UtilityMetricsBloc
 
   UtilityMetricsBloc(this.repository) : super(const UtilityMetricsInitial()) {
     on<SeedUtilityMetrics>(_onSeed);
-    on<FilterUtilityMetrics>(_onFilter);
+    on<LoadingUtilityMetrics>((event, emit) => emit(UtilityMetricsLoading(
+        selectedYear: event.selectedYear,
+        availableYears: event.availableYears)));
+    // on<FilterUtilityMetrics>(_onFilter);
   }
 
   void _onSeed(SeedUtilityMetrics event, Emitter<UtilityMetricsState> emit) {
     emit(UtilityMetricsSuccess(
         data: event.data.byServiceType,
-      selectedYear: event.data.selectedYear,
-      availableYears: event.data.availableYears
-    ));
+        selectedYear: event.data.selectedYear,
+        availableYears: event.data.availableYears));
   }
 
-  Future<void> _onFilter(
-      FilterUtilityMetrics event, Emitter<UtilityMetricsState> emit) async {
-
-    emit(UtilityMetricsLoading(selectedYear: event.selectedYear, availableYears: state.availableYears));
-    try {
-      final response = await repository.getUtilityMetrics(event.selectedYear);
-
-      if (response.status) {
-        emit(UtilityMetricsSuccess(
-            data: response.data.byServiceType,
-            selectedYear: event.selectedYear,
-          availableYears: response.data.availableYears
-        ));
-      } else {
-        emit(UtilityMetricsFailure(
-          error: response.message ?? 'Network error',
-          selectedYear: state.selectedYear,
-          availableYears: state.availableYears,
-        ));
-      }
-    } catch (e) {
-      emit(UtilityMetricsFailure(
-        error: e.toString(),
-        selectedYear: state.selectedYear,
-        availableYears: state.availableYears,
-      ));
-    }
-  }
+  // Future<void> _onFilter(
+  //     FilterUtilityMetrics event, Emitter<UtilityMetricsState> emit) async {
+  //
+  //   emit(UtilityMetricsLoading(selectedYear: event.selectedYear, availableYears: state.availableYears));
+  //   try {
+  //     final response = await repository.getUtilityMetrics(event.selectedYear);
+  //
+  //     if (response.status) {
+  //       emit(UtilityMetricsSuccess(
+  //           data: response.data.byServiceType,
+  //           selectedYear: event.selectedYear,
+  //         availableYears: response.data.availableYears
+  //       ));
+  //     } else {
+  //       emit(UtilityMetricsFailure(
+  //         error: response.message ?? 'Network error',
+  //         selectedYear: state.selectedYear,
+  //         availableYears: state.availableYears,
+  //       ));
+  //     }
+  //   } catch (e) {
+  //     emit(UtilityMetricsFailure(
+  //       error: e.toString(),
+  //       selectedYear: state.selectedYear,
+  //       availableYears: state.availableYears,
+  //     ));
+  //   }
+  // }
 }

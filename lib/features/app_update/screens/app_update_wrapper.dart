@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:momaspayplus/core/cubit/app_version_cubit/update_state.dart';
-import 'package:momaspayplus/core/cubit/app_version_cubit/update_cubit.dart';
+import 'package:momaspayplus/features/app_update/bloc/update_state.dart';
+import 'package:momaspayplus/features/app_update/bloc/update_cubit.dart';
 import 'package:momaspayplus/reuseable/bottom_sheet/update_modal/update_modal.dart';
 
 class AppUpdateWrapper extends StatefulWidget {
@@ -20,7 +20,6 @@ class _AppUpdateWrapperState extends State<AppUpdateWrapper> {
   void _showUpdateModal(AppUpdateRequired state) {
     final isMandatory = state.required;
 
-    debugPrint(isMandatory.toString());
     showModalBottomSheet(
       context: context,
       isDismissible: !isMandatory,

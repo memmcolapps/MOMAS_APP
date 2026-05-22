@@ -31,15 +31,15 @@ class UtilityMetrics extends StatelessWidget {
       builder: (context, state) {
         return Column(
           children: [
-            SectionHeader(
+            const SectionHeader(
               title: "Utility Metrics",
-              trailing: FilterDropdown(
-                selected: state.selectedYear,
-                data: state.availableYears,
-                onChanged: (year) => context
-                    .read<UtilityMetricsBloc>()
-                    .add(FilterUtilityMetrics(selectedYear: year)),
-              ),
+              // trailing: FilterDropdown(
+              //   selected: state.selectedYear,
+              //   data: state.availableYears,
+              //   onChanged: (year) => context
+              //       .read<UtilityMetricsBloc>()
+              //       .add(FilterUtilityMetrics(selectedYear: year)),
+              // ),
             ),
             const SizedBox(height: 10),
             if (state is UtilityMetricsLoading)

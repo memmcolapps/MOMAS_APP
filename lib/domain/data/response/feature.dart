@@ -76,4 +76,8 @@ class Feature {
       'analysis': analysis,
     };
   }
+
+  // 1 = active, 2 = inactive, 0 = hidden
+  bool isVisible(int value) => value != 0;
+  bool isActive(int value) => value == 1;
 }

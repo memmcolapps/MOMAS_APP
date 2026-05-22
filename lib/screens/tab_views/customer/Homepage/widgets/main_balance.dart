@@ -6,7 +6,7 @@ import 'package:momaspayplus/bloc/dashboard_bloc/dashboard_state.dart';
 import 'package:momaspayplus/domain/repository/dashboard_repository.dart';
 import 'package:momaspayplus/domain/service/dashboard_service.dart';
 import 'package:momaspayplus/utils/amount_formatter.dart';
-import 'package:momaspayplus/utils/shared_pref.dart';
+import 'package:momaspayplus/core/storage/shared_pref.dart';
 
 class MainBalance extends StatefulWidget {
   const MainBalance({

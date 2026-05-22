@@ -16,9 +16,10 @@ class AnalyticsShimmer extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         child: Column(
           children: [
-            TransactionRecordShimmer(),
             SectionHeaderShimmer(),
             TransactionHistoryShimmer(),
+            SectionHeaderShimmer(),
+            TransactionRecordShimmer(),
             SectionHeaderShimmer(),
             UtilityMetricsShimmer(),
             SectionHeaderShimmer(),

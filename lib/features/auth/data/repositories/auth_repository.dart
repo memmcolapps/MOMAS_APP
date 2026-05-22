@@ -1,0 +1,65 @@
+import 'package:momaspayplus/domain/data/response/generic_response.dart';
+import 'package:momaspayplus/domain/data/response/user_model.dart';
+import 'package:momaspayplus/core/network/request.dart';
+import 'package:momaspayplus/features/auth/data/models/login_request.dart';
+import 'package:momaspayplus/features/auth/data/models/reset_request.dart';
+import 'package:momaspayplus/features/auth/data/models/verify_otp_request.dart';
+import 'package:momaspayplus/features/auth/data/models/verify_otp_response.dart';
+
+import '../../../../core/network/routes.dart';
+
+class AuthRepository {
+  final ServerRequest _request = ServerRequest();
+
+  Future<UserModel> login(Login data) async {
+    var response =
+        await _request.postData(path: Routes.login, body: data.toJson());
+    return UserModel.fromJson(response.data);
+  }
+
+  // Future<GenericResponse> register(Register data) async {
+  //   var response =
+  //       await _request.postData(path: Routes.register, body: data.toJson());
+  //   return GenericResponse.fromJson(response.data);
+  // }
+
+  // Future<GenericResponse> confirmPassword(
+  //     String email, String password, String confirmPassword) async {
+  //   var response = await _request.postData(path: Routes.resetPassword, body: {
+  //     "email": email,
+  //     "password": password,
+  //     "confirm_password": confirmPassword
+  //   });
+  //   return GenericResponse.fromJson(response.data);
+  // }
+
+  Future<GenericResponse> requestReset(ResetRequest data) async {
+    var response =
+        await _request.postData(path: Routes.checkEmail, body: data.toJson());
+    return GenericResponse.fromJson(response.data);
+  }
+
+  Future<VerifyOtpResponse> verifyOtp(VerifyOtpRequest data) async {
+    var response =
+        await _request.postData(path: Routes.verifyEmail, body: data.toJson());
+    return VerifyOtpResponse.fromJson(response.data);
+  }
+
+  Future<GenericResponse> resetPassword(
+      String resetToken, String password) async {
+    var response = await _request.postData(path: Routes.resetPassword, body: {
+      "reset_token": resetToken,
+      "password": password,
+    });
+    return GenericResponse.fromJson(response.data);
+  }
+
+  Future<GenericResponse> updatePassword(
+      String currentPassword, String newPassword) async {
+    var response = await _request.postData(path: Routes.updatePassword, body: {
+      "current_password": currentPassword,
+      "password": newPassword,
+    });
+    return GenericResponse.fromJson(response.data);
+  }
+}

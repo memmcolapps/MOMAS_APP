@@ -186,7 +186,6 @@
 //                 case EmailCheckFail():
 //                   showErrorBottomSheet(context, state.error);
 //                 default:
-//                   log("state not implemented");
 //               }
 //             },
 //           ),

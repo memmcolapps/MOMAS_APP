@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:momaspayplus/utils/colors.dart';
@@ -75,7 +77,7 @@ class _BiometricLoginWidgetState extends State<BiometricLoginWidget>
         widget.onLoginSuccess();
       }
     } catch (e) {
-      debugPrint('Authentication error: $e');
+      log('[BioMetric] widget authentication error: $e');
     } finally {
       setState(() => _isAuthenticating = false);
     }

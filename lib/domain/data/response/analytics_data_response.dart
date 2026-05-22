@@ -59,8 +59,8 @@ class AnalysisData {
 
     return AnalysisData(
       selectedYear: json['year'] == currentYear ? 'This year' : json['year'],
-      totalMonthAmount: (json['total_month_amount'] ?? 0).toDouble(),
-      monthChangePercent: (json['month_change_percent'] ?? 0).toDouble(),
+      totalMonthAmount: (json['total_year_amount'] ?? 0).toDouble(),
+      monthChangePercent: (json['year_change_percent'] ?? 0).toDouble(),
       byYear: (json['months'] as List<dynamic>? ?? [])
           .map((e) => MonthlyTransaction.fromJson(e))
           .where((t) => t.month <= DateTime.now().month)
@@ -78,8 +78,8 @@ class AnalysisData {
 
   Map<String, dynamic> toJson() => {
     'selectedYear': selectedYear,
-    'total_month_amount': totalMonthAmount,
-    'month_change_percent': monthChangePercent,
+    'total_year_amount': totalMonthAmount,
+    'year_change_percent': monthChangePercent,
     'months': byYear.map((e) => e.toJson()).toList(),
     'services': byServiceType.map((e) => e.toJson()).toList(),
     'token_breakdown':
@@ -337,6 +337,8 @@ enum ServiceType {
   airtimeTopUp,
   dataTopUp,
   creditToken,
+  creditTokenOthers,
+  cableSubscription,
   unknown;
 
   static ServiceType fromString(String value) {
@@ -347,6 +349,10 @@ enum ServiceType {
         return ServiceType.dataTopUp;
       case 'credit_token':
         return ServiceType.creditToken;
+      case 'credit_token_others':
+        return ServiceType.creditTokenOthers;
+      case 'cable_subscription':
+        return ServiceType.cableSubscription;
       default:
         return ServiceType.unknown;
     }
@@ -360,6 +366,10 @@ enum ServiceType {
         return 'data_top_up';
       case ServiceType.creditToken:
         return 'credit_token';
+      case ServiceType.creditTokenOthers:
+        return 'credit_token_others';
+      case ServiceType.cableSubscription:
+        return 'cable_subscription';
       case ServiceType.unknown:
         return 'unknown';
     }
@@ -373,6 +383,10 @@ enum ServiceType {
         return 'Data';
       case ServiceType.creditToken:
         return 'Credit Token';
+      case ServiceType.creditTokenOthers:
+        return 'Credit(Others)';
+      case ServiceType.cableSubscription:
+        return 'Cable';
       case ServiceType.unknown:
         return 'Unknown';
     }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:momaspayplus/bloc/payment_bloc/payment_bloc.dart';
@@ -90,9 +92,41 @@ class _BottomSheetContentState extends State<_BottomSheetContent> {
         }
 
         // Error / bad response
-        if (snapshot.data == null || snapshot.data?.status == false) {
-          return const Center(
-            child: Icon(Icons.error, color: Colors.black),
+        if (snapshot.hasError || snapshot.data == null || snapshot.data?.status == false) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.error_outline_rounded, color: Colors.black45, size: 48),
+                  const SizedBox(height: 16),
+                  const Text(
+                    "Something went wrong. Please try again.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black54,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    onPressed: _recheckAdminFee,
+                    icon: const Icon(Icons.refresh),
+                    label: const Text("Retry"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MoColors.mainColor,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           );
         }
 

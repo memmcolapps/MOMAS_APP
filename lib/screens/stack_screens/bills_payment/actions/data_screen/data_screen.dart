@@ -19,6 +19,7 @@ import 'package:momaspayplus/utils/colors.dart';
 import 'package:momaspayplus/utils/screen_utils.dart';
 
 import '../../../../../reuseable/bottom_sheet.dart';
+import '../../../../../reuseable/app_error_display.dart';
 import '../../../../../reuseable/error_modal.dart';
 import '../../../../../reuseable/mo_button.dart';
 import '../../../../../reuseable/mo_form.dart';
@@ -79,13 +80,12 @@ class _DataScreenState extends State<DataScreen> {
           listener: (context, state) {
             switch (state) {
               case DataFailure():
-                showErrorBottomSheet(context, state.error);
+                AppErrorDisplay.show(context, state.error);
               case DataSuccess():
                 setState(() => _dataResponse = state.response);
               case BuyDataSuccess():
                 showSuccessBottomSheet(context, state.response.message ?? '');
               default:
-                log('state not implemented');
             }
           },
           child: SingleChildScrollView(

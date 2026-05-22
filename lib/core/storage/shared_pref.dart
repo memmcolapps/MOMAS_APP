@@ -1,12 +1,127 @@
+// import 'dart:convert';
+// import 'package:shared_preferences/shared_preferences.dart';
+//
+// class SharedPreferenceHelper {
+//   static late SharedPreferences _prefs;
+//
+//   static Future<void> init() async {
+//     _prefs = await SharedPreferences.getInstance();
+//   }
+//
+//   static SharedPreferences get instance => _prefs;
+//
+//   // Keys
+//   static const String _keyHasSeenOnboarding = 'hasSeenOnboarding';
+//   static const String _keyUser = 'user';
+//   static const String _keyLogin = 'Login';
+//   static const String _token = 'TOKEN';
+//   static const String _balance = 'balance_visible';
+//   static const String _unit = 'unit_visible';
+//   static const String _promoCache = 'promo_cache';
+//   static const String _featureCache = 'feature_cache';
+//   static const String _supportCache = 'support_cache';
+//
+//   // Onboarding
+//   static bool get hasSeenOnboarding =>
+//       _prefs.getBool(_keyHasSeenOnboarding) ?? false;
+//
+//   static Future<void> setOnboardingSeen(bool value) =>
+//       _prefs.setBool(_keyHasSeenOnboarding, value);
+//
+//   // Token
+//   static Future<void> saveToken(String token) async {
+//     await _prefs.setString(_token, token);
+//   }
+//
+//   static Future<String?> getToken() async {
+//     return _prefs.getString(_token);
+//   }
+//
+//   // User
+//   static Future<void> saveUser(Map<String, dynamic> user) async {
+//     await _prefs.setString(_keyUser, json.encode(user));
+//   }
+//
+//   static Future<Map<String, dynamic>?> getUser() async {
+//     final data = _prefs.getString(_keyUser);
+//     return data == null ? null : json.decode(data) as Map<String, dynamic>;
+//   }
+//
+//   static Future<void> clearUser() async {
+//     await _prefs.remove(_keyUser);
+//     await _prefs.remove(_token);
+//   }
+//
+//   // Login
+//   static Future<void> saveLogin(Map<String, dynamic> login) async {
+//     await _prefs.setString(_keyLogin, json.encode(login));
+//   }
+//
+//   static Future<Map<String, dynamic>?> getLogin() async {
+//     final data = _prefs.getString(_keyLogin);
+//     return data == null ? null : json.decode(data) as Map<String, dynamic>;
+//   }
+//
+//   // Balance visibility
+//   static Future<bool> getBalanceVisibility() async {
+//     return _prefs.getBool(_balance) ?? true;
+//   }
+//
+//   static Future<void> saveBalanceVisibility(bool isVisible) async {
+//     await _prefs.setBool(_balance, isVisible);
+//   }
+//
+//   // Unit visibility
+//   static Future<bool> getUnitVisibility() async {
+//     return _prefs.getBool(_unit) ?? true;
+//   }
+//
+//   static Future<void> saveUnitVisibility(bool isVisible) async {
+//     await _prefs.setBool(_unit, isVisible);
+//   }
+//
+//   // Promo cache
+//   static Future<void> savePromo(List<Map<String, dynamic>> promos) async {
+//     await _prefs.setString(_promoCache, json.encode(promos));
+//   }
+//
+//   static List<Map<String, dynamic>>? getCachedPromo() {
+//     final data = _prefs.getString(_promoCache);
+//     return data == null
+//         ? null
+//         : List<Map<String, dynamic>>.from(json.decode(data) as List);
+//   }
+//
+//   // Feature cache
+//   static Future<void> saveFeature(Map<String, dynamic> feature) async {
+//     await _prefs.setString(_featureCache, json.encode(feature));
+//   }
+//
+//   static Map<String, dynamic>? getCachedFeature() {
+//     final data = _prefs.getString(_featureCache);
+//     return data == null ? null : json.decode(data) as Map<String, dynamic>;
+//   }
+//
+//   // Support cache
+//   static Future<void> saveSupport(Map<String, dynamic> supportData) async {
+//     await _prefs.setString(_supportCache, json.encode(supportData));
+//   }
+//
+//   static Map<String, dynamic>? getSupport() {
+//     final data = _prefs.getString(_supportCache);
+//     return data == null ? null : json.decode(data) as Map<String, dynamic>;
+//   }
+// }
+
 import 'dart:convert';
 
-import 'package:momaspayplus/domain/data/request/login.dart';
 import 'package:momaspayplus/domain/data/response/feature.dart';
 import 'package:momaspayplus/domain/data/response/promo.dart';
 import 'package:momaspayplus/domain/data/response/setting_response.dart';
+import 'package:momaspayplus/features/auth/data/models/login_request.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../domain/data/response/user_model.dart';
+import '../../domain/data/response/user_model.dart';
 
 class SharedPreferenceHelper {
   static late SharedPreferences _prefs;

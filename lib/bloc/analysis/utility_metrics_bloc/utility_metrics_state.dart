@@ -20,10 +20,12 @@ class UtilityMetricsInitial extends UtilityMetricsState {
 }
 
 class UtilityMetricsLoading extends UtilityMetricsState {
-  const UtilityMetricsLoading({
+  const UtilityMetricsLoading(
+      {
     required super.selectedYear,
     required super.availableYears,
-  });
+  }
+  );
 }
 
 class UtilityMetricsSuccess extends UtilityMetricsState {

@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/bloc/payment_bloc/payment_bloc.dart';
+import 'package:momaspayplus/utils/strings.dart';
 
 import '../../domain/data/response/arrears_items.dart';
 import '../../domain/repository/bill_repository.dart';
@@ -72,6 +75,7 @@ class CustomerArrearsBloc
       final List<ArrearItem> jsonList = await repository.getCustomerArrears();
       emit(ArrearsSuccess(arrears: jsonList));
     } catch (e) {
+      log('[ArrearsBloc] getArrears error: $e');
       emit(ArrearsFailure(error: e.toString()));
     }
   }
@@ -90,9 +94,11 @@ class CustomerArrearsBloc
       if (response.status == true) {
         emit(ArrearPaymentSuccess(reference: response.message ?? ""));
       } else {
-        emit(ArrearPaymentFailure(error: response.message ?? "Payment failed"));
+        emit(ArrearPaymentFailure(
+            error: extractError(response.message)));
       }
     } catch (e) {
+      log('[ArrearsBloc] paySingle error: $e');
       emit(ArrearPaymentFailure(error: e.toString()));
     }
   }
@@ -109,9 +115,11 @@ class CustomerArrearsBloc
       if (response.status == true) {
         emit(ArrearPaymentSuccess(reference: response.message ?? ""));
       } else {
-        emit(ArrearPaymentFailure(error: response.message ?? "Payment failed"));
+        emit(ArrearPaymentFailure(
+            error: extractError(response.message)));
       }
     } catch (e) {
+      log('[ArrearsBloc] payAll error: $e');
       emit(ArrearPaymentFailure(error: e.toString()));
     }
   }

@@ -9,6 +9,7 @@ import 'package:momaspayplus/screens/tab_views/customer/analytics/widgets/power_
 import 'package:momaspayplus/screens/tab_views/customer/analytics/widgets/shimmers/analytics_shimmer.dart';
 import 'package:momaspayplus/screens/tab_views/customer/analytics/widgets/transaction_history.dart';
 import 'package:momaspayplus/screens/tab_views/customer/analytics/widgets/transaction_record.dart';
+import 'package:momaspayplus/screens/tab_views/customer/analytics/widgets/transaction_record_section.dart';
 import 'package:momaspayplus/screens/tab_views/customer/analytics/widgets/utility_metrics/utility_metrics.dart';
 import 'package:momaspayplus/screens/tab_views/shared/tabview_skeleton.dart';
 
@@ -28,14 +29,9 @@ class AnalyticsView extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 24),
                   child: Column(
                     children: [
-                      TransactionRecord(),
-                      SizedBox(height: 24),
                       TransactionHistory(),
                       SizedBox(height: 24),
-                      UtilityMetrics(),
-                      SizedBox(height: 24),
-                      AccessTokens(),
-                      SizedBox(height: 100),
+                      TransactionRecordSection()
                     ],
                   ),
                 ),

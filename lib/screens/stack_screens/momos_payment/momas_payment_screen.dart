@@ -3,8 +3,13 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:momaspayplus/bloc/access_token_bloc/access_token_bloc.dart';
+import 'package:momaspayplus/bloc/access_token_bloc/access_token_event.dart';
+import 'package:momaspayplus/bloc/access_token_bloc/access_token_state.dart';
+import 'package:momaspayplus/domain/data/response/estate_response.dart';
 import 'package:momaspayplus/domain/data/response/tariff.dart';
 import 'package:momaspayplus/domain/data/response/user_model.dart';
+import 'package:momaspayplus/domain/repository/access_token_repository.dart';
 import 'package:momaspayplus/domain/repository/bill_repository.dart';
 import 'package:momaspayplus/screens/stack_screens/stack_screen_skeleton.dart';
 import 'package:momaspayplus/utils/amount_formatter.dart';
@@ -21,6 +26,7 @@ import '../../../domain/data/response/momas_meter_response.dart';
 import '../../../domain/data/response/service_data_response.dart';
 import '../../../domain/repository/service_repository.dart';
 import '../../../reuseable/bottom_sheet.dart';
+import '../../../reuseable/app_error_display.dart';
 import '../../../reuseable/error_modal.dart';
 import '../../../reuseable/mo_button.dart';
 import '../../../reuseable/mo_form.dart';
@@ -30,7 +36,7 @@ import '../../../reuseable/search_bottom_sheet/ka_dropdown.dart';
 import '../../../reuseable/shadow_container.dart';
 import '../../../utils/navigation.dart';
 import '../../../utils/receipt_builder.dart';
-import '../../../utils/shared_pref.dart';
+import '../../../core/storage/shared_pref.dart';
 import '../../../utils/strings.dart';
 import '../../../utils/vat_calculator.dart';
 
@@ -45,12 +51,13 @@ class MomasPaymentScreen extends StatefulWidget {
 
 class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
   late MomasPaymentBloc bloc;
+  late AccessTokenBloc accessTokenBloc;
   MomasVerificationResponse? verificationResponse;
   final meterTextFormController = TextEditingController();
   final amountFormController = TextEditingController();
-  Estate? selectedEstate;
+  // EstateData? selectedEstate;
   late ServiceBloc serviceBloc;
-  ServiceDataResponse? serviceDataResponse;
+  List<EstateData>? serviceDataResponse;
   bool isLoading = false;
   User? user;
   num minPurchase = 0;
@@ -67,8 +74,10 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
     bloc = MomasPaymentBloc(repository: BillRepository());
     load();
     if (widget.momasPaymentType == MomasPaymentType.others) {
-      serviceBloc = ServiceBloc(ServiceRepository())
-        ..add(const ServicePropertiesEvent());
+      // serviceBloc = ServiceBloc(ServiceRepository())
+      //   ..add(const ServicePropertiesEvent());
+      accessTokenBloc = AccessTokenBloc(repository: AccessTokenRepository())
+        ..add(const GetAccessToken());
     }
   }
 
@@ -84,7 +93,9 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
       setState(() => isLoading = true);
 
       bloc.add(MomasVerification(
-          meterNo: user!.meter!.meterNo!, estateId: user!.estateId!));
+          meterNo: user!.meter!.meterNo!,
+          // estateId: user!.estateId!
+      ));
     }
   }
 
@@ -124,78 +135,76 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                   widget.momasPaymentType == MomasPaymentType.others
                       ? Column(
                           children: [
-                            BlocConsumer<ServiceBloc, ServiceState>(
-                              bloc: serviceBloc,
-                              builder: (context, state) {
-                                return EPDropdownButton<Estate>(
-                                  itemsListTitle: "Choose Estate",
-                                  iconSize: 22,
-                                  value: selectedEstate,
-                                  hint: const Text(""),
-                                  isExpanded: true,
-                                  underline: const Divider(),
-                                  searchMatcher: (item, text) {
-                                    return item.title!
-                                        .toLowerCase()
-                                        .contains(text.toLowerCase());
-                                  },
-                                  onChanged: (v) {
-                                    setState(() {
-                                      selectedEstate = v;
-                                      verificationResponse = null;
-                                    });
-                                  },
-                                  items: (serviceDataResponse?.data?.estate ??
-                                          [])
-                                      .map(
-                                        (e) => DropdownMenuItem(
-                                          value: e,
-                                          child: Row(
-                                            children: [
-                                              Text(e.title.toString(),
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .labelMedium!
-                                                      .copyWith(
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          color:
-                                                              Colors.black)),
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                      .toList(),
-                                );
-                              },
-                              listener:
-                                  (BuildContext context, ServiceState state) {
-                                switch (state) {
-                                  case ServiceStateLoading():
-                                    setState(() => isLoading = true);
-                                  case ServiceStateFailed():
-                                    setState(() => isLoading = false);
-                                    showErrorBottomSheet(
-                                        context, state.error);
-                                  case ServiceStateSuccess():
-                                    setState(() => isLoading = false);
-                                    serviceDataResponse = state.dataResponse;
-
-                                  default:
-                                    log("state not implemented");
-                                }
-                              },
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            const Text(
-                              "Make payment on your momas meter easily  in few steps",
-                              style: TextStyle(
-                                  fontSize: 10, fontWeight: FontWeight.w300),
-                            ),
-                            (selectedEstate != null)
-                                ? Row(
+                            // BlocConsumer<AccessTokenBloc, AccessTokenState>(
+                            //   bloc: accessTokenBloc,
+                            //   builder: (context, state) {
+                            //     return EPDropdownButton<EstateData>(
+                            //       itemsListTitle: "Choose Estate",
+                            //       iconSize: 22,
+                            //       value: selectedEstate,
+                            //       hint: const Text(""),
+                            //       isExpanded: true,
+                            //       underline: const Divider(),
+                            //       searchMatcher: (item, text) {
+                            //         return item.title!
+                            //             .toLowerCase()
+                            //             .contains(text.toLowerCase());
+                            //       },
+                            //       onChanged: (v) {
+                            //         setState(() {
+                            //           selectedEstate = v;
+                            //           verificationResponse = null;
+                            //         });
+                            //       },
+                            //       items: (serviceDataResponse ??
+                            //               [])
+                            //           .map(
+                            //             (e) => DropdownMenuItem(
+                            //               value: e,
+                            //               child: Row(
+                            //                 children: [
+                            //                   Text(e.title.toString(),
+                            //                       style: Theme.of(context)
+                            //                           .textTheme
+                            //                           .labelMedium!
+                            //                           .copyWith(
+                            //                               fontWeight:
+                            //                                   FontWeight.w400,
+                            //                               color:
+                            //                                   Colors.black)),
+                            //                 ],
+                            //               ),
+                            //             ),
+                            //           )
+                            //           .toList(),
+                            //     );
+                            //   },
+                            //   listener:
+                            //       (BuildContext context, AccessTokenState state) {
+                            //     switch (state) {
+                            //       case AccessTokenLoading():
+                            //         setState(() => isLoading = true);
+                            //       case AccessTokenFailed():
+                            //         setState(() => isLoading = false);
+                            //         AppErrorDisplay.show(context, state.error);
+                            //       case AccessTokenSuccess():
+                            //         setState(() => isLoading = false);
+                            //         serviceDataResponse = state.estateData;
+                            //
+                            //       default:
+                            //     }
+                            //   },
+                            // ),
+                            // const SizedBox(
+                            //   height: 20,
+                            // ),
+                            // const Text(
+                            //   "Make payment on your momas meter easily  in few steps",
+                            //   style: TextStyle(
+                            //       fontSize: 10, fontWeight: FontWeight.w300),
+                            // ),
+                            // (selectedEstate != null) ?
+                            Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.end,
                                     children: [
@@ -227,14 +236,15 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                                                 meterNo:
                                                     meterTextFormController
                                                         .text,
-                                                estateId: selectedEstate!.id
-                                                    .toString()));
+                                                // estateId: selectedEstate!.id
+                                                //     .toString()
+                                            ));
                                           },
                                         ),
                                       )
                                     ],
                                   )
-                                : Container(),
+                                // : Container(),
                           ],
                         )
                       : Container(),
@@ -273,7 +283,7 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                         )
                       : Container(),
                   MoFormWidget(
-                    enable: editable,
+                    // enable: editable,
                     controller: amountFormController,
                     keyboardType: TextInputType.number,
                     inputFormatters: [
@@ -321,15 +331,12 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                             .contains(text.toLowerCase());
                       },
                       onChanged: (v) {
-                        print(v.toJson());
                         if (v.amount == null) {
                           showErrorBottomSheet(context,
                               "Tariff amount not set, Please contact an admin.");
                           return;
                         }
-                        setState(() {
-                          selectedTariff = v;
-                        });
+                        setState(() => selectedTariff = v);
                       },
                       items: tariff
                           .map(
@@ -337,7 +344,7 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                                 value: e,
                                 child: Row(
                                   children: [
-                                    Text(e.type.toString().toUpperCase(),
+                                    Text(e.title.toString().toUpperCase(),
                                         style: Theme.of(context)
                                             .textTheme
                                             .labelMedium!
@@ -578,7 +585,7 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                   ),
 
                   MoButton(
-                    isNotActive: state is MomasPaymentFailure || !editable,
+                    // isNotActive: state is MomasPaymentFailure,
                     isLoading: state is MomasPaymentLoading || isLoading,
                     title: "CONTINUE",
                     onTap: () {
@@ -587,6 +594,7 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                           : payForOther();
                     },
                   ),
+                  SizedBox(height: 100,)
                 ],
               ),
             ),
@@ -597,7 +605,8 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
             case MomasPaymentLoading():
               FocusScope.of(context).unfocus();
             case MomasPaymentFailure():
-              showErrorBottomSheet(context, state.error);
+              log('[MomasPaymentScreen] listener: MomasPaymentFailure → ${state.error}');
+              AppErrorDisplay.show(context, state.error);
               setState(() {
                 isLoading = false;
                 editable = false;
@@ -614,7 +623,6 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                                 state.momasPaymentResponse.data!.receipt!),
                           )));
             default:
-              log("state not implemented");
           }
         },
       ),
@@ -642,8 +650,6 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
           context, "Payable amount can't be less or equal to zero");
       return;
     }
-
-    print("tariffID>>>>:: " + selectedTariff!.id.toString());
 
     showPaymentModal(context, user!.meter!.meterNo!, () {
       MoBottomSheet().payment(context,
@@ -683,11 +689,11 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
       return;
     }
 
-    if (selectedEstate == null) {
-      showErrorBottomSheet(
-          context, "Provide the estate you making the payment for");
-      return;
-    }
+    // if (selectedEstate == null) {
+    //   showErrorBottomSheet(
+    //       context, "Provide the estate you making the payment for");
+    //   return;
+    // }
     if (selectedTariff == null) {
       showErrorBottomSheet(context, "please select tariff type");
       return;
@@ -718,7 +724,6 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
     }
 
     showPaymentModal(context, user!.meter!.meterNo!, () {
-      print("meter number" + user!.meter!.meterNo!);
       MoBottomSheet().payment(context,
           amount: totalPayableAmount.toString(),
           serviceType: ServiceType.credit_token, onPayment: (String ref) {
@@ -744,7 +749,7 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
             meterNo: meterTextFormController.text,
             meterType: "",
             trxref: ref,
-            estateId: selectedEstate!.id.toString(),
+            // estateId: selectedEstate!.id.toString(),
             paymentType: MomasPaymentType.others));
       });
     });

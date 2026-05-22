@@ -18,6 +18,7 @@ import 'package:momaspayplus/utils/screen_utils.dart';
 import 'package:momaspayplus/utils/strings.dart';
 import '../../../domain/data/request/generate_token_request.dart';
 import '../../../domain/data/response/user_model.dart';
+import '../../../reuseable/app_error_display.dart';
 import '../../../reuseable/error_modal.dart';
 import '../../../reuseable/mo_button.dart';
 import '../../../reuseable/mo_form.dart';
@@ -26,7 +27,7 @@ import '../../../reuseable/pop_button.dart';
 import '../../../reuseable/search_bottom_sheet/ka_dropdown.dart';
 import '../../../reuseable/shadow_container.dart';
 import '../../../utils/receipt_builder.dart';
-import '../../../utils/shared_pref.dart';
+import '../../../core/storage/shared_pref.dart';
 
 class AccessTokenScreen extends StatefulWidget {
   const AccessTokenScreen({super.key});
@@ -193,14 +194,13 @@ class _AccessTokenScreenState extends State<AccessTokenScreen> {
                       (BuildContext context, AccessTokenState state) async {
                     switch (state) {
                       case AccessTokenFailed():
-                        showErrorBottomSheet(context, state.error);
+                        AppErrorDisplay.show(context, state.error);
                       case SetEstateSuccess():
                         showSuccessBottomSheet(
                                 context, "Default estate set successfully")
                             .whenComplete(() => Navigator.pop(context));
 
                       default:
-                        log("state not implemented");
                     }
                   },
                 );
@@ -341,7 +341,6 @@ class _AccessTokenScreenState extends State<AccessTokenScreen> {
                                               estateId: selectedEstateData
                                                   ?.id
                                                   .toString());
-                                          print(data.toJson());
                                           accessTokenBloc.add(
                                               GenerateTokenEvent(data));
                                         } else {
@@ -363,7 +362,7 @@ class _AccessTokenScreenState extends State<AccessTokenScreen> {
                 listener: (BuildContext context, AccessTokenState state) {
                   switch (state) {
                     case AccessTokenFailed():
-                      showErrorBottomSheet(context, state.error);
+                      AppErrorDisplay.show(context, state.error);
                     case GenerateTokenSuccess():
                       Navigator.push(
                           context,
@@ -376,7 +375,6 @@ class _AccessTokenScreenState extends State<AccessTokenScreen> {
                                   )));
 
                     default:
-                      log("state not implemented");
                   }
                 },
               );

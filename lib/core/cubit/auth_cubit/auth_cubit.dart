@@ -1,13 +1,16 @@
-import 'dart:developer';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/core/cubit/auth_cubit/auth_state.dart';
 import 'package:momaspayplus/domain/data/response/feature.dart';
 import 'package:momaspayplus/domain/data/response/user_model.dart';
-import 'package:momaspayplus/utils/shared_pref.dart';
+import 'package:momaspayplus/utils/navigation.dart';
+import 'package:momaspayplus/core/storage/shared_pref.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
+
+  void showAuth() {
+    emit(AuthUnauthenticated());
+  }
 
   void loginSuccess(User user, Feature features) {
     emit(AuthAuthenticated(user, features));
@@ -27,11 +30,21 @@ class AuthCubit extends Cubit<AuthState> {
   void sessionExpired() {
     if (state is AuthUnauthenticated) return;
     SharedPreferenceHelper.clearUser();
+    NavigationService.navigatorKey.currentState?.popUntil((route) => route.isFirst);
     emit(AuthUnauthenticated());
   }
 
   void logout() {
     SharedPreferenceHelper.clearUser();
+    NavigationService.navigatorKey.currentState?.popUntil((route) => route.isFirst);
     emit(AuthUnauthenticated());
+  }
+
+  void clearDefaultPassword() {
+    if (state is AuthAuthenticated) {
+      final current = state as AuthAuthenticated;
+      current.user.isDefaultPassword = false;
+      emit(AuthAuthenticated(current.user, current.features));
+    }
   }
 }

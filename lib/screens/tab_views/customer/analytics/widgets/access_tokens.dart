@@ -25,15 +25,15 @@ class AccessTokens extends StatelessWidget {
       builder: (context, state) {
         return Column(
           children: [
-            SectionHeader(
+            const SectionHeader(
               title: "Access Tokens",
-              trailing: FilterDropdown(
-                selected: state.selectedYear,
-                data: state.availableYears,
-                onChanged: (year) => context
-                    .read<TokenReportBloc>()
-                    .add(FilterTokenReport(selectedYear: year)),
-              ),
+              // trailing: FilterDropdown(
+              //   selected: state.selectedYear,
+              //   data: state.availableYears,
+              //   onChanged: (year) => context
+              //       .read<TokenReportBloc>()
+              //       .add(FilterTokenReport(selectedYear: year)),
+              // ),
             ),
             const SizedBox(height: 20),
             if (state is TokenReportLoading)

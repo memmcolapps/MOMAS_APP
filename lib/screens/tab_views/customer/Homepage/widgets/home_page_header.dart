@@ -4,7 +4,7 @@ import 'package:momaspayplus/domain/data/response/user_model.dart';
 import 'package:momaspayplus/screens/tab_views/customer/Homepage/widgets/main_balance.dart';
 import 'package:momaspayplus/screens/tab_views/customer/Homepage/widgets/promo_section.dart';
 import 'package:momaspayplus/utils/colors.dart';
-import 'package:momaspayplus/utils/shared_pref.dart';
+import 'package:momaspayplus/core/storage/shared_pref.dart';
 import 'package:momaspayplus/utils/strings.dart';
 
 class HomePageHeader extends StatelessWidget {

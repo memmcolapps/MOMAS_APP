@@ -5,7 +5,7 @@ import 'package:momaspayplus/domain/data/response/arrears_items.dart';
 import 'package:momaspayplus/domain/data/response/generic_response.dart';
 import 'package:momaspayplus/screens/stack_screens/arrears/arrears_page.dart';
 
-import '../../utils/routes.dart';
+import '../../core/network/routes.dart';
 import '../data/request/momas_meter_buy.dart';
 import '../data/request/momas_payent_response.dart';
 import '../data/response/cable_tv_response.dart';
@@ -14,7 +14,7 @@ import '../data/response/data_response.dart';
 import '../data/response/meter_payment_response.dart';
 import '../data/response/momas_meter_response.dart';
 import '../data/response/vending_properties.dart';
-import '../request.dart';
+import '../../core/network/request.dart';
 
 class BillRepository {
   final ServerRequest _request = ServerRequest();
@@ -59,11 +59,13 @@ class BillRepository {
   }
 
   Future<MomasVerificationResponse> verifyMomasMeter(
-      String meterNo, String estateId) async {
+      String meterNo,
+      // String estateId
+      ) async {
     var response =
         await _request.postData(path: Routes.vereifyMomasMeter, body: {
       "meterNo": meterNo,
-      "estateId": estateId,
+      // "estateId": estateId,
     });
     return MomasVerificationResponse.fromJson(response.data);
   }

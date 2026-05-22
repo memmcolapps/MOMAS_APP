@@ -10,6 +10,7 @@ import '../../bloc/setting_bloc/setting_bloc.dart';
 import '../../bloc/setting_bloc/setting_event.dart';
 import '../../bloc/setting_bloc/setting_state.dart';
 import '../../domain/repository/setting_repository.dart';
+import '../../reuseable/app_error_display.dart';
 import '../../reuseable/error_modal.dart';
 import '../../reuseable/mo_form.dart';
 
@@ -119,12 +120,11 @@ class _RequestMeterScreenState extends State<RequestMeterScreen> {
           listener: (BuildContext context, SettingsState state) {
             switch (state) {
               case SettingsStateFailed():
-                showErrorBottomSheet(context, state.error);
+                AppErrorDisplay.show(context, state.error);
               case SettingsSupportStateSuccess():
                 showSuccessBottomSheet(context, state.message);
                 _clearControllers();
               default:
-                log("state not implemented");
             }
           },
         ),

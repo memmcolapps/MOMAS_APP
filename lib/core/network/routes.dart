@@ -26,7 +26,7 @@ class Routes {
   static String serviceSearch = "$_baseURL/service-search";
   static String features = "$_baseURL/features";
   static String promo = "$_baseURL/promotion";
-  static String getEstate = "$_baseURL/get-estate";
+  static String getEstate = "$_baseURL/get-all-estate";
   static String setDefault = "$_baseURL/set-default";
   static String generateToken = "$_baseURL/generate-token";
   static String getUser = "$_baseURL/getUser";
@@ -49,6 +49,7 @@ class Routes {
   static String payArrears = "$_baseURL/pay_arrears";
   static String arrears = "$_baseURL/arrears";
   static String resetPassword = "$_baseURL/reset-password";
+  static String updatePassword = "$_baseURL/update-password";
   static String getAccount = "$_baseURL/get-account";
   static String adminFeeCheck = "$_baseURL/admin-fee-check";
 
@@ -56,6 +57,7 @@ class Routes {
 
   /// Analytics
   static String getAnalysis = "$_baseURL/get-analysis";
+  static String getAnalysisSummary = "$_baseURL/get-analysis-summary";
   static String getTransactionAnalysis = "$_baseURL/get-trx-chart";
   static String getUtilityMetrics = "$_baseURL/get-utility-metrics";
   static String getAccessTokenReport = "$_baseURL/get-token-report";

@@ -11,7 +11,8 @@ class UserModel {
   UserModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     user = json['user'] != null ? User.fromJson(json['user']) : null;
-    features = json['features'] != null ? Feature.fromJson(json['features']) : null;
+    features =
+        json['features'] != null ? Feature.fromJson(json['features']) : null;
     message = json['message'];
   }
 
@@ -55,6 +56,7 @@ class User {
   String? hno;
   String? address;
   bool? monthlyAdminFee;
+  bool? isDefaultPassword;
   // FlutterWaveKeys? flutterWaveKeys;
   // PayStackKeys? payStackKeys;
   UserRole? userRole;
@@ -85,6 +87,7 @@ class User {
     this.hno,
     this.address,
     this.monthlyAdminFee,
+    this.isDefaultPassword,
     this.estateId,
     // this.flutterWaveKeys,
     // this.payStackKeys,
@@ -119,6 +122,7 @@ class User {
     hno = json['hno'];
     monthlyAdminFee =
         (json['monthly_admin_fee']).toString() == "1" ? true : false;
+    isDefaultPassword = (json['password_update_count']) == 0 ? true : false;
     address = json['address'];
     estateName = json['estate_name'];
     tariffs = json['tariff'] != null
@@ -140,6 +144,7 @@ class User {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['monthly_admin_fee'] = monthlyAdminFee;
+    data['password_update_count'] = isDefaultPassword;
     data['first_name'] = firstName;
     data['last_name'] = lastName;
     data['phone'] = phone;

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:momaspayplus/core/cubit/app_version_cubit/update_state.dart';
-import 'package:momaspayplus/domain/repository/app_update_repository.dart';
+import 'package:momaspayplus/features/app_update/bloc/update_state.dart';
+import 'package:momaspayplus/features/app_update/data/repositories/app_update_repository.dart';
 import 'package:momaspayplus/utils/constant.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 

@@ -227,7 +227,6 @@
 //                   Navigator.of(context).push(MaterialPageRoute(
 //                       builder: (_) => const RegistrationSuccessScreen()));
 //                 default:
-//                   log("state not implemented");
 //               }
 //             },
 //           ),

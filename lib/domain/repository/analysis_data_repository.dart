@@ -1,6 +1,6 @@
 import 'package:momaspayplus/domain/data/response/analytics_data_response.dart';
-import 'package:momaspayplus/domain/request.dart';
-import 'package:momaspayplus/utils/routes.dart';
+import 'package:momaspayplus/core/network/request.dart';
+import 'package:momaspayplus/core/network/routes.dart';
 
 class AnalysisDataRepository {
   final ServerRequest _request = ServerRequest();
@@ -11,6 +11,15 @@ class AnalysisDataRepository {
   Future<AnalysisResponse> getAnalysis() async {
     var response = await _request.getData(
       path: Routes.getAnalysis,
+    );
+
+    return AnalysisResponse.fromJson(response.data);
+  }
+
+  Future<AnalysisResponse> getAnalysisSummary(String year) async {
+    var response = await _request.getData(
+      path: Routes.getAnalysisSummary,
+      dataToSend:  {'year': _resolveYear(year)}
     );
 
     return AnalysisResponse.fromJson(response.data);

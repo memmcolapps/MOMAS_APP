@@ -17,6 +17,7 @@ import '../../../../../bloc/airtime_bloc/airtime_bloc.dart';
 import '../../../../../bloc/airtime_bloc/airtime_event.dart';
 import '../../../../../bloc/airtime_bloc/airtime_state.dart';
 import '../../../../../reuseable/bottom_sheet.dart';
+import '../../../../../reuseable/app_error_display.dart';
 import '../../../../../reuseable/error_modal.dart';
 import '../../../../../reuseable/mo_button.dart';
 import '../../../../../reuseable/mo_form.dart';
@@ -223,12 +224,11 @@ class _AirtimeScreenState extends State<AirtimeScreen> {
                 listener: (context, state) {
                   switch (state) {
                     case AirtimeFailure():
-                      showErrorBottomSheet(context, state.error);
+                      AppErrorDisplay.show(context, state.error);
                     case AirtimeSuccess():
                       showSuccessBottomSheet(
                           context, state.response.message ?? "");
                     default:
-                      log("state not implemented");
                   }
                 },
               ),

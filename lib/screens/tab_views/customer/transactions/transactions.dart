@@ -16,6 +16,7 @@ import '../../../../bloc/payment_bloc/payment_event.dart';
 import '../../../../bloc/payment_bloc/payment_state.dart';
 import '../../../../domain/data/response/transaction_data_response.dart';
 import '../../../../domain/repository/payment_repository.dart';
+import '../../../../reuseable/app_error_display.dart';
 import '../../../../reuseable/error_modal.dart';
 import '../../../../reuseable/mo_form.dart';
 import '../../../../reuseable/mo_transaction_success_screen.dart';
@@ -84,7 +85,7 @@ class _TransactionsState extends State<Transactions> {
                     vertical: 16.0,
                   ),
                   child: MoFormWidget(
-                    prefixIcon: Icon(Icons.search, color: MoColors.mainColor),
+                    prefixIcon: const Icon(Icons.search, color: MoColors.mainColor),
                     hintText: "Search",
                     onChange: (value) {
                       _filterData(value);
@@ -106,9 +107,9 @@ class _TransactionsState extends State<Transactions> {
                               },
                               child: TransactionCard(
                                 data: filteredTransactionDataList![index],
-                                retry: (transRef) {
-                                  paymentBloc.add(RetryPayment(transRef));
-                                },
+                                // retry: (transRef) {
+                                //   paymentBloc.add(RetryPayment(transRef));
+                                // },
                               ),
                             );
                           },
@@ -123,9 +124,12 @@ class _TransactionsState extends State<Transactions> {
             showDialog(
               context: context,
               barrierDismissible: false,
-              builder: (_) => const LoadingDialog(text: "Loading Receipt...",),
+              builder: (_) => const LoadingDialog(text: "Loading Receipt..."),
             );
-          } else if (state is ReceiptFailure || state is ViewMomasPaymentSuccess) {
+          } else if (state is ReceiptFailure) {
+            if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+            AppErrorDisplay.show(context, state.error);
+          } else if (state is ViewMomasPaymentSuccess) {
             if (Navigator.of(context).canPop()) Navigator.of(context).pop();
           }
 
@@ -133,17 +137,18 @@ class _TransactionsState extends State<Transactions> {
             showDialog(
               context: context,
               barrierDismissible: false,
-              builder: (_) => const LoadingDialog(text: "Retrying Transaction...",),
+              builder: (_) => const LoadingDialog(text: "Retrying Transaction..."),
             );
-          } else if (state is RetryFailure || state is ViewMomasPaymentSuccess) {
+          } else if (state is RetryFailure) {
             if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+            AppErrorDisplay.show(context, state.error);
           }
 
           if (state is PaymentHistorySuccess) {
             transactionDataList = state.data;
             filteredTransactionDataList = List.from(transactionDataList!);
           } else if (state is PaymentFailureState) {
-            showErrorBottomSheet(context, state.error);
+            AppErrorDisplay.show(context, state.error);
           } else if (state is MomasPaymentSuccess) {
             Navigator.push(
                 context,

@@ -3,6 +3,7 @@ class MoImage{
   static String root = "assets";
   static String lottieSuccess =  "$root/success_lottie.json";
   static String logo =  "$root/logo.png";
+  static String logoTransparent =  "$root/logo_transparent.png";
   static String logoColor = "$root/logo-color.png";
   static String fingerPrint =  "$root/finger_print.png";
   static String settingsIcon =  "$root/settings.png";
