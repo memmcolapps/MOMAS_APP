@@ -270,11 +270,14 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                                   const SizedBox(
                                     width: 10,
                                   ),
-                                  Text(
-                                    verificationResponse!.data!.customerName!,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: MoColors.mainColor),
+                                  Expanded(
+                                    child: Text(
+                                      verificationResponse!.data!.customerName!,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: MoColors.mainColor),
+                                    ),
                                   )
                                 ],
                               ),
