@@ -23,7 +23,7 @@ import '../../../../utils/alert_dialog-view.dart';
 import '../../../../core/storage/shared_pref.dart';
 import '../../../../utils/strings.dart';
 import '../../../auth/email_code_screen.dart';
-import '../../../stack_screens/support/support_screen.dart';
+import '../../../../features/support/screens/support_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

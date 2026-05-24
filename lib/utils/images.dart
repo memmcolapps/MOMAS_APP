@@ -53,4 +53,8 @@ class MoImage{
   static String appStore =  "$root/app-store.png";
 
   static String checkedCircle = "$root/checked.png";
+
+  static String resolvedTicket = "$root/resolved.png";
+  static String pendingTicket = "$root/pending.png";
+  static String newReplyTicket = "$root/new-reply.png";
 }

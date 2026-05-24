@@ -52,4 +52,22 @@ class AppTextStyles {
     color: MoColors.mainColor,
     letterSpacing: 0.32,
   );
+
+   static const TextStyle ticketHeading = TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 14,
+    color: MoColors.mainColor,
+  );
+
+  static const TextStyle ticketText = TextStyle(
+    fontWeight: FontWeight.w400,
+    fontSize: 12,
+    color: Colors.black,
+  );
+
+  static const TextStyle ticketInfo = TextStyle(
+    fontWeight: FontWeight.w400,
+    color: MoColors.ticketInfo,
+    fontSize: 10,
+  );
 }

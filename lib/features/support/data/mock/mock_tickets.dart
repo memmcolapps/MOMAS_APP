@@ -1,0 +1,68 @@
+import 'package:momaspayplus/features/support/data/models/ticket_model.dart';
+
+final List<TicketModel> mockTickets = [
+  const TicketModel(
+    ticketId: '#00142',
+    issueType: 'Meter Issue',
+    dateCreated: '20-05-2026',
+    timeAgo: '3 mins ago',
+    message: 'I am unable to complete my transfer. The transaction keeps failing at the confirmation step. I have tried multiple times but the issue persists.',
+    status: TicketStatus.pending,
+  ),
+  const TicketModel(
+    ticketId: '#00139',
+    issueType: 'Payment Issue',
+    dateCreated: '18-05-2026',
+    timeAgo: '2 hrs ago',
+    message: 'My account was debited twice for the same transaction on the 18th of May. I have checked my transaction history and both deductions are clearly visible with the same reference number, same amount of NGN 45,000, and same timestamp. I did not authorize two payments and I need the duplicate charge reversed immediately. I have also tried reaching out via the in-app chat but got no response after waiting for over 40 minutes. This is very urgent as the funds are needed for a time-sensitive obligation.',
+    status: TicketStatus.newReply,
+  ),
+  const TicketModel(
+    ticketId: '#00131',
+    issueType: 'Other Issue',
+    dateCreated: '19-05-2026',
+    timeAgo: '1 day ago',
+    message: 'Unable to log in after resetting my password. The new password is not being accepted on the mobile app.',
+    status: TicketStatus.resolved,
+  ),
+  const TicketModel(
+    ticketId: '#00128',
+    issueType: 'Meter Issue',
+    dateCreated: '18-05-2026',
+    timeAgo: '2 days ago',
+    message: 'My prepaid meter is not reflecting the units I purchased yesterday. I bought 50 units but the meter still shows the same balance as before the purchase.',
+    status: TicketStatus.resolved,
+  ),
+  const TicketModel(
+    ticketId: '#00120',
+    issueType: 'Payment Issue',
+    dateCreated: '17-05-2026',
+    timeAgo: '3 days ago',
+    message: 'I was charged a transaction fee that was not disclosed before I confirmed the payment. This is unacceptable and I want a full refund of the hidden charge.',
+    status: TicketStatus.pending,
+  ),
+  const TicketModel(
+    ticketId: '#00115',
+    issueType: 'Other Issue',
+    dateCreated: '16-05-2026',
+    timeAgo: '4 days ago',
+    message: 'The app crashes every time I try to open the transaction history tab. I have reinstalled the app twice and the problem persists on my device.',
+    status: TicketStatus.newReply,
+  ),
+  const TicketModel(
+    ticketId: '#00109',
+    issueType: 'Meter Issue',
+    dateCreated: '15-05-2026',
+    timeAgo: '5 days ago',
+    message: 'I entered the wrong meter number during a token purchase. The transaction was successful but the token was sent to the wrong meter. Please help me reverse or redirect the purchase.',
+    status: TicketStatus.resolved,
+  ),
+  const TicketModel(
+    ticketId: '#00102',
+    issueType: 'Payment Issue',
+    dateCreated: '14-05-2026',
+    timeAgo: '6 days ago',
+    message: 'My wallet balance is not updating after a bank transfer. The money left my bank account over 3 hours ago but my in-app wallet still shows the old balance.',
+    status: TicketStatus.pending,
+  ),
+];

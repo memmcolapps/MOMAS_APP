@@ -16,20 +16,24 @@ import '../screens/generate_token/access_token_verification.dart';
 import '../screens/metrics/metrics_screen.dart';
 import '../screens/stack_screens/momos_payment/momas_payment_screen.dart';
 import '../screens/reprint_token/reprint_token_screen.dart';
-import '../screens/stack_screens/support/support_screen.dart';
+import '../features/support/screens/support_screen.dart';
 import 'images.dart';
 
 class DashboardBuilder {
-  static List<GridItemModel> builder(Feature feature, BuildContext context, User? user) {
+  static List<GridItemModel> builder(
+      Feature feature, BuildContext context, User? user) {
     return [
       GridItemModel(
         image: MoImage.momasPayment,
         title: "Buy Units",
         subtitle: "Buy more unit for your momas meter",
         active: feature.isActive(feature.momasMeter),
-        onTap: () => Navigator.push(context, MaterialPageRoute(
-          builder: (_) => const MomasPaymentScreen(momasPaymentType: MomasPaymentType.self),
-        )),
+        onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const MomasPaymentScreen(
+                  momasPaymentType: MomasPaymentType.self),
+            )),
       ),
       // if (feature.isVisible(feature.momasMeter))
       //   GridItemModel(
@@ -47,9 +51,12 @@ class DashboardBuilder {
           title: "Pay Other Meter",
           subtitle: "Buy unit for other meters",
           active: feature.isActive(feature.otherMeter),
-          onTap: () => Navigator.push(context, MaterialPageRoute(
-            builder: (_) => const MomasPaymentScreen(momasPaymentType: MomasPaymentType.others),
-          )),
+          onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const MomasPaymentScreen(
+                    momasPaymentType: MomasPaymentType.others),
+              )),
         ),
       // if (feature.isVisible(feature.printToken))
       //   GridItemModel(
@@ -69,11 +76,13 @@ class DashboardBuilder {
               ? "Verify estate token"
               : "Generate and manage security token",
           active: feature.isActive(feature.accessToken),
-          onTap: () => Navigator.push(context, MaterialPageRoute(
-            builder: (_) => user?.userRole == UserRole.estateStaff
-                ? const AccessTokenVerification()
-                : const AccessTokenScreen(),
-          )),
+          onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => user?.userRole == UserRole.estateStaff
+                    ? const AccessTokenVerification()
+                    : const AccessTokenScreen(),
+              )),
         ),
       if (feature.isVisible(feature.services))
         GridItemModel(
@@ -81,9 +90,11 @@ class DashboardBuilder {
           title: "Services",
           subtitle: "Request for any services in your estate",
           active: feature.isActive(feature.services),
-          onTap: () => Navigator.push(context, MaterialPageRoute(
-            builder: (_) => const ServiceScreen(),
-          )),
+          onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const ServiceScreen(),
+              )),
         ),
       if (feature.isVisible(feature.billPayment))
         GridItemModel(
@@ -91,9 +102,11 @@ class DashboardBuilder {
           title: "Bill Payment",
           subtitle: "Manage and add beneficiary to your account",
           active: feature.isActive(feature.billPayment),
-          onTap: () => Navigator.push(context, MaterialPageRoute(
-            builder: (_) => const BillPaymentOptionsScreen(),
-          )),
+          onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const BillPaymentOptionsScreen(),
+              )),
         ),
       if (feature.isVisible(feature.support))
         GridItemModel(
@@ -102,10 +115,14 @@ class DashboardBuilder {
           subtitle: "Contact our 24/7 support",
           active: feature.isActive(feature.support),
           onTap: () {
-            final settingBloc = context.read<SettingsBloc>()..add(SupportSettingEvent());
-            Navigator.push(context, MaterialPageRoute(
-              builder: (_) => BlocProvider.value(value: settingBloc, child: const SupportScreen()),
-            ));
+            final settingBloc = context.read<SettingsBloc>()
+              ..add(SupportSettingEvent());
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BlocProvider.value(
+                      value: settingBloc, child: const SupportScreen()),
+                ));
           },
         ),
       // if (feature.isVisible(feature.analysis))
@@ -123,9 +140,11 @@ class DashboardBuilder {
         image: MoImage.analytics,
         title: "Arrears",
         subtitle: "Buy for unpaid utilities",
-        onTap: () => Navigator.push(context, MaterialPageRoute(
-          builder: (_) => const CustomerArrearsPage(),
-        )),
+        onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const CustomerArrearsPage(),
+            )),
       ),
     ];
   }
@@ -148,11 +167,10 @@ class GridItemModel {
   final VoidCallback? onTap;
   final bool active;
 
-  GridItemModel({
-    required this.image,
-    required this.title,
-    required this.subtitle,
-    this.onTap,
-    this.active = true
-  });
+  GridItemModel(
+      {required this.image,
+      required this.title,
+      required this.subtitle,
+      this.onTap,
+      this.active = true});
 }
