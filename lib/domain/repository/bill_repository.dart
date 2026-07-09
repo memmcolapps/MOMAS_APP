@@ -3,6 +3,7 @@ import 'package:momaspayplus/domain/data/request/cable_tv_request.dart';
 import 'package:momaspayplus/domain/data/request/data_request.dart';
 import 'package:momaspayplus/domain/data/response/arrears_items.dart';
 import 'package:momaspayplus/domain/data/response/generic_response.dart';
+import 'package:momaspayplus/domain/data/response/token_fee_calc_response.dart';
 import 'package:momaspayplus/screens/stack_screens/arrears/arrears_page.dart';
 
 import '../../core/network/routes.dart';
@@ -68,6 +69,18 @@ class BillRepository {
       // "estateId": estateId,
     });
     return MomasVerificationResponse.fromJson(response.data);
+  }
+
+  Future<TokenFeeCalculationResponse> energyCalc(
+      num tariffId,
+      num amount
+      ) async {
+    var response =
+    await _request.postData(path: Routes.energyuCalc, body: {
+      "tariff_id": tariffId,
+      "amount": amount,
+    });
+    return TokenFeeCalculationResponse.fromJson(response.data);
   }
 
   Future<MomasPaymentResponse> payMomasMeter(MomasMeterBuy momasPayment) async {

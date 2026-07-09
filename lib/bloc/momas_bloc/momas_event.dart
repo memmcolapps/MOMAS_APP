@@ -22,6 +22,19 @@ class MomasVerification extends MomasPaymentEvent {
   List<Object> get props => [meterNo];
 }
 
+class EnergyCalculation extends MomasPaymentEvent {
+  final num tariffId;
+  final num amount;
+
+  const EnergyCalculation({
+    required this.tariffId,
+    required this.amount
+  });
+
+  @override
+  List<Object> get props => [tariffId, amount];
+}
+
 class MomasMeterPayment extends MomasPaymentEvent {
   final MomasPaymentType paymentType;
   final String meterType, trxref;

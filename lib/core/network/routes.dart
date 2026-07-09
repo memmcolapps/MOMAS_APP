@@ -36,6 +36,7 @@ class Routes {
   static String buyCable = "$_baseURL/buy-cable";
   static String validateCable = "$_baseURL/validate-cable";
   static String vereifyMomasMeter = "$_baseURL/validate";
+  static String energyuCalc = "$_baseURL/calculate-token-fees-amount";
   static String payMomasMeter = "$_baseURL/buy-meter";
   static String buyMeterOthers = "$_baseURL/buy-meter-others";
   static String reprintMeter = "$_baseURL/reprint-token";

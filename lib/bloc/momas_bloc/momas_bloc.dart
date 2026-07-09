@@ -8,6 +8,7 @@ import '../../domain/data/request/momas_meter_buy.dart';
 import '../../domain/data/request/momas_payent_response.dart';
 import '../../domain/data/response/meter_payment_response.dart';
 import '../../domain/data/response/momas_meter_response.dart';
+import '../../domain/data/response/token_fee_calc_response.dart';
 import '../../domain/repository/bill_repository.dart';
 import 'momas_event.dart';
 import 'momas_state.dart';
@@ -29,7 +30,33 @@ class MomasPaymentBloc extends Bloc<MomasPaymentEvent, MomasPaymentState> {
     on<MomasGetVentingProperties>((event, emit) async {
       await onGetVendingProperties(event, emit);
     });
+
+    on<EnergyCalculation>((event, emit) async {
+      await onEnergyCalculation(event, emit);
+    });
   }
+
+
+  // Future onEnergyCalculation(
+  //     EnergyCalculation event, Emitter<MomasPaymentState> emit) async {
+  //   emit(energyCalcLoading());
+  //   try {
+  //     final TokenFeeCalculationResponse response =
+  //     await repository.energyCalc(
+  //         event.tariffId,
+  //         event.amount
+  //     );
+  //     if (response.status == true) {
+  //       emit(EnergyCalcState(response: response));
+  //     } else {
+  //       emit(MomasPaymentFailure(
+  //           error: extractError(response.message)));
+  //     }
+  //   } catch (e) {
+  //     log('[MomasBloc] onCalculate error: $e');
+  //     emit(MomasPaymentFailure(error: e.toString()));
+  //   }
+  // }
 
   Future onVerify(
       MomasVerification event, Emitter<MomasPaymentState> emit) async {
@@ -115,6 +142,28 @@ class MomasPaymentBloc extends Bloc<MomasPaymentEvent, MomasPaymentState> {
       }
     } catch (e) {
       log('[MomasBloc] onGetVendingProperties error: $e');
+      emit(MomasPaymentFailure(error: e.toString()));
+    }
+  }
+
+
+  Future onEnergyCalculation(
+      EnergyCalculation event, Emitter<MomasPaymentState> emit) async {
+    emit(energyCalcLoading());
+    try {
+      final TokenFeeCalculationResponse response =
+      await repository.energyCalc(
+          event.tariffId,
+          event.amount
+      );
+      if (response.status == true) {
+        emit(EnergyCalcState(response: response));
+      } else {
+        emit(MomasPaymentFailure(
+            error: extractError(response.message)));
+      }
+    } catch (e) {
+      log('[MomasBloc] onCalculate error: $e');
       emit(MomasPaymentFailure(error: e.toString()));
     }
   }

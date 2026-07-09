@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:momaspayplus/domain/data/response/token_fee_calc_response.dart';
 import 'package:momaspayplus/domain/data/response/vending_properties.dart';
 
 import '../../domain/data/request/momas_payent_response.dart';
@@ -18,10 +19,18 @@ class MomasPaymentLoading extends MomasPaymentState {}
 
 class MomasVerificationLoading extends MomasPaymentState {}
 
+class energyCalcLoading extends MomasPaymentState {}
+
 class MomasMeterVerificationState extends MomasPaymentState {
   final MomasVerificationResponse response;
 
   const MomasMeterVerificationState({required this.response});
+}
+
+class EnergyCalcState extends MomasPaymentState {
+  final TokenFeeCalculationResponse response;
+
+  const EnergyCalcState({required this.response});
 }
 
 class MomasPaymentFailure extends MomasPaymentState {

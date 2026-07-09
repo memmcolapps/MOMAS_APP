@@ -75,6 +75,7 @@ class _MoFormWidgetState extends State<MoFormWidget> {
                // filled: widget.enable == false ? true: false,
                //  fillColor: widget.enable == false ? Colors.grey.shade100 : null,
                 hintText: widget.hintText,
+                hintStyle: TextStyle(color: Colors.black54),
                 prefixIcon: widget.prefixIcon,
                 suffixIcon: widget.isPassword
                     ? IconButton(

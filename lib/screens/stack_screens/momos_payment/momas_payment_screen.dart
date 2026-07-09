@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:momaspayplus/bloc/access_token_bloc/access_token_bloc.dart';
 import 'package:momaspayplus/bloc/access_token_bloc/access_token_event.dart';
 import 'package:momaspayplus/bloc/access_token_bloc/access_token_state.dart';
@@ -24,6 +25,7 @@ import '../../../bloc/service_bloc/service_event.dart';
 import '../../../bloc/service_bloc/service_state.dart';
 import '../../../domain/data/response/momas_meter_response.dart';
 import '../../../domain/data/response/service_data_response.dart';
+import '../../../domain/data/response/token_fee_calc_response.dart';
 import '../../../domain/repository/service_repository.dart';
 import '../../../reuseable/bottom_sheet.dart';
 import '../../../reuseable/app_error_display.dart';
@@ -39,6 +41,7 @@ import '../../../utils/receipt_builder.dart';
 import '../../../core/storage/shared_pref.dart';
 import '../../../utils/strings.dart';
 import '../../../utils/vat_calculator.dart';
+
 
 class MomasPaymentScreen extends StatefulWidget {
   final MomasPaymentType momasPaymentType;
@@ -124,86 +127,9 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // if (!editable && state is MomasPaymentFailure)
-                  //   Text(
-                  //     state.error,
-                  //     style: const TextStyle(
-                  //       fontSize: 14,
-                  //       color: Colors.red,
-                  //     ),
-                  //   ),
                   widget.momasPaymentType == MomasPaymentType.others
                       ? Column(
                           children: [
-                            // BlocConsumer<AccessTokenBloc, AccessTokenState>(
-                            //   bloc: accessTokenBloc,
-                            //   builder: (context, state) {
-                            //     return EPDropdownButton<EstateData>(
-                            //       itemsListTitle: "Choose Estate",
-                            //       iconSize: 22,
-                            //       value: selectedEstate,
-                            //       hint: const Text(""),
-                            //       isExpanded: true,
-                            //       underline: const Divider(),
-                            //       searchMatcher: (item, text) {
-                            //         return item.title!
-                            //             .toLowerCase()
-                            //             .contains(text.toLowerCase());
-                            //       },
-                            //       onChanged: (v) {
-                            //         setState(() {
-                            //           selectedEstate = v;
-                            //           verificationResponse = null;
-                            //         });
-                            //       },
-                            //       items: (serviceDataResponse ??
-                            //               [])
-                            //           .map(
-                            //             (e) => DropdownMenuItem(
-                            //               value: e,
-                            //               child: Row(
-                            //                 children: [
-                            //                   Text(e.title.toString(),
-                            //                       style: Theme.of(context)
-                            //                           .textTheme
-                            //                           .labelMedium!
-                            //                           .copyWith(
-                            //                               fontWeight:
-                            //                                   FontWeight.w400,
-                            //                               color:
-                            //                                   Colors.black)),
-                            //                 ],
-                            //               ),
-                            //             ),
-                            //           )
-                            //           .toList(),
-                            //     );
-                            //   },
-                            //   listener:
-                            //       (BuildContext context, AccessTokenState state) {
-                            //     switch (state) {
-                            //       case AccessTokenLoading():
-                            //         setState(() => isLoading = true);
-                            //       case AccessTokenFailed():
-                            //         setState(() => isLoading = false);
-                            //         AppErrorDisplay.show(context, state.error);
-                            //       case AccessTokenSuccess():
-                            //         setState(() => isLoading = false);
-                            //         serviceDataResponse = state.estateData;
-                            //
-                            //       default:
-                            //     }
-                            //   },
-                            // ),
-                            // const SizedBox(
-                            //   height: 20,
-                            // ),
-                            // const Text(
-                            //   "Make payment on your momas meter easily  in few steps",
-                            //   style: TextStyle(
-                            //       fontSize: 10, fontWeight: FontWeight.w300),
-                            // ),
-                            // (selectedEstate != null) ?
                             Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.end,
@@ -244,7 +170,6 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                                       )
                                     ],
                                   )
-                                // : Container(),
                           ],
                         )
                       : Container(),
@@ -400,156 +325,156 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                                   ),
                                 ),
                                 const Divider(),
-                                // Items Table
-                                Table(
-                                  columnWidths: const {
-                                    0: FlexColumnWidth(),
-                                    1: FixedColumnWidth(100),
-                                  },
-                                  children: [
-                                    TableRow(
-                                      children: [
-                                        const Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 5.0),
-                                          child: Text(
-                                            "Utilities",
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 5.0),
-                                          child: Text(
-                                            AmountFormatter.format(
-                                                double.parse(utilitiesAmount
-                                                    .toString())),
-                                            textAlign: TextAlign.right,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    TableRow(
-                                      children: [
-                                        const Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 5.0),
-                                          child: Text(
-                                            "Cost of Unit",
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 5.0),
-                                          child: Text(
-                                            AmountFormatter.format(
-                                                VatCalculator()
-                                                    .calculateCostOfUnit(
-                                                        amountText:
-                                                            amountFormController
-                                                                .text,
-                                                        tariffAmount:
-                                                            selectedTariff
-                                                                ?.amount,
-                                                        utilitiesAmount:
-                                                            utilitiesAmount,
-                                                        vat: selectedTariff
-                                                            ?.vat)
-                                                    .toDouble()),
-                                            textAlign: TextAlign.right,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    TableRow(
-                                      children: [
-                                        const Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 5.0),
-                                          child: Text(
-                                            "VAT Amount",
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 5.0),
-                                          child: Text(
-                                            AmountFormatter.format(
-                                                VatCalculator()
-                                                    .calculateVatAmount(
-                                                        amountText:
-                                                            amountFormController
-                                                                .text,
-                                                        tariffAmount:
-                                                            selectedTariff
-                                                                ?.amount,
-                                                        utilitiesAmount:
-                                                            utilitiesAmount,
-                                                        vat: selectedTariff
-                                                            ?.vat)
-                                                    .toDouble()),
-                                            textAlign: TextAlign.right,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    TableRow(
-                                      children: [
-                                        const Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 5.0),
-                                          child: Text(
-                                            "Unit",
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 5.0),
-                                          child: Text(
-                                            "${AmountFormatter.format(VatCalculator().calculateTariffAmountPerKWatt(amountText: amountFormController.text, tariffAmount: selectedTariff?.amount, utilitiesAmount: utilitiesAmount, vat: selectedTariff?.vat).toDouble())}Kw/h",
-                                            textAlign: TextAlign.right,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                const Divider(),
+                                // // Items Table
+                                // Table(
+                                //   columnWidths: const {
+                                //     0: FlexColumnWidth(),
+                                //     1: FixedColumnWidth(100),
+                                //   },
+                                //   children: [
+                                //     TableRow(
+                                //       children: [
+                                //         const Padding(
+                                //           padding: EdgeInsets.symmetric(
+                                //               vertical: 5.0),
+                                //           child: Text(
+                                //             "Utilities",
+                                //             style: TextStyle(
+                                //               fontSize: 14,
+                                //               color: Colors.black,
+                                //             ),
+                                //           ),
+                                //         ),
+                                //         Padding(
+                                //           padding: const EdgeInsets.symmetric(
+                                //               vertical: 5.0),
+                                //           child: Text(
+                                //             AmountFormatter.format(
+                                //                 double.parse(utilitiesAmount
+                                //                     .toString())),
+                                //             textAlign: TextAlign.right,
+                                //             style: const TextStyle(
+                                //               fontSize: 14,
+                                //               fontWeight: FontWeight.bold,
+                                //               color: Colors.black,
+                                //             ),
+                                //           ),
+                                //         ),
+                                //       ],
+                                //     ),
+                                //     TableRow(
+                                //       children: [
+                                //         const Padding(
+                                //           padding: EdgeInsets.symmetric(
+                                //               vertical: 5.0),
+                                //           child: Text(
+                                //             "Cost of Unit",
+                                //             style: TextStyle(
+                                //               fontSize: 14,
+                                //               color: Colors.black,
+                                //             ),
+                                //           ),
+                                //         ),
+                                //         Padding(
+                                //           padding: const EdgeInsets.symmetric(
+                                //               vertical: 5.0),
+                                //           child: Text(
+                                //             AmountFormatter.format(
+                                //                 VatCalculator()
+                                //                     .calculateCostOfUnit(
+                                //                         amountText:
+                                //                             amountFormController
+                                //                                 .text,
+                                //                         tariffAmount:
+                                //                             selectedTariff
+                                //                                 ?.amount,
+                                //                         utilitiesAmount:
+                                //                             utilitiesAmount,
+                                //                         vat: selectedTariff
+                                //                             ?.vat)
+                                //                     .toDouble()),
+                                //             textAlign: TextAlign.right,
+                                //             style: const TextStyle(
+                                //               fontSize: 14,
+                                //               fontWeight: FontWeight.bold,
+                                //               color: Colors.black,
+                                //             ),
+                                //           ),
+                                //         ),
+                                //       ],
+                                //     ),
+                                //     TableRow(
+                                //       children: [
+                                //         const Padding(
+                                //           padding: EdgeInsets.symmetric(
+                                //               vertical: 5.0),
+                                //           child: Text(
+                                //             "VAT Amount",
+                                //             style: TextStyle(
+                                //               fontSize: 14,
+                                //               color: Colors.black,
+                                //             ),
+                                //           ),
+                                //         ),
+                                //         Padding(
+                                //           padding: const EdgeInsets.symmetric(
+                                //               vertical: 5.0),
+                                //           child: Text(
+                                //             AmountFormatter.format(
+                                //                 VatCalculator()
+                                //                     .calculateVatAmount(
+                                //                         amountText:
+                                //                             amountFormController
+                                //                                 .text,
+                                //                         tariffAmount:
+                                //                             selectedTariff
+                                //                                 ?.amount,
+                                //                         utilitiesAmount:
+                                //                             utilitiesAmount,
+                                //                         vat: selectedTariff
+                                //                             ?.vat)
+                                //                     .toDouble()),
+                                //             textAlign: TextAlign.right,
+                                //             style: const TextStyle(
+                                //               fontSize: 14,
+                                //               fontWeight: FontWeight.bold,
+                                //               color: Colors.black,
+                                //             ),
+                                //           ),
+                                //         ),
+                                //       ],
+                                //     ),
+                                //     TableRow(
+                                //       children: [
+                                //         const Padding(
+                                //           padding: EdgeInsets.symmetric(
+                                //               vertical: 5.0),
+                                //           child: Text(
+                                //             "Unit",
+                                //             style: TextStyle(
+                                //               fontSize: 14,
+                                //               color: Colors.black,
+                                //             ),
+                                //           ),
+                                //         ),
+                                //         Padding(
+                                //           padding: const EdgeInsets.symmetric(
+                                //               vertical: 5.0),
+                                //           child: Text(
+                                //             "${AmountFormatter.format(VatCalculator().calculateTariffAmountPerKWatt(amountText: amountFormController.text, tariffAmount: selectedTariff?.amount, utilitiesAmount: utilitiesAmount, vat: selectedTariff?.vat).toDouble())}Kw/h",
+                                //             textAlign: TextAlign.right,
+                                //             style: const TextStyle(
+                                //               fontSize: 14,
+                                //               fontWeight: FontWeight.bold,
+                                //               color: Colors.black,
+                                //             ),
+                                //           ),
+                                //         ),
+                                //       ],
+                                //     ),
+                                //   ],
+                                // ),
+                                // const Divider(),
                                 // Total Section
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -592,9 +517,29 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                     isLoading: state is MomasPaymentLoading || isLoading,
                     title: "CONTINUE",
                     onTap: () {
-                      widget.momasPaymentType == MomasPaymentType.self
-                          ? payForSelf()
-                          : payForOther();
+                        num totalPayableAmount = int.parse(amountFormController.text);
+
+                        if (totalPayableAmount <= 0) {
+                          showErrorBottomSheet(
+                              context, "Payable amount can't be less or equal to zero");
+                          return;
+                        }
+                        widget.momasPaymentType == MomasPaymentType.self
+                            ? SizedBox() : handleOther();
+
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (_)
+                          => EnergyCalculationScreen(
+                              momasPaymentType: widget.momasPaymentType,
+                              verificationResponse: verificationResponse!, 
+                              amount: amountFormController.text.trim(),
+                            tariff: selectedTariff,
+                              user: user,
+                            meterNo: meterTextFormController.text
+                          )));
+                      // widget.momasPaymentType == MomasPaymentType.self
+                      //     ? payForSelf()
+                      //     : payForOther();
                     },
                   ),
                   SizedBox(height: 100,)
@@ -617,14 +562,16 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
             case MomasMeterVerificationState():
               verificationResponse = state.response;
               getForOtherVent(verificationResponse);
-            case MomasPaymentSuccess():
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (builder) => TransactionSuccessPage(
-                            details: ReceiptBuilder().meterPayment(
-                                state.momasPaymentResponse.data!.receipt!),
-                          )));
+            // case MomasPaymentSuccess():
+            //   Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //           builder: (builder) => TransactionSuccessPage(
+            //                 details: ReceiptBuilder().meterPayment(
+            //                     state.momasPaymentResponse.data!.receipt!),
+            //               )
+            //       )
+            //   );
             default:
           }
         },
@@ -632,129 +579,847 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
     );
   }
 
-  payForSelf() {
-    var receivableAmount = VatCalculator().calculateCostOfUnit(
-        amountText: amountFormController.text,
-        tariffAmount: selectedTariff?.amount,
-        utilitiesAmount: utilitiesAmount,
-        vat: selectedTariff?.vat);
-
-    if (receivableAmount < minPurchase || receivableAmount > maxPurchase) {
-      // if(r)
-      showErrorBottomSheet(context,
-          "Payable amount (NGN${amountFormController.text}) can not be less than minimum  vend.");
-      return;
-    }
-
-    num totalPayableAmount = int.parse(amountFormController.text);
-
-    if (totalPayableAmount <= 0) {
-      showErrorBottomSheet(
-          context, "Payable amount can't be less or equal to zero");
-      return;
-    }
-
-    showPaymentModal(context, user!.meter!.meterNo!, () {
-      MoBottomSheet().payment(context,
-          amount: totalPayableAmount.toString(),
-          serviceType: ServiceType.credit_token, onPayment: (String ref) {
-        bloc.add(MomasMeterPayment(
-            vatAmount: VatCalculator()
-                .calculateVatAmount(
-                    amountText: amountFormController.text,
-                    tariffAmount: selectedTariff?.amount,
-                    utilitiesAmount: utilitiesAmount,
-                    vat: selectedTariff?.vat)
-                .toString(),
-            estateId: user!.estateId,
-            utilityAmount: utilitiesAmount.toString(),
-            totalPaidAmount: totalPayableAmount.toString(),
-            vendValueKWPerNaira: VatCalculator()
-                .calculateTariffAmountPerKWatt(
-                    amountText: amountFormController.text,
-                    tariffAmount: selectedTariff?.amount,
-                    utilitiesAmount: utilitiesAmount,
-                    vat: selectedTariff?.vat)
-                .toString(),
-            tariffId: selectedTariff!.id.toString(),
-            vendingAmount: receivableAmount.toString(),
-            meterNo: user!.meter!.meterNo!,
-            meterType: user!.meter!.meterType ?? "",
-            trxref: ref,
-            paymentType: MomasPaymentType.self));
-      });
-    });
-  }
-
-  payForOther() {
-    if (verificationResponse?.data == null) {
-      showErrorBottomSheet(context, "Please verify the meter number.");
-      return;
-    }
-
-    // if (selectedEstate == null) {
-    //   showErrorBottomSheet(
-    //       context, "Provide the estate you making the payment for");
-    //   return;
-    // }
-    if (selectedTariff == null) {
-      showErrorBottomSheet(context, "please select tariff type");
-      return;
-    }
-
-    // amount - tariff - vent
-    var receivableAmount = VatCalculator().calculateCostOfUnit(
-        amountText: amountFormController.text,
-        tariffAmount: selectedTariff?.amount,
-        utilitiesAmount: utilitiesAmount,
-        vat: selectedTariff?.vat);
-    if (receivableAmount < minPurchase || receivableAmount > maxPurchase) {
-      showErrorBottomSheet(context,
-          "Payable amount (NGN${amountFormController.text}) can not be less than minimum  vend.");
-      return;
-    }
-
+  handleOther() {
     if (verificationResponse == null || isEmpty(meterTextFormController.text)) {
       showErrorBottomSheet(context, "Verify meter number before payment");
       return;
     }
-    num totalPayableAmount = int.parse(amountFormController.text);
+  }
 
-    if (totalPayableAmount <= 0) {
-      showErrorBottomSheet(
-          context, "Payable amount can't be less or equal to zero");
+  // payForSelf() {
+  //   var receivableAmount = VatCalculator().calculateCostOfUnit(
+  //       amountText: amountFormController.text,
+  //       tariffAmount: selectedTariff?.amount,
+  //       utilitiesAmount: utilitiesAmount,
+  //       vat: selectedTariff?.vat);
+  //
+  //   if (receivableAmount < minPurchase || receivableAmount > maxPurchase) {
+  //     // if(r)
+  //     showErrorBottomSheet(context,
+  //         "Payable amount (NGN${amountFormController.text}) can not be less than minimum  vend.");
+  //     return;
+  //   }
+  //
+  //   num totalPayableAmount = int.parse(amountFormController.text);
+  //
+  //   if (totalPayableAmount <= 0) {
+  //     showErrorBottomSheet(
+  //         context, "Payable amount can't be less or equal to zero");
+  //     return;
+  //   }
+  //
+  //   showPaymentModal(context, user!.meter!.meterNo!, () {
+  //     MoBottomSheet().payment(
+  //         context, 1,
+  //         amount: totalPayableAmount.toString(),
+  //         serviceType: ServiceType.credit_token,
+  //         onPayment: (String ref){
+  //       bloc.add(MomasMeterPayment(
+  //           vatAmount: "200",
+  //           // VatCalculator()
+  //           //     .calculateVatAmount(
+  //           //         amountText: amountFormController.text,
+  //           //         tariffAmount: selectedTariff?.amount,
+  //           //         utilitiesAmount: utilitiesAmount,
+  //           //         vat: selectedTariff?.vat)
+  //           //     .toString(),
+  //           estateId: user!.estateId,
+  //           utilityAmount: utilitiesAmount.toString(),
+  //           totalPaidAmount: totalPayableAmount.toString(),
+  //           vendValueKWPerNaira: "100",
+  //           // VatCalculator()
+  //           //     .calculateTariffAmountPerKWatt(
+  //           //         amountText: amountFormController.text,
+  //           //         tariffAmount: selectedTariff?.amount,
+  //           //         utilitiesAmount: utilitiesAmount,
+  //           //         vat: selectedTariff?.vat)
+  //           //     .toString(),
+  //           tariffId: selectedTariff!.id.toString(),
+  //           vendingAmount: receivableAmount.toString(),
+  //           meterNo: user!.meter!.meterNo!,
+  //           meterType: user!.meter!.meterType ?? "",
+  //           trxref: ref,
+  //           paymentType: MomasPaymentType.self));
+  //     });
+  //   });
+  // }
+  //
+  // payForOther() {
+  //   if (verificationResponse?.data == null) {
+  //     showErrorBottomSheet(context, "Please verify the meter number.");
+  //     return;
+  //   }
+  //
+  //   // if (selectedEstate == null) {
+  //   //   showErrorBottomSheet(
+  //   //       context, "Provide the estate you making the payment for");
+  //   //   return;
+  //   // }
+  //   if (selectedTariff == null) {
+  //     showErrorBottomSheet(context, "please select tariff type");
+  //     return;
+  //   }
+  //
+  //   // amount - tariff - vent
+  //   // var receivableAmount = VatCalculator().calculateCostOfUnit(
+  //   //     amountText: amountFormController.text,
+  //   //     tariffAmount: selectedTariff?.amount,
+  //   //     utilitiesAmount: utilitiesAmount,
+  //   //     vat: selectedTariff?.vat);
+  //   // if (receivableAmount < minPurchase || receivableAmount > maxPurchase) {
+  //   //   showErrorBottomSheet(context,
+  //   //       "Payable amount (NGN${amountFormController.text}) can not be less than minimum  vend.");
+  //   //   return;
+  //   // }
+  //
+  //   if (verificationResponse == null || isEmpty(meterTextFormController.text)) {
+  //     showErrorBottomSheet(context, "Verify meter number before payment");
+  //     return;
+  //   }
+  //   num totalPayableAmount = int.parse(amountFormController.text);
+  //
+  //   if (totalPayableAmount <= 0) {
+  //     showErrorBottomSheet(
+  //         context, "Payable amount can't be less or equal to zero");
+  //     return;
+  //   }
+  //
+  //   showPaymentModal(context, user!.meter!.meterNo!, () {
+  //     MoBottomSheet().payment(context, 1,
+  //         amount: totalPayableAmount.toString(),
+  //         serviceType: ServiceType.credit_token, onPayment: (String ref) {
+  //       bloc.add(MomasMeterPayment(
+  //           vatAmount: "300",
+  //           // VatCalculator()
+  //           //     .calculateVatAmount(
+  //           //         amountText: amountFormController.text,
+  //           //         tariffAmount: selectedTariff?.amount,
+  //           //         utilitiesAmount: utilitiesAmount,
+  //           //         vat: selectedTariff?.vat)
+  //           //     .toString(),
+  //           utilityAmount: utilitiesAmount.toString(),
+  //           totalPaidAmount: totalPayableAmount.toString(),
+  //           vendValueKWPerNaira: "900",
+  //           // VatCalculator()
+  //           //     .calculateTariffAmountPerKWatt(
+  //           //         amountText: amountFormController.text,
+  //           //         tariffAmount: selectedTariff?.amount,
+  //           //         utilitiesAmount: utilitiesAmount,
+  //           //         vat: selectedTariff?.vat)
+  //           //     .toString(),
+  //           tariffId: selectedTariff!.id.toString(),
+  //           vendingAmount: "100",//receivableAmount.toString(),
+  //           meterNo: meterTextFormController.text,
+  //           meterType: "",
+  //           trxref: ref,
+  //           // estateId: selectedEstate!.id.toString(),
+  //           paymentType: MomasPaymentType.others));
+  //     });
+  //   });
+  // }
+  //
+  // void showPaymentModal(
+  //     BuildContext context, String meter, VoidCallback onYesPressed) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return Dialog(
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(20.0),
+  //         ),
+  //         child: Padding(
+  //           padding: const EdgeInsets.all(20.0),
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: [
+  //               Icon(
+  //                 Icons.payment,
+  //                 size: 50,
+  //                 color: MoColors.mainColorII,
+  //               ),
+  //               const SizedBox(height: 20),
+  //               Center(
+  //                 child: Text(
+  //                   'Meter number: $meter',
+  //                   style: const TextStyle(
+  //                     fontSize: 15,
+  //                     fontWeight: FontWeight.bold,
+  //                   ),
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 10),
+  //               Text(
+  //                 'Would you like to proceed with the payment for the meter?',
+  //                 textAlign: TextAlign.center,
+  //                 style: TextStyle(
+  //                   fontSize: 16,
+  //                   color: Colors.grey[600],
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 20),
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //                 children: [
+  //                   Expanded(
+  //                     child: ElevatedButton(
+  //                       onPressed: () {
+  //                         Navigator.of(context).pop();
+  //                         onYesPressed();
+  //                       },
+  //                       style: ElevatedButton.styleFrom(
+  //                         backgroundColor: MoColors.mainColorII,
+  //                         shape: RoundedRectangleBorder(
+  //                           borderRadius: BorderRadius.circular(12.0),
+  //                         ),
+  //                       ),
+  //                       child: const Padding(
+  //                         padding: EdgeInsets.symmetric(
+  //                             horizontal: 15.0, vertical: 12.0),
+  //                         child: Text(
+  //                           'Pay',
+  //                           style: TextStyle(fontSize: 10, color: Colors.white),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   const SizedBox(
+  //                     width: 10,
+  //                   ),
+  //                   Expanded(
+  //                     child: OutlinedButton(
+  //                       onPressed: () {
+  //                         Navigator.of(context).pop(); // Close the dialog
+  //                         // Handle cancel action here if needed
+  //                       },
+  //                       style: OutlinedButton.styleFrom(
+  //                         side: BorderSide(color: MoColors.mainColorII),
+  //                         shape: RoundedRectangleBorder(
+  //                           borderRadius: BorderRadius.circular(12.0),
+  //                         ),
+  //                       ),
+  //                       child: Padding(
+  //                         padding: const EdgeInsets.symmetric(
+  //                             horizontal: 15.0, vertical: 12.0),
+  //                         child: Text(
+  //                           'Cancel',
+  //                           style: TextStyle(
+  //                               fontSize: 10, color: MoColors.mainColorII),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+}
+
+
+///--------
+
+class EnergyCalculationScreen extends StatefulWidget {
+  final MomasPaymentType momasPaymentType;
+  final MomasVerificationResponse verificationResponse;
+  final String amount;
+  final Tariff? tariff;
+  final User? user;
+  final String meterNo;
+  const EnergyCalculationScreen({super.key,
+    required this.momasPaymentType,
+    required this.verificationResponse,
+    required this.amount, this.tariff, this.user, required this.meterNo});
+
+  @override
+  State<EnergyCalculationScreen> createState() => _EnergyCalculationScreenState();
+}
+
+class _EnergyCalculationScreenState extends State<EnergyCalculationScreen> {
+  late MomasPaymentBloc bloc;
+  // late AccessTokenBloc accessTokenBloc;
+  TokenFeeCalculationResponse? energyResponse;
+  bool editable = true;
+  bool isLoading = false;
+  MomasVerificationResponse? verificationResponse;
+  final meterTextFormController = TextEditingController();
+  final amountFormController = TextEditingController();
+  bool get hasEnergyData =>
+      energyResponse != null && energyResponse?.data != null;
+  @override
+  void initState() {
+    super.initState();
+    bloc = MomasPaymentBloc(repository: BillRepository());
+    verificationResponse = widget.verificationResponse;
+
+    amountFormController.text = widget.amount;
+    final tariffId = widget.tariff?.id;
+    if (tariffId == null) {
+      debugPrint("Tariff is null - cannot proceed");
       return;
     }
+    bloc.add(EnergyCalculation(
+        tariffId: widget.tariff!.id!.toInt(),
+        amount: int.parse(widget.amount))
+    );
+  }
+  @override
+  Widget build(BuildContext context) {
+    return StackScreenSkeleton(
+        heading: 'Energy calculation',
+        body: BlocConsumer<MomasPaymentBloc, MomasPaymentState>(
+            bloc: bloc,
+            builder: (context, state){
+              if (!hasEnergyData) {
+                return const Center(
+                    child: SpinKitFadingCircle(
+                      color: MoColors.mainColor,
+                      size: 40.0,
+                    ));
+              }
+              final data = energyResponse!.data;
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: context.isTablet
+                      ? EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.width * 0.15)
+                      : const EdgeInsets.all(0.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // widget.momasPaymentType == MomasPaymentType.others
+                      //     ? Column(
+                      //   children: [
+                      //     Row(
+                      //       crossAxisAlignment:
+                      //       CrossAxisAlignment.end,
+                      //       children: [
+                      //         Expanded(
+                      //           flex: 3,
+                      //           child: MoFormWidget(
+                      //             controller: meterTextFormController,
+                      //             keyboardType: TextInputType.number,
+                      //             prefixIcon: const Icon(
+                      //               Icons.electric_meter,
+                      //               color: Colors.grey,
+                      //             ),
+                      //             title: "Meter Number",
+                      //             onChange: (v) {
+                      //               setState(() {
+                      //                 verificationResponse = null;
+                      //               });
+                      //             },
+                      //           ),
+                      //         ),
+                      //         Expanded(
+                      //           child: MoButton(
+                      //             isLoading: state
+                      //             is MomasVerificationLoading,
+                      //             title: "VERIFY",
+                      //             onTap: () {
+                      //               verificationResponse = null;
+                      //               bloc.add(MomasVerification(
+                      //                 meterNo:
+                      //                 meterTextFormController
+                      //                     .text,
+                      //                 // estateId: selectedEstate!.id
+                      //                 //     .toString()
+                      //               ));
+                      //             },
+                      //           ),
+                      //         )
+                      //       ],
+                      //     )
+                      //     // : Container(),
+                      //   ],
+                      // )
+                      //     : Container(),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: MoColors.mainColor.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(8)),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10.0, vertical: 10),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.person,
+                                  color: Colors.white,
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    verificationResponse?.data?.customerName ??
+                                        'Unknown customer',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: MoColors.mainColor),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      MoFormWidget(
+                        // enable: editable,
+                        // controller: amountFormController,
+                        keyboardType: TextInputType.number,
+                        enable: false,
+                        hintText: widget.amount,
+                        title: "Amount (NGN)",
+                      ),
+                      MoFormWidget(
+                        enable: false,
+                        hintText: widget.tariff?.title ?? "N/A",
+                        title: "Tariff",
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * .04,
+                      ),
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 15.0,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              // Header Row
+                              const Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 0.0, vertical: 5.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Items",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Amount (NGN)",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Divider(),
+                              // Items Table
+                              Table(
+                                columnWidths: const {
+                                  0: FlexColumnWidth(),
+                                  1: FixedColumnWidth(120),
+                                },
+                                children: [
+                                  _row("Utilities",
+                                      data.utilityAmount.toString()),
+                                  _row("VAT", data.vat.toString()),
+                                  _row("VAT Amount",
+                                      data.vatAmount.toString()),
+                                  _row("Service fee",
+                                      data.serviceFee.toString()),
+                                  _row("Fixed charge",
+                                      data.fixedCharge.toString()),
+                                  _row("Estate fee",
+                                      data.estateFee.toString()),
+                                  _row("Unit", data.unit.toString()),
+                                  _row("Cost of Unit",
+                                      data.vendingAmount.toString()),
+                                ],
+                              ),
+                              // Table(
+                              //   columnWidths: const {
+                              //     0: FlexColumnWidth(),
+                              //     1: FixedColumnWidth(100),
+                              //   },
+                              //   children: [
+                              //     TableRow(
+                              //       children: [
+                              //         const Padding(
+                              //           padding: EdgeInsets.symmetric(
+                              //               vertical: 5.0),
+                              //           child: Text(
+                              //             "Utilities",
+                              //             style: TextStyle(
+                              //               fontSize: 14,
+                              //               color: Colors.black,
+                              //             ),
+                              //           ),
+                              //         ),
+                              //         Padding(
+                              //           padding: const EdgeInsets.symmetric(
+                              //               vertical: 5.0),
+                              //           child: Text(
+                              //             energyResponse!.data.utilityAmount.toString(),
+                              //             // AmountFormatter.format(
+                              //             //     double.parse(utilitiesAmount
+                              //             //         .toString())),
+                              //             textAlign: TextAlign.right,
+                              //             style: const TextStyle(
+                              //               fontSize: 14,
+                              //               fontWeight: FontWeight.bold,
+                              //               color: Colors.black,
+                              //             ),
+                              //           ),
+                              //         ),
+                              //       ],
+                              //     ),
+                              //     TableRow(
+                              //       children: [
+                              //         const Padding(
+                              //           padding: EdgeInsets.symmetric(
+                              //               vertical: 5.0),
+                              //           child: Text(
+                              //             "VAT",
+                              //             style: TextStyle(
+                              //               fontSize: 14,
+                              //               color: Colors.black,
+                              //             ),
+                              //           ),
+                              //         ),
+                              //         Padding(
+                              //           padding: const EdgeInsets.symmetric(
+                              //               vertical: 5.0),
+                              //           child: Text(
+                              //             energyResponse!.data.vat.toString(),
+                              //             textAlign: TextAlign.right,
+                              //             style: const TextStyle(
+                              //               fontSize: 14,
+                              //               fontWeight: FontWeight.bold,
+                              //               color: Colors.black,
+                              //             ),
+                              //           ),
+                              //         ),
+                              //       ],
+                              //     ),
+                              //     TableRow(
+                              //       children: [
+                              //         const Padding(
+                              //           padding: EdgeInsets.symmetric(
+                              //               vertical: 5.0),
+                              //           child: Text(
+                              //             "VAT Amount",
+                              //             style: TextStyle(
+                              //               fontSize: 14,
+                              //               color: Colors.black,
+                              //             ),
+                              //           ),
+                              //         ),
+                              //         Padding(
+                              //           padding: const EdgeInsets.symmetric(
+                              //               vertical: 5.0),
+                              //           child: Text(
+                              //             energyResponse!.data.vatAmount.toString(),
+                              //             textAlign: TextAlign.right,
+                              //             style: const TextStyle(
+                              //               fontSize: 14,
+                              //               fontWeight: FontWeight.bold,
+                              //               color: Colors.black,
+                              //             ),
+                              //           ),
+                              //         ),
+                              //       ],
+                              //     ),
+                              //     TableRow(
+                              //       children: [
+                              //         const Padding(
+                              //           padding: EdgeInsets.symmetric(
+                              //               vertical: 5.0),
+                              //           child: Text(
+                              //             "Service fee",
+                              //             style: TextStyle(
+                              //               fontSize: 14,
+                              //               color: Colors.black,
+                              //             ),
+                              //           ),
+                              //         ),
+                              //         Padding(
+                              //           padding: const EdgeInsets.symmetric(
+                              //               vertical: 5.0),
+                              //           child: Text(
+                              //               energyResponse!.data.serviceFee.toString()
+                              //           ),
+                              //         ),
+                              //       ],
+                              //     ),
+                              //     TableRow(
+                              //       children: [
+                              //         const Padding(
+                              //           padding: EdgeInsets.symmetric(
+                              //               vertical: 5.0),
+                              //           child: Text(
+                              //             "Fixed charge",
+                              //             style: TextStyle(
+                              //               fontSize: 14,
+                              //               color: Colors.black,
+                              //             ),
+                              //           ),
+                              //         ),
+                              //         Padding(
+                              //           padding: const EdgeInsets.symmetric(
+                              //               vertical: 5.0),
+                              //           child: Text(
+                              //               energyResponse!.data.fixedCharge.toString()
+                              //           ),
+                              //         ),
+                              //       ],
+                              //     ),
+                              //     TableRow(
+                              //       children: [
+                              //         const Padding(
+                              //           padding: EdgeInsets.symmetric(
+                              //               vertical: 5.0),
+                              //           child: Text(
+                              //             "Estate fee",
+                              //             style: TextStyle(
+                              //               fontSize: 14,
+                              //               color: Colors.black,
+                              //             ),
+                              //           ),
+                              //         ),
+                              //         Padding(
+                              //           padding: const EdgeInsets.symmetric(
+                              //               vertical: 5.0),
+                              //           child: Text(
+                              //               energyResponse!.data.estateFee.toString()
+                              //           ),
+                              //         ),
+                              //       ],
+                              //     ),
+                              //     TableRow(
+                              //       children: [
+                              //         const Padding(
+                              //           padding: EdgeInsets.symmetric(
+                              //               vertical: 5.0),
+                              //           child: Text(
+                              //             "Unit",
+                              //             style: TextStyle(
+                              //               fontSize: 14,
+                              //               color: Colors.black,
+                              //             ),
+                              //           ),
+                              //         ),
+                              //         Padding(
+                              //           padding: const EdgeInsets.symmetric(
+                              //               vertical: 5.0),
+                              //           child: Text(
+                              //             energyResponse!.data.unit.toString()
+                              //           ),
+                              //         ),
+                              //       ],
+                              //     ),
+                              //     TableRow(
+                              //       children: [
+                              //         const Padding(
+                              //           padding: EdgeInsets.symmetric(
+                              //               vertical: 5.0),
+                              //           child: Text(
+                              //             "Cost of Unit",
+                              //             style: TextStyle(
+                              //               fontSize: 14,
+                              //               color: Colors.black,
+                              //             ),
+                              //           ),
+                              //         ),
+                              //         Padding(
+                              //           padding: const EdgeInsets.symmetric(
+                              //               vertical: 5.0),
+                              //           child: Text(
+                              //             energyResponse!.data.vendingAmount.toString(),
+                              //             // AmountFormatter.format(
+                              //             //     VatCalculator()
+                              //             //         .calculateCostOfUnit(
+                              //             //         amountText:
+                              //             //         amountFormController
+                              //             //             .text,
+                              //             //         tariffAmount:
+                              //             //         selectedTariff
+                              //             //             ?.amount,
+                              //             //         utilitiesAmount:
+                              //             //         utilitiesAmount,
+                              //             //         vat: selectedTariff
+                              //             //             ?.vat)
+                              //             //         .toDouble()),
+                              //             textAlign: TextAlign.right,
+                              //             style: const TextStyle(
+                              //               fontSize: 14,
+                              //               fontWeight: FontWeight.bold,
+                              //               color: Colors.black,
+                              //             ),
+                              //           ),
+                              //         ),
+                              //       ],
+                              //     ),
+                              //   ],
+                              // ),
+                              const Divider(),
+                              // Total Section
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 16.0),
+                                child: Column(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.center,
+                                  children: [
+                                    const Text(
+                                      "Amount payable",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    Text(
+                                      AmountFormatter.formatNaira(
+                                          double.parse(
+                                              widget.amount)),
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                          // : Container(),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * .02,
+                      ),
 
-    showPaymentModal(context, user!.meter!.meterNo!, () {
+                      MoButton(
+                        // isNotActive: state is MomasPaymentFailure,
+                        isLoading: state is MomasPaymentLoading || isLoading,
+                        title: "CONTINUE",
+                        onTap: () {
+                          widget.momasPaymentType == MomasPaymentType.self
+                              ? payForSelf()
+                              : payForOther();
+                        },
+                      ),
+                      SizedBox(height: 100,)
+                    ],
+                  ),
+                ),
+              );
+            },
+            listener: (BuildContext context, MomasPaymentState state) {
+              switch (state) {
+                case EnergyCalcState():
+                  setState(() {
+                    energyResponse = state.response;
+                  });
+                  break;
+                case MomasPaymentLoading():
+                  FocusScope.of(context).unfocus();
+                case MomasPaymentFailure():
+                  log('[MomasPaymentScreen] listener: MomasPaymentFailure → ${state.error}');
+                  AppErrorDisplay.show(context, state.error);
+                  setState(() {
+                    isLoading = false;
+                    editable = false;
+                  });
+                // case MomasMeterVerificationState():
+                //   verificationResponse = state.response;
+                //   getForOtherVent(verificationResponse);
+                case MomasPaymentSuccess():
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (builder) => TransactionSuccessPage(
+                            details: ReceiptBuilder().meterPayment(
+                                state.momasPaymentResponse.data!.receipt!),
+                          )));
+                default:
+              }
+            })
+    );
+  }
+
+  TableRow _row(String title, String value) {
+    return TableRow(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: Text(title),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: Text(
+            value,
+            textAlign: TextAlign.right,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ],
+    );
+}
+  payForSelf() {
+
+    showPaymentModal(context, widget.user!.meter!.meterNo!, () {
       MoBottomSheet().payment(context,
-          amount: totalPayableAmount.toString(),
+          amount: widget.amount.toString(),
           serviceType: ServiceType.credit_token, onPayment: (String ref) {
-        bloc.add(MomasMeterPayment(
-            vatAmount: VatCalculator()
-                .calculateVatAmount(
-                    amountText: amountFormController.text,
-                    tariffAmount: selectedTariff?.amount,
-                    utilitiesAmount: utilitiesAmount,
-                    vat: selectedTariff?.vat)
-                .toString(),
-            utilityAmount: utilitiesAmount.toString(),
-            totalPaidAmount: totalPayableAmount.toString(),
-            vendValueKWPerNaira: VatCalculator()
-                .calculateTariffAmountPerKWatt(
-                    amountText: amountFormController.text,
-                    tariffAmount: selectedTariff?.amount,
-                    utilitiesAmount: utilitiesAmount,
-                    vat: selectedTariff?.vat)
-                .toString(),
-            tariffId: selectedTariff!.id.toString(),
-            vendingAmount: receivableAmount.toString(),
-            meterNo: meterTextFormController.text,
-            meterType: "",
-            trxref: ref,
-            // estateId: selectedEstate!.id.toString(),
-            paymentType: MomasPaymentType.others));
-      });
+            bloc.add(MomasMeterPayment(
+                vatAmount: energyResponse!.data.vatAmount.toString(),
+                estateId:  widget.user!.estateId,
+                utilityAmount: energyResponse!.data.utilityAmount.toString(),
+                totalPaidAmount: widget.amount.toString(),
+                vendValueKWPerNaira: energyResponse!.data.unit.toString(),
+                tariffId: widget.tariff!.id.toString(),
+                vendingAmount: energyResponse!.data.vendingAmount.toString(),
+                meterNo:  widget.user!.meter!.meterNo!,
+                meterType:  widget.user!.meter!.meterType ?? "",
+                trxref: ref,
+                paymentType: MomasPaymentType.self));
+          });
+    });
+  }
+
+  payForOther() {
+
+    showPaymentModal(context, widget.user!.meter!.meterNo!, () {
+      MoBottomSheet().payment(context,
+          amount: widget.amount.toString(),
+          serviceType: ServiceType.credit_token, onPayment: (String ref) {
+            bloc.add(MomasMeterPayment(
+                vatAmount: energyResponse!.data.vatAmount.toString(),
+                utilityAmount: energyResponse!.data.utilityAmount.toString(),
+                totalPaidAmount: widget.amount.toString(),
+                vendValueKWPerNaira: energyResponse!.data.unit.toString(),
+                tariffId: widget.tariff!.id.toString(),
+                // selectedTariff!.id.toString(),
+                vendingAmount: energyResponse!.data.vendingAmount.toString(),
+                meterNo: widget.meterNo,
+                meterType: "",
+                trxref: ref,
+                // estateId: selectedEstate!.id.toString(),
+                paymentType: MomasPaymentType.others));
+          });
     });
   }
 
@@ -858,3 +1523,828 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
     );
   }
 }
+
+
+
+
+
+
+
+//class MomasPaymentScreen extends StatefulWidget {
+//   final MomasPaymentType momasPaymentType;
+//
+//   const MomasPaymentScreen({super.key, required this.momasPaymentType});
+//
+//   @override
+//   State<MomasPaymentScreen> createState() => _MomasPaymentScreenState();
+// }
+//
+// class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
+//   late MomasPaymentBloc bloc;
+//   late AccessTokenBloc accessTokenBloc;
+//   MomasVerificationResponse? verificationResponse;
+//   final meterTextFormController = TextEditingController();
+//   final amountFormController = TextEditingController();
+//   // EstateData? selectedEstate;
+//   late ServiceBloc serviceBloc;
+//   List<EstateData>? serviceDataResponse;
+//   bool isLoading = false;
+//   User? user;
+//   num minPurchase = 0;
+//   num maxPurchase = 0;
+//   num utilitiesAmount = 0;
+//   String amountValue = "";
+//   Tariff? selectedTariff;
+//   List<Tariff> tariff = [];
+//   bool editable = true;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     bloc = MomasPaymentBloc(repository: BillRepository());
+//     load();
+//     if (widget.momasPaymentType == MomasPaymentType.others) {
+//       // serviceBloc = ServiceBloc(ServiceRepository())
+//       //   ..add(const ServicePropertiesEvent());
+//       accessTokenBloc = AccessTokenBloc(repository: AccessTokenRepository())
+//         ..add(const GetAccessToken());
+//     }
+//   }
+//
+//   load() async {
+//     user = await SharedPreferenceHelper.getUser();
+//     if (widget.momasPaymentType == MomasPaymentType.self) {
+//       if (user!.meter?.meterNo == null) {
+//         showErrorBottomSheet(NavigationService.navigatorKey.currentContext!,
+//             "Please user have no active meter");
+//         return;
+//       }
+//
+//       setState(() => isLoading = true);
+//
+//       bloc.add(MomasVerification(
+//           meterNo: user!.meter!.meterNo!,
+//           // estateId: user!.estateId!
+//       ));
+//     }
+//   }
+//
+//   getForOtherVent(MomasVerificationResponse? verificationResponse) {
+//     //set tariff
+//     tariff = verificationResponse?.data?.tariffs ?? [];
+//     maxPurchase = verificationResponse!.data?.purchase?.maxPurchase ?? 0;
+//     minPurchase = verificationResponse.data?.purchase?.minPurchase ?? 0;
+//     utilitiesAmount = verificationResponse.data?.purchase?.minVending ?? 0;
+//     setState(() => isLoading = false);
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return StackScreenSkeleton(
+//       heading: "Buy Credit Token",
+//       body: BlocConsumer<MomasPaymentBloc, MomasPaymentState>(
+//         bloc: bloc,
+//         builder: (context, state) {
+//           return SingleChildScrollView(
+//             child: Padding(
+//               padding: context.isTablet
+//                   ? EdgeInsets.symmetric(
+//                       horizontal: MediaQuery.of(context).size.width * 0.15)
+//                   : const EdgeInsets.all(0.0),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   // if (!editable && state is MomasPaymentFailure)
+//                   //   Text(
+//                   //     state.error,
+//                   //     style: const TextStyle(
+//                   //       fontSize: 14,
+//                   //       color: Colors.red,
+//                   //     ),
+//                   //   ),
+//                   widget.momasPaymentType == MomasPaymentType.others
+//                       ? Column(
+//                           children: [
+//                             // BlocConsumer<AccessTokenBloc, AccessTokenState>(
+//                             //   bloc: accessTokenBloc,
+//                             //   builder: (context, state) {
+//                             //     return EPDropdownButton<EstateData>(
+//                             //       itemsListTitle: "Choose Estate",
+//                             //       iconSize: 22,
+//                             //       value: selectedEstate,
+//                             //       hint: const Text(""),
+//                             //       isExpanded: true,
+//                             //       underline: const Divider(),
+//                             //       searchMatcher: (item, text) {
+//                             //         return item.title!
+//                             //             .toLowerCase()
+//                             //             .contains(text.toLowerCase());
+//                             //       },
+//                             //       onChanged: (v) {
+//                             //         setState(() {
+//                             //           selectedEstate = v;
+//                             //           verificationResponse = null;
+//                             //         });
+//                             //       },
+//                             //       items: (serviceDataResponse ??
+//                             //               [])
+//                             //           .map(
+//                             //             (e) => DropdownMenuItem(
+//                             //               value: e,
+//                             //               child: Row(
+//                             //                 children: [
+//                             //                   Text(e.title.toString(),
+//                             //                       style: Theme.of(context)
+//                             //                           .textTheme
+//                             //                           .labelMedium!
+//                             //                           .copyWith(
+//                             //                               fontWeight:
+//                             //                                   FontWeight.w400,
+//                             //                               color:
+//                             //                                   Colors.black)),
+//                             //                 ],
+//                             //               ),
+//                             //             ),
+//                             //           )
+//                             //           .toList(),
+//                             //     );
+//                             //   },
+//                             //   listener:
+//                             //       (BuildContext context, AccessTokenState state) {
+//                             //     switch (state) {
+//                             //       case AccessTokenLoading():
+//                             //         setState(() => isLoading = true);
+//                             //       case AccessTokenFailed():
+//                             //         setState(() => isLoading = false);
+//                             //         AppErrorDisplay.show(context, state.error);
+//                             //       case AccessTokenSuccess():
+//                             //         setState(() => isLoading = false);
+//                             //         serviceDataResponse = state.estateData;
+//                             //
+//                             //       default:
+//                             //     }
+//                             //   },
+//                             // ),
+//                             // const SizedBox(
+//                             //   height: 20,
+//                             // ),
+//                             // const Text(
+//                             //   "Make payment on your momas meter easily  in few steps",
+//                             //   style: TextStyle(
+//                             //       fontSize: 10, fontWeight: FontWeight.w300),
+//                             // ),
+//                             // (selectedEstate != null) ?
+//                             Row(
+//                                     crossAxisAlignment:
+//                                         CrossAxisAlignment.end,
+//                                     children: [
+//                                       Expanded(
+//                                         flex: 3,
+//                                         child: MoFormWidget(
+//                                           controller: meterTextFormController,
+//                                           keyboardType: TextInputType.number,
+//                                           prefixIcon: const Icon(
+//                                             Icons.electric_meter,
+//                                             color: Colors.grey,
+//                                           ),
+//                                           title: "Meter Number",
+//                                           onChange: (v) {
+//                                             setState(() {
+//                                               verificationResponse = null;
+//                                             });
+//                                           },
+//                                         ),
+//                                       ),
+//                                       Expanded(
+//                                         child: MoButton(
+//                                           isLoading: state
+//                                               is MomasVerificationLoading,
+//                                           title: "VERIFY",
+//                                           onTap: () {
+//                                             verificationResponse = null;
+//                                             bloc.add(MomasVerification(
+//                                                 meterNo:
+//                                                     meterTextFormController
+//                                                         .text,
+//                                                 // estateId: selectedEstate!.id
+//                                                 //     .toString()
+//                                             ));
+//                                           },
+//                                         ),
+//                                       )
+//                                     ],
+//                                   )
+//                                 // : Container(),
+//                           ],
+//                         )
+//                       : Container(),
+//                   const SizedBox(
+//                     height: 15,
+//                   ),
+//                   isNotEmpty(verificationResponse?.data?.customerName)
+//                       ? Padding(
+//                           padding: const EdgeInsets.symmetric(horizontal: 15),
+//                           child: Container(
+//                             decoration: BoxDecoration(
+//                                 color: MoColors.mainColor.withOpacity(0.3),
+//                                 borderRadius: BorderRadius.circular(8)),
+//                             child: Padding(
+//                               padding: const EdgeInsets.symmetric(
+//                                   horizontal: 10.0, vertical: 10),
+//                               child: Row(
+//                                 children: [
+//                                   const Icon(
+//                                     Icons.person,
+//                                     color: Colors.white,
+//                                   ),
+//                                   const SizedBox(
+//                                     width: 10,
+//                                   ),
+//                                   Expanded(
+//                                     child: Text(
+//                                       verificationResponse!.data!.customerName!,
+//                                       overflow: TextOverflow.ellipsis,
+//                                       style: const TextStyle(
+//                                           fontWeight: FontWeight.bold,
+//                                           color: MoColors.mainColor),
+//                                     ),
+//                                   )
+//                                 ],
+//                               ),
+//                             ),
+//                           ),
+//                         )
+//                       : Container(),
+//                   MoFormWidget(
+//                     // enable: editable,
+//                     controller: amountFormController,
+//                     keyboardType: TextInputType.number,
+//                     inputFormatters: [
+//                       FilteringTextInputFormatter.deny(RegExp(r'[,.]')),
+//                     ],
+//                     title: "Amount (NGN)",
+//                     onChange: (value) {
+//                       setState(() {
+//                         amountValue = value;
+//                       });
+//                     },
+//                   ),
+//                   const SizedBox(
+//                     height: 5,
+//                   ),
+//                   Padding(
+//                     padding: const EdgeInsets.symmetric(horizontal: 15),
+//                     child: Row(
+//                       children: [
+//                         Text("Min $minPurchase | Max $maxPurchase",
+//                             style: const TextStyle(
+//                                 fontWeight: FontWeight.bold,
+//                                 color: Colors.black)),
+//                         const Spacer(),
+//                         Text("Utilities $utilitiesAmount ",
+//                             style: const TextStyle(
+//                                 fontWeight: FontWeight.bold,
+//                                 color: Colors.black))
+//                       ],
+//                     ),
+//                   ),
+//                   const SizedBox(
+//                     height: 10,
+//                   ),
+//                   EPDropdownButton<Tariff>(
+//                       itemsListTitle: "Selected Vending Type",
+//                       iconSize: 22,
+//                       value: selectedTariff,
+//                       hint: const Text(""),
+//                       isExpanded: true,
+//                       underline: const Divider(),
+//                       searchMatcher: (item, text) {
+//                         return (item.title!)
+//                             .toLowerCase()
+//                             .contains(text.toLowerCase());
+//                       },
+//                       onChanged: (v) {
+//                         if (v.amount == null) {
+//                           showErrorBottomSheet(context,
+//                               "Tariff amount not set, Please contact an admin.");
+//                           return;
+//                         }
+//                         setState(() => selectedTariff = v);
+//                       },
+//                       items: tariff
+//                           .map(
+//                             (e) => DropdownMenuItem(
+//                                 value: e,
+//                                 child: Row(
+//                                   children: [
+//                                     Text(e.title.toString().toUpperCase(),
+//                                         style: Theme.of(context)
+//                                             .textTheme
+//                                             .labelMedium!
+//                                             .copyWith(
+//                                                 fontWeight: FontWeight.w400,
+//                                                 color: Colors.black)),
+//                                   ],
+//                                 )),
+//                           )
+//                           .toList()),
+//                   SizedBox(
+//                     height: MediaQuery.of(context).size.height * .04,
+//                   ),
+//                   (amountFormController.text.isNotEmpty &&
+//                           selectedTariff != null &&
+//                           verificationResponse != null)
+//                       ? Center(
+//                           child: Padding(
+//                             padding: const EdgeInsets.symmetric(
+//                               horizontal: 15.0,
+//                             ),
+//                             child: Column(
+//                               crossAxisAlignment: CrossAxisAlignment.center,
+//                               children: [
+//                                 // Header Row
+//                                 const Padding(
+//                                   padding: EdgeInsets.symmetric(
+//                                       horizontal: 0.0, vertical: 8.0),
+//                                   child: Row(
+//                                     mainAxisAlignment:
+//                                         MainAxisAlignment.spaceBetween,
+//                                     children: [
+//                                       Text(
+//                                         "Items",
+//                                         style: TextStyle(
+//                                           fontSize: 14,
+//                                           fontWeight: FontWeight.bold,
+//                                           color: Colors.grey,
+//                                         ),
+//                                       ),
+//                                       Text(
+//                                         "Amount (NGN)",
+//                                         style: TextStyle(
+//                                           fontSize: 14,
+//                                           fontWeight: FontWeight.bold,
+//                                           color: Colors.grey,
+//                                         ),
+//                                       ),
+//                                     ],
+//                                   ),
+//                                 ),
+//                                 const Divider(),
+//                                 // Items Table
+//                                 Table(
+//                                   columnWidths: const {
+//                                     0: FlexColumnWidth(),
+//                                     1: FixedColumnWidth(100),
+//                                   },
+//                                   children: [
+//                                     TableRow(
+//                                       children: [
+//                                         const Padding(
+//                                           padding: EdgeInsets.symmetric(
+//                                               vertical: 5.0),
+//                                           child: Text(
+//                                             "Utilities",
+//                                             style: TextStyle(
+//                                               fontSize: 14,
+//                                               color: Colors.black,
+//                                             ),
+//                                           ),
+//                                         ),
+//                                         Padding(
+//                                           padding: const EdgeInsets.symmetric(
+//                                               vertical: 5.0),
+//                                           child: Text(
+//                                             AmountFormatter.format(
+//                                                 double.parse(utilitiesAmount
+//                                                     .toString())),
+//                                             textAlign: TextAlign.right,
+//                                             style: const TextStyle(
+//                                               fontSize: 14,
+//                                               fontWeight: FontWeight.bold,
+//                                               color: Colors.black,
+//                                             ),
+//                                           ),
+//                                         ),
+//                                       ],
+//                                     ),
+//                                     TableRow(
+//                                       children: [
+//                                         const Padding(
+//                                           padding: EdgeInsets.symmetric(
+//                                               vertical: 5.0),
+//                                           child: Text(
+//                                             "Cost of Unit",
+//                                             style: TextStyle(
+//                                               fontSize: 14,
+//                                               color: Colors.black,
+//                                             ),
+//                                           ),
+//                                         ),
+//                                         Padding(
+//                                           padding: const EdgeInsets.symmetric(
+//                                               vertical: 5.0),
+//                                           child: Text(
+//                                             AmountFormatter.format(
+//                                                 VatCalculator()
+//                                                     .calculateCostOfUnit(
+//                                                         amountText:
+//                                                             amountFormController
+//                                                                 .text,
+//                                                         tariffAmount:
+//                                                             selectedTariff
+//                                                                 ?.amount,
+//                                                         utilitiesAmount:
+//                                                             utilitiesAmount,
+//                                                         vat: selectedTariff
+//                                                             ?.vat)
+//                                                     .toDouble()),
+//                                             textAlign: TextAlign.right,
+//                                             style: const TextStyle(
+//                                               fontSize: 14,
+//                                               fontWeight: FontWeight.bold,
+//                                               color: Colors.black,
+//                                             ),
+//                                           ),
+//                                         ),
+//                                       ],
+//                                     ),
+//                                     TableRow(
+//                                       children: [
+//                                         const Padding(
+//                                           padding: EdgeInsets.symmetric(
+//                                               vertical: 5.0),
+//                                           child: Text(
+//                                             "VAT Amount",
+//                                             style: TextStyle(
+//                                               fontSize: 14,
+//                                               color: Colors.black,
+//                                             ),
+//                                           ),
+//                                         ),
+//                                         Padding(
+//                                           padding: const EdgeInsets.symmetric(
+//                                               vertical: 5.0),
+//                                           child: Text(
+//                                             AmountFormatter.format(
+//                                                 VatCalculator()
+//                                                     .calculateVatAmount(
+//                                                         amountText:
+//                                                             amountFormController
+//                                                                 .text,
+//                                                         tariffAmount:
+//                                                             selectedTariff
+//                                                                 ?.amount,
+//                                                         utilitiesAmount:
+//                                                             utilitiesAmount,
+//                                                         vat: selectedTariff
+//                                                             ?.vat)
+//                                                     .toDouble()),
+//                                             textAlign: TextAlign.right,
+//                                             style: const TextStyle(
+//                                               fontSize: 14,
+//                                               fontWeight: FontWeight.bold,
+//                                               color: Colors.black,
+//                                             ),
+//                                           ),
+//                                         ),
+//                                       ],
+//                                     ),
+//                                     TableRow(
+//                                       children: [
+//                                         const Padding(
+//                                           padding: EdgeInsets.symmetric(
+//                                               vertical: 5.0),
+//                                           child: Text(
+//                                             "Unit",
+//                                             style: TextStyle(
+//                                               fontSize: 14,
+//                                               color: Colors.black,
+//                                             ),
+//                                           ),
+//                                         ),
+//                                         Padding(
+//                                           padding: const EdgeInsets.symmetric(
+//                                               vertical: 5.0),
+//                                           child: Text(
+//                                             "${AmountFormatter.format(VatCalculator().calculateTariffAmountPerKWatt(amountText: amountFormController.text, tariffAmount: selectedTariff?.amount, utilitiesAmount: utilitiesAmount, vat: selectedTariff?.vat).toDouble())}Kw/h",
+//                                             textAlign: TextAlign.right,
+//                                             style: const TextStyle(
+//                                               fontSize: 14,
+//                                               fontWeight: FontWeight.bold,
+//                                               color: Colors.black,
+//                                             ),
+//                                           ),
+//                                         ),
+//                                       ],
+//                                     ),
+//                                   ],
+//                                 ),
+//                                 const Divider(),
+//                                 // Total Section
+//                                 Padding(
+//                                   padding: const EdgeInsets.symmetric(
+//                                       vertical: 16.0),
+//                                   child: Column(
+//                                     crossAxisAlignment:
+//                                         CrossAxisAlignment.center,
+//                                     children: [
+//                                       const Text(
+//                                         "Amount payable",
+//                                         style: TextStyle(
+//                                           fontSize: 14,
+//                                           color: Colors.grey,
+//                                         ),
+//                                       ),
+//                                       Text(
+//                                         AmountFormatter.formatNaira(
+//                                             double.parse(
+//                                                 amountFormController.text)),
+//                                         style: const TextStyle(
+//                                           fontSize: 24,
+//                                           fontWeight: FontWeight.bold,
+//                                           color: Colors.black,
+//                                         ),
+//                                       ),
+//                                     ],
+//                                   ),
+//                                 ),
+//                               ],
+//                             ),
+//                           ),
+//                         )
+//                       : Container(),
+//                   SizedBox(
+//                     height: MediaQuery.of(context).size.height * .05,
+//                   ),
+//
+//                   MoButton(
+//                     // isNotActive: state is MomasPaymentFailure,
+//                     isLoading: state is MomasPaymentLoading || isLoading,
+//                     title: "CONTINUE",
+//                     onTap: () {
+//                       widget.momasPaymentType == MomasPaymentType.self
+//                           ? payForSelf()
+//                           : payForOther();
+//                     },
+//                   ),
+//                   SizedBox(height: 100,)
+//                 ],
+//               ),
+//             ),
+//           );
+//         },
+//         listener: (BuildContext context, MomasPaymentState state) {
+//           switch (state) {
+//             case MomasPaymentLoading():
+//               FocusScope.of(context).unfocus();
+//             case MomasPaymentFailure():
+//               log('[MomasPaymentScreen] listener: MomasPaymentFailure → ${state.error}');
+//               AppErrorDisplay.show(context, state.error);
+//               setState(() {
+//                 isLoading = false;
+//                 editable = false;
+//               });
+//             case MomasMeterVerificationState():
+//               verificationResponse = state.response;
+//               getForOtherVent(verificationResponse);
+//             case MomasPaymentSuccess():
+//               Navigator.push(
+//                   context,
+//                   MaterialPageRoute(
+//                       builder: (builder) => TransactionSuccessPage(
+//                             details: ReceiptBuilder().meterPayment(
+//                                 state.momasPaymentResponse.data!.receipt!),
+//                           )));
+//             default:
+//           }
+//         },
+//       ),
+//     );
+//   }
+//
+//   payForSelf() {
+//     var receivableAmount = VatCalculator().calculateCostOfUnit(
+//         amountText: amountFormController.text,
+//         tariffAmount: selectedTariff?.amount,
+//         utilitiesAmount: utilitiesAmount,
+//         vat: selectedTariff?.vat);
+//
+//     if (receivableAmount < minPurchase || receivableAmount > maxPurchase) {
+//       // if(r)
+//       showErrorBottomSheet(context,
+//           "Payable amount (NGN${amountFormController.text}) can not be less than minimum  vend.");
+//       return;
+//     }
+//
+//     num totalPayableAmount = int.parse(amountFormController.text);
+//
+//     if (totalPayableAmount <= 0) {
+//       showErrorBottomSheet(
+//           context, "Payable amount can't be less or equal to zero");
+//       return;
+//     }
+//
+//     showPaymentModal(context, user!.meter!.meterNo!, () {
+//       MoBottomSheet().payment(context,
+//           amount: totalPayableAmount.toString(),
+//           serviceType: ServiceType.credit_token, onPayment: (String ref) {
+//         bloc.add(MomasMeterPayment(
+//             vatAmount: VatCalculator()
+//                 .calculateVatAmount(
+//                     amountText: amountFormController.text,
+//                     tariffAmount: selectedTariff?.amount,
+//                     utilitiesAmount: utilitiesAmount,
+//                     vat: selectedTariff?.vat)
+//                 .toString(),
+//             estateId: user!.estateId,
+//             utilityAmount: utilitiesAmount.toString(),
+//             totalPaidAmount: totalPayableAmount.toString(),
+//             vendValueKWPerNaira: VatCalculator()
+//                 .calculateTariffAmountPerKWatt(
+//                     amountText: amountFormController.text,
+//                     tariffAmount: selectedTariff?.amount,
+//                     utilitiesAmount: utilitiesAmount,
+//                     vat: selectedTariff?.vat)
+//                 .toString(),
+//             tariffId: selectedTariff!.id.toString(),
+//             vendingAmount: receivableAmount.toString(),
+//             meterNo: user!.meter!.meterNo!,
+//             meterType: user!.meter!.meterType ?? "",
+//             trxref: ref,
+//             paymentType: MomasPaymentType.self));
+//       });
+//     });
+//   }
+//
+//   payForOther() {
+//     if (verificationResponse?.data == null) {
+//       showErrorBottomSheet(context, "Please verify the meter number.");
+//       return;
+//     }
+//
+//     // if (selectedEstate == null) {
+//     //   showErrorBottomSheet(
+//     //       context, "Provide the estate you making the payment for");
+//     //   return;
+//     // }
+//     if (selectedTariff == null) {
+//       showErrorBottomSheet(context, "please select tariff type");
+//       return;
+//     }
+//
+//     // amount - tariff - vent
+//     var receivableAmount = VatCalculator().calculateCostOfUnit(
+//         amountText: amountFormController.text,
+//         tariffAmount: selectedTariff?.amount,
+//         utilitiesAmount: utilitiesAmount,
+//         vat: selectedTariff?.vat);
+//     if (receivableAmount < minPurchase || receivableAmount > maxPurchase) {
+//       showErrorBottomSheet(context,
+//           "Payable amount (NGN${amountFormController.text}) can not be less than minimum  vend.");
+//       return;
+//     }
+//
+//     if (verificationResponse == null || isEmpty(meterTextFormController.text)) {
+//       showErrorBottomSheet(context, "Verify meter number before payment");
+//       return;
+//     }
+//     num totalPayableAmount = int.parse(amountFormController.text);
+//
+//     if (totalPayableAmount <= 0) {
+//       showErrorBottomSheet(
+//           context, "Payable amount can't be less or equal to zero");
+//       return;
+//     }
+//
+//     showPaymentModal(context, user!.meter!.meterNo!, () {
+//       MoBottomSheet().payment(context,
+//           amount: totalPayableAmount.toString(),
+//           serviceType: ServiceType.credit_token, onPayment: (String ref) {
+//         bloc.add(MomasMeterPayment(
+//             vatAmount: VatCalculator()
+//                 .calculateVatAmount(
+//                     amountText: amountFormController.text,
+//                     tariffAmount: selectedTariff?.amount,
+//                     utilitiesAmount: utilitiesAmount,
+//                     vat: selectedTariff?.vat)
+//                 .toString(),
+//             utilityAmount: utilitiesAmount.toString(),
+//             totalPaidAmount: totalPayableAmount.toString(),
+//             vendValueKWPerNaira: VatCalculator()
+//                 .calculateTariffAmountPerKWatt(
+//                     amountText: amountFormController.text,
+//                     tariffAmount: selectedTariff?.amount,
+//                     utilitiesAmount: utilitiesAmount,
+//                     vat: selectedTariff?.vat)
+//                 .toString(),
+//             tariffId: selectedTariff!.id.toString(),
+//             vendingAmount: receivableAmount.toString(),
+//             meterNo: meterTextFormController.text,
+//             meterType: "",
+//             trxref: ref,
+//             // estateId: selectedEstate!.id.toString(),
+//             paymentType: MomasPaymentType.others));
+//       });
+//     });
+//   }
+//
+//   void showPaymentModal(
+//       BuildContext context, String meter, VoidCallback onYesPressed) {
+//     showDialog(
+//       context: context,
+//       builder: (BuildContext context) {
+//         return Dialog(
+//           shape: RoundedRectangleBorder(
+//             borderRadius: BorderRadius.circular(20.0),
+//           ),
+//           child: Padding(
+//             padding: const EdgeInsets.all(20.0),
+//             child: Column(
+//               mainAxisSize: MainAxisSize.min,
+//               children: [
+//                 Icon(
+//                   Icons.payment,
+//                   size: 50,
+//                   color: MoColors.mainColorII,
+//                 ),
+//                 const SizedBox(height: 20),
+//                 Center(
+//                   child: Text(
+//                     'Meter number: $meter',
+//                     style: const TextStyle(
+//                       fontSize: 15,
+//                       fontWeight: FontWeight.bold,
+//                     ),
+//                   ),
+//                 ),
+//                 const SizedBox(height: 10),
+//                 Text(
+//                   'Would you like to proceed with the payment for the meter?',
+//                   textAlign: TextAlign.center,
+//                   style: TextStyle(
+//                     fontSize: 16,
+//                     color: Colors.grey[600],
+//                   ),
+//                 ),
+//                 const SizedBox(height: 20),
+//                 Row(
+//                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                   children: [
+//                     Expanded(
+//                       child: ElevatedButton(
+//                         onPressed: () {
+//                           Navigator.of(context).pop();
+//                           onYesPressed();
+//                         },
+//                         style: ElevatedButton.styleFrom(
+//                           backgroundColor: MoColors.mainColorII,
+//                           shape: RoundedRectangleBorder(
+//                             borderRadius: BorderRadius.circular(12.0),
+//                           ),
+//                         ),
+//                         child: const Padding(
+//                           padding: EdgeInsets.symmetric(
+//                               horizontal: 15.0, vertical: 12.0),
+//                           child: Text(
+//                             'Pay',
+//                             style: TextStyle(fontSize: 10, color: Colors.white),
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                     const SizedBox(
+//                       width: 10,
+//                     ),
+//                     Expanded(
+//                       child: OutlinedButton(
+//                         onPressed: () {
+//                           Navigator.of(context).pop(); // Close the dialog
+//                           // Handle cancel action here if needed
+//                         },
+//                         style: OutlinedButton.styleFrom(
+//                           side: BorderSide(color: MoColors.mainColorII),
+//                           shape: RoundedRectangleBorder(
+//                             borderRadius: BorderRadius.circular(12.0),
+//                           ),
+//                         ),
+//                         child: Padding(
+//                           padding: const EdgeInsets.symmetric(
+//                               horizontal: 15.0, vertical: 12.0),
+//                           child: Text(
+//                             'Cancel',
+//                             style: TextStyle(
+//                                 fontSize: 10, color: MoColors.mainColorII),
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ],
+//             ),
+//           ),
+//         );
+//       },
+//     );
+//   }
+// }
