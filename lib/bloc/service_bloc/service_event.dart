@@ -8,6 +8,21 @@ abstract class ServiceEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class ServiceTypeEvent extends ServiceEvent {
+  const ServiceTypeEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
+class ArtisanListEvent extends ServiceEvent {
+  final int serviceId;
+  const ArtisanListEvent(this.serviceId);
+
+  @override
+  List<Object> get props => [serviceId];
+}
+
 class ServicePropertiesEvent extends ServiceEvent {
   const ServicePropertiesEvent();
 

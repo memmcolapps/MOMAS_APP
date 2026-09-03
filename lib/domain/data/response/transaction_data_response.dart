@@ -85,8 +85,12 @@ class TransactionData {
   }
 }
 
+// TODO(DON): When webhook is active...
+//  update status 3 to service failure not payment failure
+//  and rename to something else ... not declined
 enum PaymentStatus {
   pending(0),
+  failed(1),
   successful(2),
   declined(3),
   none(4);
@@ -99,6 +103,8 @@ enum PaymentStatus {
     switch (value) {
       case 0:
         return PaymentStatus.pending;
+      case 1:
+        return PaymentStatus.failed;
       case 2:
         return PaymentStatus.successful;
       case 3:
@@ -117,8 +123,8 @@ enum PaymentStatus {
         return Colors.orange; // Pending - Orange
       case PaymentStatus.successful:
         return Colors.green; // Successful - Green
-      case PaymentStatus.declined:
-        return Colors.red; // Declined - Red
+      // case PaymentStatus.declined:
+      //   return Colors.red; // Declined - Red
       default:
         return Colors.grey; // Default or unknown status
     }
@@ -129,12 +135,26 @@ enum PaymentStatus {
     switch (this) {
       case PaymentStatus.pending:
         return 'Pending';
+      case PaymentStatus.failed:
+        return 'Failed';
       case PaymentStatus.successful:
         return 'Successful';
       case PaymentStatus.declined:
-        return 'Declined';
+        return 'Failed';
       case PaymentStatus.none:
         return 'NONE';
     }
+  }
+
+  IconData serviceIcon(String? serviceType) {
+    final type = serviceType?.toLowerCase() ?? '';
+
+    if (type.contains('airtime')) return Icons.phone_android_rounded;
+    if (type.contains('data')) return Icons.network_cell_rounded;
+    if (type.contains('cable')) return Icons.tv_rounded;
+    if (type.contains('token') || type.contains('credit')) return Icons.bolt_rounded;
+    if (type.contains('arrear')) return Icons.account_balance_wallet_outlined;
+
+    return Icons.receipt_long_rounded; // fallback
   }
 }

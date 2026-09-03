@@ -39,10 +39,10 @@ class MomasMeterBuy {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['vending_amount'] = vendingAmount;
-    data['trxref'] = trxref;
-    data['meterType'] = meterType;
-    data['estate_id'] = estateId;
-    data['meterNo'] = meterNo;
+    data['trxref'] = trxref;//
+    data['meter_type'] = meterType; //
+    data['estate_id'] = estateId; //
+    data['receiver_meterNo'] = meterNo; //
     data['tariff_id'] = tariffId;
     data['vend_amount_kw_per_naira'] = vendValueKWPerNaira;
     data['total_paid_amount'] = totalPaidAmount;

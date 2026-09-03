@@ -1,6 +1,7 @@
 
 
 import 'package:equatable/equatable.dart';
+import 'package:momaspayplus/utils/network_enum.dart';
 
 abstract class DataEvent extends Equatable {
   const DataEvent();
@@ -24,8 +25,9 @@ class BuyData extends DataEvent {
 
 
 class GetData extends DataEvent {
-  const GetData();
+  final Network network;
+  const GetData({required this.network});
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [network];
 }

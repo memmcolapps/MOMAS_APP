@@ -1,17 +1,16 @@
-
-
-
 import 'package:flutter/material.dart';
 
 class ShadowContainer extends StatelessWidget {
   final Widget child;
+  final double? height;
   final BorderRadiusGeometry? borderRadius;
   final Color?  color;
-  const ShadowContainer({super.key, required this.child,  this.borderRadius,  this.color});
+  const ShadowContainer({super.key, required this.child, this.height, this.borderRadius,  this.color});
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: height,
       decoration: BoxDecoration(
         color:color?? Colors.white,
         borderRadius: borderRadius ?? BorderRadius.circular(15.0),

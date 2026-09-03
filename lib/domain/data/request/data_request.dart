@@ -14,10 +14,10 @@ class DataRequest {
   Map<String, dynamic> toJson() {
     return {
       'service_id': serviceId,
-      'amount': amount,
+      // 'amount': amount,
       'phone': phone,
       'variation_code': variationCode,
-      'ref': ref,
+      'trx_id': ref,
     };
   }
 }

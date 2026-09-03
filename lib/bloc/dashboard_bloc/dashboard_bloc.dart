@@ -1,9 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/bloc/dashboard_bloc/dashboard_state.dart';
 import 'package:momaspayplus/domain/service/dashboard_service.dart';
 
-import '../../domain/repository/dashboard_repository.dart';
-import '../../utils/shared_pref.dart';
+import '../../core/storage/shared_pref.dart';
 import 'dashboard_event.dart';
 
 class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
@@ -39,22 +40,25 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
 
   Future<void> _onFeatureEvent(
       DashboardEvent event, Emitter<DashboardState> emit) async {
-    super.onEvent(event);
-
-    try {
-      if (event is FeatureDashboardEvent) {
+    if (event is FeatureDashboardEvent) {
+      final cached = SharedPreferenceHelper.getCachedFeature();
+      if (cached != null) {
+        emit(FeaturesSuccessful(cached));
+      } else {
         emit(FeaturesLoading());
-        var data = await service.getFeature();
+      }
+
+      try {
+        final data = await service.getFeature();
         if (data.status == true) {
+          await SharedPreferenceHelper.saveFeature(data.feature);
           emit(FeaturesSuccessful(data.feature));
         } else {
-          emit(FeaturesFailure());
+          if (cached == null) emit(FeaturesFailure());
         }
+      } catch (e) {
+        if (cached == null) emit(FeaturesFailure());
       }
-    } catch (_, e) {
-      print(_);
-      print(e);
-      emit(WalletFailure());
     }
   }
 }
@@ -84,16 +88,23 @@ class PromoBloc extends Bloc<DashboardEvent, DashboardState> {
 
   PromoBloc(this.service) : super(DashboardInitial()) {
     on<PromotionEvent>((event, emit) async {
-      emit(FeaturesLoading());
+      final cached = SharedPreferenceHelper.getCachedPromo();
+      if (cached != null) {
+        emit(PromotionSuccessful(cached));
+      } else {
+        emit(FeaturesLoading());
+      }
+
       try {
-        var data = await service.getPromo();
+        final data = await service.getPromo();
         if (data.status == true) {
+          await SharedPreferenceHelper.savePromo(data.promo);
           emit(PromotionSuccessful(data.promo));
         } else {
-          emit(PromotionFailure());
+          if (cached == null) emit(PromotionFailure());
         }
       } catch (e) {
-        emit(PromotionFailure());
+        if (cached == null) emit(PromotionFailure());
       }
     });
   }
@@ -104,17 +115,23 @@ class UserBloc extends Bloc<DashboardEvent, DashboardState> {
 
   UserBloc(this.service) : super(DashboardInitial()) {
     on<GetUserDashboardEvent>((event, emit) async {
-      emit(FeaturesLoading());
+      final cached = await SharedPreferenceHelper.getUser();
+      if (cached != null) {
+        emit(GetUserSuccessful(cached));
+      } else {
+        emit(FeaturesLoading());
+      }
+
       try {
         var data = await service.getUser();
-        if (data.status == true) {
+        if (data.status == true && data.user != null) {
           SharedPreferenceHelper.saveUser(data.user!.toJson());
-          emit(GetUserSuccessful(data));
+          emit(GetUserSuccessful(data.user!));
         } else {
-          emit(PromotionFailure());
+          if (cached == null) emit(PromotionFailure());
         }
       } catch (e) {
-        emit(PromotionFailure());
+        if (cached == null) emit(PromotionFailure());
       }
     });
   }

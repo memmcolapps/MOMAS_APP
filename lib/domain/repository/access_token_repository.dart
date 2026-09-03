@@ -1,13 +1,13 @@
 import 'package:momaspayplus/domain/data/request/generate_token_request.dart';
 import 'package:momaspayplus/domain/data/response/generic_response.dart';
 
-import '../../utils/routes.dart';
+import '../../core/network/routes.dart';
 import '../data/request/set_estate_request.dart';
 import '../data/response/access_token_list_data.dart';
 import '../data/response/estate_response.dart';
 import '../data/response/generate_token_response.dart';
 import '../data/response/user_model.dart';
-import '../request.dart';
+import '../../core/network/request.dart';
 
 class AccessTokenRepository {
   final ServerRequest _request = ServerRequest();

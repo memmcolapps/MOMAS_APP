@@ -1,8 +1,8 @@
 import 'package:momaspayplus/domain/data/response/generic_response.dart';
 
-import '../../utils/routes.dart';
+import '../../core/network/routes.dart';
 import '../data/response/setting_response.dart';
-import '../request.dart';
+import '../../core/network/request.dart';
 
 class SettingRepository {
   final ServerRequest _request = ServerRequest();

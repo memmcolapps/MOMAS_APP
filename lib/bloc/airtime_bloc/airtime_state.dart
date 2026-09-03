@@ -13,7 +13,11 @@ class BuyAirtime extends AirtimeEvent {
   final String phone;
   final String ref;
 
-  const BuyAirtime({required this.serviceId, required this.amount, required this.phone, required this.ref});
+  const BuyAirtime(
+      {required this.serviceId,
+      required this.amount,
+      required this.phone,
+      required this.ref});
 
   @override
   List<Object> get props => [serviceId, amount, phone, ref];

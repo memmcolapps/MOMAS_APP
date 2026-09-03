@@ -23,7 +23,7 @@ class DashboardModel {
 }
 
 class Feature {
-  int id;
+  // int id;
   int momasMeter;
   int otherMeter;
   int printToken;
@@ -35,7 +35,7 @@ class Feature {
   int analysis;
 
   Feature({
-    required this.id,
+    // required this.id,
     required this.momasMeter,
     required this.otherMeter,
     required this.printToken,
@@ -49,7 +49,7 @@ class Feature {
 
   factory Feature.fromJson(Map<String, dynamic> json) {
     return Feature(
-      id: json['id'],
+      // id: json['id'],
       momasMeter: json['momas_meter'],
       otherMeter: json['other_meter'],
       printToken: json['print_token'],
@@ -64,7 +64,7 @@ class Feature {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      // 'id': id,
       'momas_meter': momasMeter,
       'other_meter': otherMeter,
       'print_token': printToken,
@@ -76,4 +76,8 @@ class Feature {
       'analysis': analysis,
     };
   }
+
+  // 1 = active, 2 = inactive, 0 = hidden
+  bool isVisible(int value) => value != 0;
+  bool isActive(int value) => value == 1;
 }

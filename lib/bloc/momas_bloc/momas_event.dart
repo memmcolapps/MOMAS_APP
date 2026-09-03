@@ -12,12 +12,29 @@ abstract class MomasPaymentEvent extends Equatable {
 
 class MomasVerification extends MomasPaymentEvent {
   final String meterNo;
-  final String estateId;
+  // final String estateId;
 
-  const MomasVerification({required this.meterNo, required this.estateId});
+  const MomasVerification({required this.meterNo,
+    // required this.estateId
+  });
 
   @override
   List<Object> get props => [meterNo];
+}
+
+class EnergyCalculation extends MomasPaymentEvent {
+  final num tariffId;
+  final num amount;
+  final String receiver_meterNo;
+
+  const EnergyCalculation({
+    required this.tariffId,
+    required this.amount,
+    required this.receiver_meterNo
+  });
+
+  @override
+  List<Object> get props => [tariffId, amount, receiver_meterNo];
 }
 
 class MomasMeterPayment extends MomasPaymentEvent {
@@ -56,4 +73,16 @@ class MomasPaymentHistory extends MomasPaymentEvent {
 
 class MomasGetVentingProperties extends MomasPaymentEvent {
   const MomasGetVentingProperties();
+}
+
+class MomasFailedTrxHistory extends MomasPaymentEvent {
+  const MomasFailedTrxHistory();
+}
+
+class MomasReprintToken extends MomasPaymentEvent {
+  final String trxId;
+  MomasReprintToken({ required this.trxId});
+
+  @override
+  List<Object> get props => [trxId];
 }

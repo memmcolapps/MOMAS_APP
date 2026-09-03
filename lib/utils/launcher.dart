@@ -1,12 +1,9 @@
-
+import 'package:flutter/cupertino.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class Launcher{
+class Launcher {
   Future<void> launchInBrowser(Uri url) async {
-    if (!await launchUrl(
-      url,
-      mode: LaunchMode.externalApplication,
-    )) {
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       throw Exception('Could not launch $url');
     }
   }

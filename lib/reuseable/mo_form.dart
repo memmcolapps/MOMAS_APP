@@ -72,7 +72,10 @@ class _MoFormWidgetState extends State<MoFormWidget> {
             obscureText: widget.isPassword ? _obscureText : false,
             inputFormatters: widget.inputFormatters,
             decoration: InputDecoration(
+               // filled: widget.enable == false ? true: false,
+               //  fillColor: widget.enable == false ? Colors.grey.shade100 : null,
                 hintText: widget.hintText,
+                hintStyle: TextStyle(color: Colors.black54),
                 prefixIcon: widget.prefixIcon,
                 suffixIcon: widget.isPassword
                     ? IconButton(

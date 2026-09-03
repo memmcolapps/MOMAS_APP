@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'colors.dart';
 
 class ThemeConfig {
   static ThemeData buildCustomTheme() {
-    final ColorScheme colorScheme = ColorScheme(
+    final ColorScheme colorScheme = ColorScheme.fromSeed(
+      seedColor: MoColors.mainColor,
       primary: MoColors.mainColor,
       secondary: Colors.orange,
       surface: Colors.white,
-      background: Colors.grey[200],
+      // background: Colors.grey[200],
       error: Colors.red,
       onPrimary: MoColors.mainColor,
-      onSecondary: MoColors.mainColor.withOpacity(0.1),
+      onSecondary: MoColors.mainColor.withValues(alpha: 0.1),
       onSurface: MoColors.mainColor,
       onError: Colors.red,
       brightness: Brightness.light,
@@ -20,19 +22,24 @@ class ThemeConfig {
     return base.copyWith(
       textSelectionTheme: TextSelectionThemeData(
         cursorColor: MoColors.mainColor,
-        selectionColor: MoColors.mainColor.withOpacity(0.5),
+        selectionColor: MoColors.mainColor.withValues(alpha: 0.5),
         selectionHandleColor: MoColors.mainColor,
       ),
       colorScheme: colorScheme,
       primaryColor: MoColors.mainColor,
-      scaffoldBackgroundColor: Colors.grey[200],
-      appBarTheme: AppBarTheme(
-        color: MoColors.mainColor,
+      scaffoldBackgroundColor: MoColors.scaffoldWhite,
+      appBarTheme: const AppBarTheme(
+        backgroundColor: MoColors.mainColor,
+        systemOverlayStyle: SystemUiOverlayStyle (
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
+        ),
         iconTheme: IconThemeData(
           color: MoColors.whiteColor,
         ),
       ),
-      buttonTheme: ButtonThemeData(
+      buttonTheme: const ButtonThemeData(
         buttonColor: MoColors.mainColor,
         textTheme: ButtonTextTheme.primary,
       ),

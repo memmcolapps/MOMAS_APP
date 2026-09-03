@@ -1,0 +1,75 @@
+import 'package:momaspayplus/app/app_config.dart';
+
+class Routes {
+  // static const String _url = "https://momaspay.memmserve.com/api";
+  // static const String _url = "http://34.116.150.23:8080/api";
+  // static const String _url = "http://staging.memmserve.com";
+  // static const String _url = "https://unobstructed-kindredly-jeanmarie.ngrok-free.dev";
+  static final String _url = AppConfig.baseUrl;
+  static final String _baseURL = "$_url/api";
+  // static final String _hesUrl = 'https://sbctest.memmserve.com';
+  static final String _hesUrl = 'https://memmcolapps.memmserve.com';
+  static final String _hesBaseURL = "$_hesUrl/hes";
+  static String login = "$_baseURL/login";
+  static String buyAirtime = "$_baseURL/buy-airtime";
+  static String buyData = "$_baseURL/buy-data";
+  static String getData = "$_baseURL/get-data";
+  static String register = "$_baseURL/register";
+  static String checkEmail = "$_baseURL/check-email";
+  static String verifyEmail = "$_baseURL/validate-email";
+  static String balance = "$_baseURL/balance";
+  static String pay = "$_baseURL/pay";
+  static String verifyPayment = "$_url/paystack-check";
+  static String getTransaction = "$_baseURL/get-transactions";
+  static String retryMeter = "$_baseURL/retry-meter";
+  static String getTrx = "$_baseURL/get-trx";
+  static String serviceType = "$_baseURL/fetch-services";
+  static String artisanByService = "$_baseURL/get-artisans-by-service";
+  static String serviceProperties = "$_baseURL/service-properties";
+  static String serviceSearch = "$_baseURL/service-search";
+  static String features = "$_baseURL/features";
+  static String promo = "$_baseURL/promotion";
+  static String getEstate = "$_baseURL/get-all-estate";
+  static String setDefault = "$_baseURL/set-default";
+  static String generateToken = "$_baseURL/generate-token";
+  static String generateHesToken = "$_hesBaseURL/api/auth/token";
+  static String getUser = "$_baseURL/getUser";
+  static String saveComment = "$_baseURL/save-comment";
+  static String getComment = "$_baseURL/get-comment";
+  static String cablePlan = "$_baseURL/cable-plan";
+  static String buyCable = "$_baseURL/buy-cable";
+  static String validateCable = "$_baseURL/validate-cable";
+  static String vereifyMomasMeter = "$_baseURL/validate";
+  static String energyuCalc = "$_baseURL/calculate-token-fees-amount";
+  static String payMomasMeter = "$_baseURL/buy-meter";
+  static String buyMeterOthers = "$_baseURL/buy-meter-others";
+  static String reprintMeter = "$_baseURL/reprint-token";
+  static String failedTrx = "$_baseURL/failed-credit-token-transactions";
+  static String retryToken = "$_baseURL/retry-credit-token";
+  static String deleteUser = "$_baseURL/delete-user";
+  static String support = "$_baseURL/support";
+  static String requestMeter = "$_baseURL/request-meter";
+  static String approveToken = "$_baseURL/approve-token";
+  static String disApproveToken = "$_baseURL/disapprove-token";
+  static String tokenList = "$_baseURL/token-list";
+  static String vendingProperties = "$_baseURL/vending-properties";
+  static String payArrears = "$_baseURL/pay_arrears";
+  static String arrears = "$_baseURL/arrears";
+  static String resetPassword = "$_baseURL/reset-password";
+  static String updatePassword = "$_baseURL/update-password";
+  static String getAccount = "$_baseURL/get-account";
+  static String adminFeeCheck = "$_baseURL/admin-fee-check";
+
+  static String checkAppUpdate = "$_baseURL/check-app-version";
+
+  /// Analytics
+  static String getAnalysis = "$_baseURL/get-analysis";
+  static String getAnalysisSummary = "$_baseURL/get-analysis-summary";
+  static String getTransactionAnalysis = "$_baseURL/get-trx-chart";
+  static String getUtilityMetrics = "$_baseURL/get-utility-metrics";
+  static String getAccessTokenReport = "$_baseURL/get-token-report";
+
+  /// hes
+  static String loadToken = "$_hesBaseURL/api/dlms/setToken";
+  static String hesConnection = "$_hesBaseURL/api/meter-connection";
+}

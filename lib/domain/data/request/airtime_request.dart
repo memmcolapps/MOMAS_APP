@@ -9,9 +9,9 @@ class AirtimeRequest {
   Map<String, dynamic> toJson() {
     return {
       'service_id': serviceId,
-      'amount': amount,
+      // 'amount': amount,
       'phone': phone,
-      'ref': ref,
+      'trx_id': ref,
     };
   }
 }

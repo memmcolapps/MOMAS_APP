@@ -1,6 +1,11 @@
+import 'dart:developer';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/bloc/setting_bloc/setting_event.dart';
 import 'package:momaspayplus/bloc/setting_bloc/setting_state.dart';
+import 'package:momaspayplus/core/storage/shared_pref.dart';
+import 'package:momaspayplus/utils/strings.dart';
 
 import '../../domain/repository/setting_repository.dart';
 
@@ -9,9 +14,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
 
   SettingsBloc(this.serviceRepository) : super(SettingsStateInitial()) {
     on<SupportSettingEvent>((event, emit) async => onServiceEvent(event, emit));
-
     on<DeleteEvent>((event, emit) async => onDeleteEvent(event, emit));
-
     on<RequestMeterEvent>(
         (event, emit) async => onRequestMeteEvent(event, emit));
   }
@@ -19,16 +22,27 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   void onServiceEvent(
       SupportSettingEvent event, Emitter<SettingsState> emit) async {
     super.onEvent(event);
-    try {
+
+    final cached = SharedPreferenceHelper.getSupport();
+    if (cached != null) {
+      emit(SettingsSupportStateLoading(data: cached));
+    } else {
       emit(SettingsStateLoading());
+    }
+
+    try {
       var response = await serviceRepository.support();
-      if (response.status == true) {
-        emit(SettingsSupportStateLoading(response: response));
+      if (response.status == true && response.data != null) {
+        await SharedPreferenceHelper.saveSupport(response.data!);
+        emit(SettingsSupportStateLoading(data: response.data!));
       } else {
-        emit(const SettingsStateFailed("Fail to get list of support"));
+        if (cached == null) {
+          emit(const SettingsStateFailed('Unable to load support contacts. Please try again.'));
+        }
       }
-    } catch (_, e) {
-      emit(SettingsStateFailed(_.toString()));
+    } catch (e) {
+      log('[SettingsBloc] onServiceEvent error: $e');
+      if (cached == null) emit(SettingsStateFailed(e.toString()));
     }
   }
 
@@ -40,10 +54,11 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       if (response.status == true) {
         emit(SettingsSupportStateSuccess(response.message ?? ""));
       } else {
-        emit(const SettingsStateFailed("Fail to get list of support"));
+        emit(const SettingsStateFailed('Account deletion failed. Please try again.'));
       }
-    } catch (_, e) {
-      emit(SettingsStateFailed(_.toString()));
+    } catch (e) {
+      log('[SettingsBloc] onDeleteEvent error: $e');
+      emit(SettingsStateFailed(e.toString()));
     }
   }
 
@@ -58,11 +73,12 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         emit(SettingsSupportStateSuccess(response.message ?? ""));
         return;
       } else {
-        emit(
-            SettingsStateFailed(response.message ?? "Failed to request meter"));
+        emit(SettingsStateFailed(
+            extractError(response.message)));
       }
-    } catch (_, e) {
-      emit(SettingsStateFailed(_.toString()));
+    } catch (e) {
+      log('[SettingsBloc] onRequestMeteEvent error: $e');
+      emit(SettingsStateFailed(e.toString()));
     }
   }
 }

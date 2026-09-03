@@ -1,38 +1,41 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/domain/data/response/generic_response.dart';
 import 'package:momaspayplus/domain/repository/bill_repository.dart';
+import 'package:momaspayplus/utils/strings.dart';
 
 import '../../domain/data/request/airtime_request.dart';
 import 'airtime_event.dart';
 import 'airtime_state.dart';
 
-
 class AirtimeBloc extends Bloc<AirtimeEvent, AirtimeState> {
   final BillRepository repository;
 
-  AirtimeBloc({required this.repository}) : super(AirtimeInitial()){
+  AirtimeBloc({required this.repository}) : super(AirtimeInitial()) {
     on<BuyAirtime>((event, emit) async {
-        await mapEventToState(event, emit);
+      await mapEventToState(event, emit);
+    });
+  }
 
-    });  }
-
- Future mapEventToState(AirtimeEvent event,  Emitter<AirtimeState> emit) async {
+  Future mapEventToState(AirtimeEvent event, Emitter<AirtimeState> emit) async {
     if (event is BuyAirtime) {
       emit(AirtimeLoading());
       try {
         final AirtimeRequest request = AirtimeRequest(
-          ref: event.ref ,
+          ref: event.ref,
           serviceId: event.serviceId,
           amount: event.amount,
           phone: event.phone,
         );
         final GenericResponse response = await repository.buyAirtime(request);
-       if(response.status ==true){
-         emit(AirtimeSuccess(response: response));
-       }else{
-         emit(AirtimeFailure(error: response.message ?? ""));
-       }
+        if (response.status == true) {
+          emit(AirtimeSuccess(response: response));
+        } else {
+          emit(AirtimeFailure(error: extractError(response.message)));
+        }
       } catch (e) {
+        log('[AirtimeBloc] buyAirtime error: $e');
         emit(AirtimeFailure(error: e.toString()));
       }
     }

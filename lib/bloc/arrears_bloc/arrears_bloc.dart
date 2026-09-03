@@ -1,4 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:momaspayplus/bloc/payment_bloc/payment_bloc.dart';
+import 'package:momaspayplus/utils/strings.dart';
 
 import '../../domain/data/response/arrears_items.dart';
 import '../../domain/repository/bill_repository.dart';
@@ -10,9 +14,11 @@ class GetArrears extends CustomerArrearsEvent {}
 
 class PaySingleArrear extends CustomerArrearsEvent {
   final int id;
+  final ServiceType serviceType;
   final String paymentRef;
   PaySingleArrear({
     required this.id,
+    required this.serviceType,
     required this.paymentRef,
   });
 }
@@ -69,6 +75,7 @@ class CustomerArrearsBloc
       final List<ArrearItem> jsonList = await repository.getCustomerArrears();
       emit(ArrearsSuccess(arrears: jsonList));
     } catch (e) {
+      log('[ArrearsBloc] getArrears error: $e');
       emit(ArrearsFailure(error: e.toString()));
     }
   }
@@ -80,15 +87,18 @@ class CustomerArrearsBloc
       final response = await repository.payArrear({
         "type": "single",
         "id": event.id.toString(),
-        "paymentRef": event.paymentRef,
+        "service_type": event.serviceType.name,
+        "ref": event.paymentRef,
       });
 
       if (response.status == true) {
         emit(ArrearPaymentSuccess(reference: response.message ?? ""));
       } else {
-        emit(ArrearPaymentFailure(error: response.message ?? "Payment failed"));
+        emit(ArrearPaymentFailure(
+            error: extractError(response.message)));
       }
     } catch (e) {
+      log('[ArrearsBloc] paySingle error: $e');
       emit(ArrearPaymentFailure(error: e.toString()));
     }
   }
@@ -99,15 +109,17 @@ class CustomerArrearsBloc
     try {
       final response = await repository.payArrear({
         "type": "all",
-        "paymentRef": event.paymentRef,
+        "ref": event.paymentRef,
       });
 
       if (response.status == true) {
         emit(ArrearPaymentSuccess(reference: response.message ?? ""));
       } else {
-        emit(ArrearPaymentFailure(error: response.message ?? "Payment failed"));
+        emit(ArrearPaymentFailure(
+            error: extractError(response.message)));
       }
     } catch (e) {
+      log('[ArrearsBloc] payAll error: $e');
       emit(ArrearPaymentFailure(error: e.toString()));
     }
   }

@@ -1,81 +1,42 @@
+import 'dart:developer';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:momaspayplus/screens/auth/login.dart';
-import 'package:momaspayplus/utils/navigation.dart';
-import 'package:momaspayplus/utils/shared_pref.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:get_it/get_it.dart';
 
-import 'package:momaspayplus/utils/theme.dart';
-import 'package:upgrader/upgrader.dart';
+import 'package:momaspayplus/app/app.dart';
+import 'package:momaspayplus/core/cubit/auth_cubit/auth_cubit.dart';
+import 'package:momaspayplus/core/storage/shared_pref.dart';
+import 'package:momaspayplus/utils/app_bloc_observer.dart';
 
-import 'bloc/intro_page/intro_page.dart';
-import 'bloc/registeration_bloc/register_bloc.dart';
-import 'bloc/setting_bloc/setting_bloc.dart';
-import 'domain/data/response/user_model.dart';
-import 'domain/repository/auth_repository.dart';
-import 'domain/repository/setting_repository.dart';
-import 'domain/service/auth_service.dart';
+final getIt = GetIt.instance;
 
-final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+Future<void> main() async {
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  Bloc.observer = AppBlocObserver();
 
-void main() {
-  runApp(const MyApp());
-}
+  // Catch Flutter framework errors (widget build, rendering, etc.)
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    log('[Flutter Error] ${details.exceptionAsString()}',
+        stackTrace: details.stack);
+  };
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  // Catch unhandled async errors outside the Flutter widget tree
+  PlatformDispatcher.instance.onError = (error, stack) {
+    log('[Unhandled Error] $error', stackTrace: stack);
+    return true;
+  };
 
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorObservers: [routeObserver],
-      navigatorKey: NavigationService.navigatorKey,
-      debugShowCheckedModeBanner: false,
-      title: 'Momas Pay',
-      theme: ThemeConfig.buildCustomTheme(),
-      home: UpgradeAlert(child: const MyHomePage(title: 'Momas Pay')),
-    );
-  }
-}
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
+  await SharedPreferenceHelper.init();
+  getIt.registerLazySingleton(() => AuthCubit());
+  await getIt<AuthCubit>().loadUser();
 
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<User?>(
-        future: SharedPreferenceHelper.getUser(),
-        builder: (context, snapshot) {
-          return MultiBlocProvider(
-              providers: [
-                BlocProvider(
-                  create: (context) =>
-                      RegisterBloc(AuthService(AuthRepository())),
-                ),
-              ],
-              child: snapshot.data == null
-                  ? const IntroPage()
-                  : const LoginScreen());
-        });
-    // child: const LoginScreen());
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[],
-        ),
-      ),
-      // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
+  runApp(const MomasPayApp());
 }

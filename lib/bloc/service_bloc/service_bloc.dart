@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/bloc/service_bloc/service_event.dart';
 import 'package:momaspayplus/bloc/service_bloc/service_state.dart';
+import 'package:momaspayplus/utils/strings.dart';
 
 import '../../domain/repository/service_repository.dart';
 
@@ -8,6 +11,10 @@ class ServiceBloc extends Bloc<ServiceEvent, ServiceState> {
   final ServiceRepository serviceRepository;
 
   ServiceBloc(this.serviceRepository) : super(ServiceStateInitial()) {
+    on<ServiceTypeEvent>(
+        (event, emit) async => onServiceTypeEvent(event, emit));
+    on<ArtisanListEvent>(
+        (event, emit) async => onArtisanListEvent(event, emit));
     on<ServicePropertiesEvent>(
         (event, emit) async => onServiceEvent(event, emit));
     on<ServiceSearchEvent>(
@@ -15,6 +22,41 @@ class ServiceBloc extends Bloc<ServiceEvent, ServiceState> {
     on<ServicePostCommentEvent>(
         (event, emit) async => postCommentEvent(event, emit));
     on<GetCommentEvent>((event, emit) async => getCommentEvent(event, emit));
+  }
+
+  void onServiceTypeEvent(
+      ServiceTypeEvent event, Emitter<ServiceState> emit) async {
+    super.onEvent(event);
+    try {
+      emit(ServiceStateLoading());
+      var response = await serviceRepository.getServiceType();
+      if (response.status == true) {
+        emit(ServiceTypeSuccess(response));
+      } else {
+        emit(ServiceStateFailed(extractError(response.message)));
+      }
+    } catch (e) {
+      log('[ServiceBloc] onServiceTypeEvent error: $e');
+      emit(ServiceStateFailed(e.toString()));
+    }
+  }
+
+  void onArtisanListEvent(
+      ArtisanListEvent event, Emitter<ServiceState> emit) async {
+    super.onEvent(event);
+    try {
+      emit(ServiceStateLoading());
+      var response =
+          await serviceRepository.getArtisanByService(event.serviceId);
+      if (response.status == true) {
+        emit(ArtisanListSuccess(response));
+      } else {
+        emit(ServiceStateFailed(extractError(response.message)));
+      }
+    } catch (e) {
+      log('[ServiceBloc] onArtisanListEvent error: $e');
+      emit(ServiceStateFailed(e.toString()));
+    }
   }
 
   void onServiceEvent(ServiceEvent event, Emitter<ServiceState> emit) async {
@@ -25,11 +67,11 @@ class ServiceBloc extends Bloc<ServiceEvent, ServiceState> {
       if (response.status == true) {
         emit(ServiceStateSuccess(response));
       } else {
-        emit(ServiceStateFailed(response.message ?? ""));
+        emit(ServiceStateFailed(extractError(response.message)));
       }
-    } catch (_, e) {
-      print(e);
-      emit(ServiceStateFailed(_.toString()));
+    } catch (e) {
+      log('[ServiceBloc] onServiceEvent error: $e');
+      emit(ServiceStateFailed(e.toString()));
     }
   }
 
@@ -43,10 +85,10 @@ class ServiceBloc extends Bloc<ServiceEvent, ServiceState> {
       if (response.status == true) {
         emit(ServiceSearchStateSuccess(response));
       } else {
-        emit(ServiceStateFailed(response.message ?? ""));
+        emit(ServiceStateFailed(extractError(response.message)));
       }
-    } catch (_, e) {
-      emit(ServiceStateFailed(_.toString()));
+    } catch (e) {
+      emit(ServiceStateFailed(e.toString()));
     }
   }
 
@@ -62,10 +104,10 @@ class ServiceBloc extends Bloc<ServiceEvent, ServiceState> {
         emit(ServiceSaveChatStateSuccess(response.message ?? ""));
         emit(ServiceGetChatStateSuccess(responseComment));
       } else {
-        emit(ServiceStateFailed(response.message ?? ""));
+        emit(ServiceStateFailed(extractError(response.message)));
       }
-    } catch (_, e) {
-      emit(ServiceStateFailed(_.toString()));
+    } catch (e) {
+      emit(ServiceStateFailed(e.toString()));
     }
   }
 
@@ -77,11 +119,11 @@ class ServiceBloc extends Bloc<ServiceEvent, ServiceState> {
       if (response.status == true) {
         emit(ServiceGetChatStateSuccess(response));
       } else {
-        emit(const ServiceStateFailed("request fails to get comments"));
+        emit(const ServiceStateFailed('Unable to load comments. Please try again.'));
       }
-    } catch (_, e) {
-      print(e);
-      emit(ServiceStateFailed(_.toString()));
+    } catch (e) {
+      log('[ServiceBloc] getCommentEvent error: $e');
+      emit(ServiceStateFailed(e.toString()));
     }
   }
 }

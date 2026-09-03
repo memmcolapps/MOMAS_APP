@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:momaspayplus/domain/data/response/artisan_list_response.dart';
+import 'package:momaspayplus/domain/data/response/service_type_response.dart';
 
 import '../../domain/data/response/comment_response.dart';
 import '../../domain/data/response/service_data_response.dart';
@@ -21,6 +23,24 @@ class ServiceStateFailed extends ServiceState {
   final String error;
 
   const ServiceStateFailed(this.error);
+}
+
+class ServiceTypeSuccess extends ServiceState {
+  final ServiceTypeResponse dataResponse;
+
+  const ServiceTypeSuccess(this.dataResponse);
+
+  @override
+  List<Object> get props => [];
+}
+
+class ArtisanListSuccess extends ServiceState {
+  final ArtisanListResponse dataResponse;
+
+  const ArtisanListSuccess(this.dataResponse);
+
+  @override
+  List<Object> get props => [];
 }
 
 class ServiceStateSuccess extends ServiceState {

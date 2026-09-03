@@ -1,7 +1,12 @@
+import 'dart:ffi';
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:momaspayplus/domain/data/request/momas_payment_request.dart';
 import 'package:momaspayplus/domain/repository/payment_repository.dart';
 import 'package:momaspayplus/utils/colors.dart';
 import 'package:momaspayplus/utils/images.dart';
@@ -14,17 +19,21 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../domain/data/response/user_model.dart';
 import '../../utils/keyboard_utils.dart';
-import '../../utils/shared_pref.dart';
+import '../../core/storage/shared_pref.dart';
+import '../app_error_display.dart';
 import '../error_modal.dart';
 
 class PaymentBottomSheet extends StatefulWidget {
   final String amount;
   final ServiceType? service;
+  final String  tariffId;
+  final String action;
 
   final Function(String ref)? onPayment;
 
   const PaymentBottomSheet(
-      {super.key, required this.amount, this.onPayment, this.service});
+      {super.key, required this.amount, this.onPayment,
+        this.service, required this.tariffId, required this.action});
 
   @override
   State<PaymentBottomSheet> createState() => _PaymentBottomSheetState();
@@ -32,6 +41,7 @@ class PaymentBottomSheet extends StatefulWidget {
 
 class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
   late PaymentBloc paymentBloc;
+  String ref = DateTime.now().millisecondsSinceEpoch.toString();
   User? user;
 
   @override
@@ -47,10 +57,31 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
     setState(() {
       isLoading = true;
     });
+    print("pay_type:" +type.name);
+    print("service:" +widget.service!.name);
     paymentBloc.add(
       MakePayment(
-          payType: type, amount: widget.amount, serviceType: widget.service!),
+          momasPaymentRequest: MomasPaymentRequest(
+              pay_type: type.name,
+              amount: widget.amount,
+              service_type: widget.service!.name,
+              action: ActionRequest(type: widget.action),
+              tariff_id: widget.tariffId.toString())),
     );
+    // paymentBloc.add(
+    //   MakePayment(
+    //       payType: type,
+    //       amount: widget.amount,
+    //       serviceType: widget.service!,
+    //       tariffId: widget.tariffId.toString()),
+    // );
+  }
+
+  void _onPaymentVerified(String ref) {
+    setState(() {
+      isLoading = true;
+    });
+    paymentBloc.add(VerifyPayment(ref: ref));
   }
 
   load() async {
@@ -59,20 +90,40 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final double deviceHeight = MediaQuery.heightOf(context);
+    final EdgeInsets safePadding = MediaQuery.paddingOf(context);
     return BlocProvider(
       create: (context) => PaymentBloc(PaymentRepository()),
       child: BlocConsumer<PaymentBloc, PaymentState>(
         bloc: paymentBloc,
         builder: (context, state) {
           if (state is PaymentLoading) {
-            return Center(
-                child: SpinKitFadingCircle(
-              color: MoColors.mainColor,
-              size: 40.0,
-            ));
+
+            return SizedBox(
+              height: deviceHeight * 0.5,
+              child: const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SpinKitFadingCircle(
+                    color: MoColors.mainColor,
+                    size: 40.0,
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    "Just a moment...",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+            );
           }
           return Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.fromLTRB(16, 16, 16, safePadding.bottom + 16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,20 +178,29 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
                   ],
                 ),
                 const SizedBox(height: 20),
+                // if (appFlavor == 'development' || appFlavor == 'staging') ... [
+                //   _buildPaymentOption(context, 'Pay with Test', MoImage.payStack,
+                //       onTap: () {
+                //         widget.onPayment!(ref);
+                //         Navigator.pop(context);
+                //         // _onPaymentOptionTap(PaymentType.paystack),
+                //       }, additionalInfo: "1.5% + NGN100"),
+                // ],
+                const SizedBox(height: 10),
                 _buildPaymentOption(
                     context, 'Pay with Paystack', MoImage.payStack,
                     onTap: () => _onPaymentOptionTap(PaymentType.paystack),
-                    additionalInfo: "1.5% + NGN100"),
-                const SizedBox(height: 10),
-                _buildPaymentOption(context, 'Enkpay payment', null,
-                    onTap: () => _onPaymentOptionTap(PaymentType.enkpay),
-                    additionalInfo: "Flat NGN100"),
-                const SizedBox(height: 10),
-                _buildPaymentOption(
-                    context, 'Pay with Flutterwave', MoImage.flutterWave,
-                    additionalInfo: "2.0%",
-                    onTap: () => _onPaymentOptionTap(PaymentType.flutterwave)),
-                const SizedBox(height: 10),
+                    additionalInfo: "2.5% + NGN100"),
+                // const SizedBox(height: 10),F
+                // _buildPaymentOption(context, 'Enkpay payment', null,
+                //     onTap: () => _onPaymentOptionTap(PaymentType.enkpay),
+                //     additionalInfo: "Flat NGN100"),
+                // const SizedBox(height: 10),
+                // _buildPaymentOption(
+                //     context, 'Pay with Flutterwave', MoImage.flutterWave,
+                //     additionalInfo: "2.0%",
+                //     onTap: () => _onPaymentOptionTap(PaymentType.flutterwave)),
+                const SizedBox(height: 10),   
                 _buildPaymentOption(
                     context, 'Pay with wallet', MoImage.walletPayment,
                     additionalInfo: isNotEmpty(user?.mainWallet.toString())
@@ -161,11 +221,19 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
               MaterialPageRoute(
                   builder: (context) => PaymentWebView(url: state.url)),
             ).then((value) {
-              if (value["status"] == "success") {
-                widget.onPayment!(value["ref"]);
-                Navigator.pop(context);
+              if (value != null && value["ref"] != null) {
+                _onPaymentVerified(value["ref"]);
               }
             });
+          } else if (state is PaymentVerified) {
+            if (state.paymentStatus == 'success' && state.ref.isNotEmpty) {
+              Navigator.pop(context);
+              widget.onPayment!(state.ref);
+            } else {
+              // Context is still valid — show error directly without delay so the
+              // user sees it before this bottom sheet is dismissed.
+              showErrorBottomSheet(context, "Payment verification failed. Please try again.");
+            }
           } else if (state is PaymentWalletSuccess) {
             widget.onPayment!(state.ref);
             Navigator.pop(context);
@@ -173,14 +241,9 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
             setState(() {
               isLoading = false;
             });
-            // ScaffoldMessenger.of(context).showSnackBar(
-            //   SnackBar(
-            //       content: Text(
-            //     state.error,
-            //     style: const TextStyle(color: Colors.black),
-            //   )),
-            // );
-            Navigator.pop(context);
+            // Context is still valid here — show error directly on the payment
+            // sheet (the user can retry or close manually). Popping first would
+            // unmount the context, making any subsequent error display fail silently.
             showErrorBottomSheet(context, state.error);
           }
         },
@@ -256,6 +319,39 @@ class _PaymentWebViewState extends State<PaymentWebView> {
 
   late WebViewController controller;
 
+  // Future<void> handleApiRedirect(BuildContext context, String apiUrl) async {
+  //   var client = HttpClient();
+  //
+  //   try {
+  //     var request = await client.getUrl(Uri.parse(apiUrl));
+  //     request.headers.set("ngrok-skip-browser-warning", "true");
+  //     request.followRedirects = false;
+  //     var response = await request.close();
+  //
+  //     if (response.statusCode >= 300 && response.statusCode < 400 ) {
+  //       String? redirectUrl = response.headers.value('location');
+  //       print(redirectUrl);
+  //
+  //       bool containsPayment = redirectUrl.toString().contains('payment');
+  //       if (redirectUrl != null && containsPayment) {
+  //         Uri uri = Uri.parse(redirectUrl);
+  //         print('Query params: ${uri.queryParameters}');
+  //
+  //         String? ref =
+  //             uri.queryParameters['ref'] ?? uri.queryParameters["trans_id"];
+  //         String? status = uri.queryParameters['status'];
+  //         if (context.mounted) {
+  //           Navigator.pop(context, {"ref": ref, "status": status});
+  //         }
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print('Error: $e');
+  //   } finally {
+  //     client.close();
+  //   }
+  // }
+
   loadController() {
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -279,12 +375,30 @@ class _PaymentWebViewState extends State<PaymentWebView> {
           onWebResourceError: (WebResourceError error) {},
           onNavigationRequest: (NavigationRequest request) {
             Uri uri = Uri.parse(request.url);
-            bool containsPayment = uri.toString().contains('payment');
-            if (containsPayment == true) {
-              String? ref =
-                  uri.queryParameters['ref'] ?? uri.queryParameters["trans_id"];
-              String? status = uri.queryParameters['status'];
-              Navigator.pop(context, {"ref": ref, "status": status});
+
+            // if (request.url.contains('paystack-check')) {
+            //   handleApiRedirect(context, request.url);
+            //   return NavigationDecision.prevent;
+            // }
+
+            // bool containsPayment = uri.toString().contains('payment');
+            // if (containsPayment == true) {
+            //   debugPrint("Payment verification route detected");
+            //   String? ref =
+            //       uri.queryParameters['ref'] ?? uri.queryParameters["trans_id"];
+            //   String? status = uri.queryParameters['status'];
+            //   Navigator.pop(context, {"ref": ref, "status": status});
+            //   return NavigationDecision.prevent;
+            // }
+
+            bool paystackVerification =
+                uri.toString().contains('paystack-check');
+
+            if (paystackVerification) {
+              String? ref = uri.queryParameters['trxref'] ??
+                  uri.queryParameters["reference"];
+              Navigator.pop(context, {"ref": ref});
+              return NavigationDecision.prevent;
             }
             return NavigationDecision.navigate;
           },
@@ -296,7 +410,14 @@ class _PaymentWebViewState extends State<PaymentWebView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Payment')),
+      appBar: AppBar(
+          title: const Text(
+        'Make Payment',
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w700,
+        ),
+      )),
       body: Stack(
         children: [
           WebViewWidget(controller: controller),

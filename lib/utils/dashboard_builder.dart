@@ -1,170 +1,162 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:momaspayplus/bloc/momas_bloc/momas_bloc.dart';
-import 'package:momaspayplus/screens/service/service_screen.dart';
+import 'package:momaspayplus/bloc/setting_bloc/setting_bloc.dart';
+import 'package:momaspayplus/bloc/setting_bloc/setting_event.dart';
+import 'package:momaspayplus/screens/stack_screens/service/service_screen.dart';
 
 import '../domain/data/response/feature.dart';
 import '../domain/data/response/user_model.dart';
-import '../screens/arrears/arrears_page.dart';
-import '../screens/bills_payment/bill_selected_screen.dart';
-import '../screens/generate_token/access_token_screen.dart';
+import 'package:momaspayplus/screens/stack_screens/arrears/arrears_page.dart';
+import '../screens/stack_screens/bills_payment/bill_selected_screen.dart';
+import '../screens/stack_screens/access_token/access_token_screen.dart';
 import '../screens/generate_token/access_token_verification.dart';
 import '../screens/metrics/metrics_screen.dart';
-import '../screens/momos_payment/momas_payment_screen.dart';
+import '../screens/stack_screens/momos_payment/momas_payment_screen.dart';
 import '../screens/reprint_token/reprint_token_screen.dart';
-import '../screens/profile/support/support_screen.dart';
+import '../features/support/screens/support_screen.dart';
 import 'images.dart';
 
 class DashboardBuilder {
   static List<GridItemModel> builder(
-      Feature future, BuildContext context, User user) {
-    List<GridItemModel> value = [];
-    if (future.momasMeter == 1) {
-      value.add(
+      Feature feature, BuildContext context, User? user) {
+    return [
+      GridItemModel(
+        image: MoImage.momasPayment,
+        title: "Buy Units",
+        subtitle: "Buy more unit for your momas meter",
+        active: feature.isActive(feature.momasMeter),
+        onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const MomasPaymentScreen(
+                  momasPaymentType: MomasPaymentType.self),
+            )),
+      ),
+      // if (feature.isVisible(feature.momasMeter))
+      //   GridItemModel(
+      //     image: MoImage.momasPayment,
+      //     title: "Buy Units",
+      //     subtitle: "Buy more unit for your momas meter",
+      //     active: feature.isActive(feature.momasMeter),
+      //     onTap: () => Navigator.push(context, MaterialPageRoute(
+      //       builder: (_) => const MomasPaymentScreen(momasPaymentType: MomasPaymentType.self),
+      //     )),
+      //   ),
+      if (feature.isVisible(feature.otherMeter))
         GridItemModel(
-            image: MoImage.momasPayment,
-            title: "Make Payment",
-            subtitle: "Buy more unit for your momas meter",
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (builder) => const MomasPaymentScreen(
-                            momasPaymentType: MomasPaymentType.self,
-                          )));
-            }),
-      );
-    }
-    if (future.otherMeter == 1) {
-      value.add(
+          image: MoImage.meterPayment,
+          title: "Pay Other Meter",
+          subtitle: "Buy unit for other meters",
+          active: feature.isActive(feature.otherMeter),
+          onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const MomasPaymentScreen(
+                    momasPaymentType: MomasPaymentType.others),
+              )),
+        ),
+      // if (feature.isVisible(feature.printToken))
+      //   GridItemModel(
+      //     image: MoImage.reprintToken,
+      //     title: "Reprint Token",
+      //     subtitle: "Reprint your purchased token",
+      //     active: feature.isActive(feature.printToken),
+      //     onTap: () => Navigator.push(context, MaterialPageRoute(
+      //       builder: (_) => ReprintTokenScreen(),
+      //     )),
+      //   ),
+      if (feature.isVisible(feature.accessToken))
         GridItemModel(
-            image: MoImage.meterPayment,
-            title: "Pay Other Meter",
-            subtitle: "Buy  unit for other meters",
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (builder) => const MomasPaymentScreen(
-                            momasPaymentType: MomasPaymentType.others,
-                          )));
-            }),
-      );
-    }
-    if (future.printToken == 1) {
-      value.add(
+          image: MoImage.accessToken,
+          title: "Access Token",
+          subtitle: user?.userRole == UserRole.estateStaff
+              ? "Verify estate token"
+              : "Generate and manage security token",
+          active: feature.isActive(feature.accessToken),
+          onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => user?.userRole == UserRole.estateStaff
+                    ? const AccessTokenVerification()
+                    : const AccessTokenScreen(),
+              )),
+        ),
+      if (feature.isVisible(feature.services))
         GridItemModel(
-            image: MoImage.reprintToken,
-            title: "Reprint Token",
-            subtitle: "Reprint your purchased token",
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (builder) => ReprintTokenScreen()));
-            }),
-      );
-    }
-    if (future.accessToken == 1) {
-      value.add(
+          image: MoImage.services,
+          title: "Services",
+          subtitle: "Request for any services in your estate",
+          active: feature.isActive(feature.services),
+          onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const ServiceScreen(),
+              )),
+        ),
+      if (feature.isVisible(feature.billPayment))
         GridItemModel(
-            image: MoImage.accessToken,
-            title: "Access Token",
-            subtitle: user.userRole == UserRole.estateStaff
-                ? "Verify estate token"
-                : "Generate and manage security token",
-            onTap: () {
-              print(user.userRole);
-              if ((user.userRole == UserRole.estateStaff)) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (builder) => const AccessTokenVerification()));
-              } else {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (builder) => const AccessTokenScreen()));
-              }
-            }),
-      );
-    }
-    if (future.services == 1) {
-      value.add(
+          image: MoImage.billPayment,
+          title: "Bill Payment",
+          subtitle: "Manage and add beneficiary to your account",
+          active: feature.isActive(feature.billPayment),
+          onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const BillPaymentOptionsScreen(),
+              )),
+        ),
+      if (feature.isVisible(feature.support))
         GridItemModel(
-            image: MoImage.services,
-            title: "Services",
-            subtitle: "Request for any services in your estate",
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (builder) => const ServiceScreen()));
-            }),
-      );
-    }
-    if (future.billPayment == 1) {
-      value.add(
-        GridItemModel(
-            image: MoImage.billPayment,
-            title: "Bill Payment",
-            subtitle: "Manage and add beneficiary to your account",
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (builder) => const BillPaymentOptionsScreen()));
-            }),
-      );
-    }
-    if (future.support == 1) {
-      value.add(
-        GridItemModel(
-            image: MoImage.support,
-            title: "Support",
-            subtitle: "Contact our 24/7 support",
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (builder) => const SupportScreen()));
-            }),
-      );
-    }
-    // if (future.topUp == 1) {
-    //   value.add(
-    //     GridItemModel(
-    //         image: MoImage.topUpWallet,
-    //         title: "Top up wallet",
-    //         subtitle: "Fund your wallet easily",
-    //         onTap: null),
-    //   );
-    // }
-    if (future.analysis == 1) {
-      value.add(
-        GridItemModel(
-            image: MoImage.analytics,
-            title: "Analytics",
-            subtitle: "Buy Airtime and Data for all Network",
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (builder) => const MetricsScreen()));
-            }),
-      );
+          image: MoImage.support,
+          title: "Support",
+          subtitle: "Contact our 24/7 support",
+          active: feature.isActive(feature.support),
+          onTap: () {
+            final settingBloc = context.read<SettingsBloc>()
+              ..add(SupportSettingEvent());
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BlocProvider.value(
+                      value: settingBloc, child: const SupportScreen()),
+                ));
+          },
+        ),
+      // if (feature.isVisible(feature.analysis))
+      //   GridItemModel(
+      //     image: MoImage.analytics,
+      //     title: "Analytics",
+      //     subtitle: "View your usage analytics",
+      //     active: feature.isActive(feature.analysis),
+      //     onTap: () => Navigator.push(context, MaterialPageRoute(
+      //       builder: (_) => const MetricsScreen(),
+      //     )),
+      //   ),
+      // Arrears is always visible
+      GridItemModel(
+        image: MoImage.analytics,
+        title: "Arrears",
+        subtitle: "Buy for unpaid utilities",
+        onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const CustomerArrearsPage(),
+            )),
+      ),
+    ];
+  }
+
+  static GridItemModel? quickSlot2(Feature feature, BuildContext context) {
+    final items = builder(feature, context, null);
+
+    if (feature.isVisible(feature.services)) {
+      return items.firstWhere((item) => item.title == "Services");
     }
 
-    value.add(
-      GridItemModel(
-          image: MoImage.analytics,
-          title: "Arrears",
-          subtitle: "Buy for unpaid utilities",
-          onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (builder) => CustomerArrearsPage()));
-          }),
-    );
-    return value;
+    return items.firstWhere((item) => item.title == "Arrears");
   }
 }
 
@@ -173,11 +165,12 @@ class GridItemModel {
   final String title;
   final String subtitle;
   final VoidCallback? onTap;
+  final bool active;
 
-  GridItemModel({
-    required this.image,
-    required this.title,
-    required this.subtitle,
-    this.onTap,
-  });
+  GridItemModel(
+      {required this.image,
+      required this.title,
+      required this.subtitle,
+      this.onTap,
+      this.active = true});
 }

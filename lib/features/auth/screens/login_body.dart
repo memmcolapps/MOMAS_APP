@@ -1,0 +1,180 @@
+import 'dart:developer';
+
+import 'package:flutter/material.dart';
+
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:momaspayplus/core/cubit/auth_cubit/auth_cubit.dart';
+import 'package:momaspayplus/core/cubit/tab_cubit/tab_cubit.dart';
+import 'package:momaspayplus/features/auth/bloc/login/login_bloc.dart';
+import 'package:momaspayplus/features/auth/bloc/login/login_event.dart';
+import 'package:momaspayplus/features/auth/bloc/login/login_state.dart';
+import 'package:momaspayplus/features/auth/cubit/auth_view_cubit.dart';
+import 'package:momaspayplus/features/auth/data/models/login_request.dart';
+
+import 'package:momaspayplus/main.dart';
+import 'package:momaspayplus/reuseable/app_error_display.dart';
+import 'package:momaspayplus/reuseable/error_modal.dart';
+import 'package:momaspayplus/reuseable/mo_button.dart';
+import 'package:momaspayplus/reuseable/mo_form.dart';
+import 'package:momaspayplus/utils/bio_metric_widget.dart';
+import 'package:momaspayplus/utils/colors.dart';
+import 'package:momaspayplus/core/storage/shared_pref.dart';
+import 'package:momaspayplus/utils/validators.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+
+class LoginBody extends StatefulWidget {
+  final TextEditingController emailController;
+
+  const LoginBody({super.key, required this.emailController});
+
+  @override
+  State<LoginBody> createState() => _LoginBodyState();
+}
+
+class _LoginBodyState extends State<LoginBody> {
+  final TextEditingController passwordController = TextEditingController();
+  String version = "";
+  @override
+  void initState() {
+    super.initState();
+    SharedPreferenceHelper.getLogin().then((onValue) {
+      setState(() {
+        if (onValue?.email != null) {
+          widget.emailController.text = onValue!.email!;
+        }
+        if (onValue?.meterNo != null) {
+          widget.emailController.text = onValue!.meterNo!;
+        }
+      });
+    });
+    _loadVersion();
+  }
+
+  @override
+  void dispose() {
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  void _goToForgotPassword(BuildContext context) {
+    context.read<AuthViewCubit>().showForgotPassword();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(
+          height: 100,
+        ),
+        MoFormWidget(
+          controller: widget.emailController,
+          prefixIcon: const Icon(
+            Icons.email,
+            color: Colors.grey,
+          ),
+          title: "Email or Meter Number",
+        ),
+        MoFormWidget(
+          controller: passwordController,
+          prefixIcon: const Icon(
+            Icons.lock,
+            color: Colors.grey,
+          ),
+          title: "Password",
+          isPassword: true,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+          child: Row(
+            children: [
+              const Spacer(),
+              InkWell(
+                onTap: () => _goToForgotPassword(context),
+                child: const Text(
+                  "Forgot Password",
+                  style: TextStyle(color: MoColors.mainColor),
+                ),
+              )
+            ],
+          ),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        BlocConsumer<LoginBloc, LoginState>(
+          builder: (context, state) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: MoButton(
+                      title: "LOGIN",
+                      isLoading:
+                          context.watch<LoginBloc>().state is LoginLoading,
+                      onTap: () {
+                        var meterNo = "";
+                        var email = "";
+                        if (FormValidators.isValidEmail(
+                            widget.emailController.text)) {
+                          email = widget.emailController.text;
+                        } else {
+                          meterNo = widget.emailController.text;
+                        }
+                        final password = passwordController.text;
+                        final login = Login(
+                            meterNo: meterNo, password: password, email: email);
+                        context.read<LoginBloc>().add(UserLoginEvent(login));
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  BiometricLoginWidget(
+                    onLoginSuccess: () {
+                      SharedPreferenceHelper.getLogin().then((onValue) {
+                        if (onValue != null && context.mounted) {
+                          context
+                              .read<LoginBloc>()
+                              .add(UserLoginEvent(onValue));
+                        }
+                      });
+                    },
+                  )
+                ],
+              ),
+            );
+          },
+          listener: (BuildContext context, LoginState state) {
+            switch (state) {
+              case LoginFailure():
+                AppErrorDisplay.show(context, state.error);
+              case LoginSuccess():
+                context.read<TabCubit>().changeTab(0);
+                getIt<AuthCubit>().loginSuccess(state.user, state.features);
+              // Navigator.pushAndRemoveUntil(
+              //     context,
+              //     MaterialPageRoute(builder: (_) => const RootScreen()),
+              //     (v) => false);
+              default:
+            }
+          },
+        ),
+        const SizedBox(
+          height: 15,
+        ),
+        Text("v"+version),
+      ],
+    );
+  }
+
+  Future<void> _loadVersion() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+
+    setState(() {
+      version = "${packageInfo.version} (${packageInfo.buildNumber})";
+    });
+  }
+}
