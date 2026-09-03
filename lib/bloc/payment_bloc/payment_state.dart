@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:momaspayplus/domain/data/response/payment_verification_response.dart';
 
-import '../../domain/data/request/momas_payent_response.dart';
+import '../../domain/data/response/momas_payent_response.dart';
 import '../../domain/data/response/bank_details.dart';
 import '../../domain/data/response/transaction_data_response.dart';
 

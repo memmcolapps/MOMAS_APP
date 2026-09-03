@@ -103,7 +103,11 @@ class _UpdateDefaultPasswordModalState
                     title: "UPDATE PASSWORD",
                     onTap: () {
                       if (passwordController.text != confirmController.text) {
-                        showErrorBottomSheet(context, "Passwords do not match");
+                        showErrorBottomSheet(context, "Passwords do not match.");
+                        return;
+                      }
+                      if (passwordController.text == oldPasswordController.text) {
+                        showErrorBottomSheet(context, "Current and new password must not the same.");
                         return;
                       }
                       context.read<ResetBloc>().add(

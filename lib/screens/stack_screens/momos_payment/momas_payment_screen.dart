@@ -16,6 +16,7 @@ import 'package:momaspayplus/screens/stack_screens/stack_screen_skeleton.dart';
 import 'package:momaspayplus/utils/amount_formatter.dart';
 import 'package:momaspayplus/utils/colors.dart';
 import 'package:momaspayplus/utils/screen_utils.dart';
+import '../../../bloc/hes_bloc/hes_bloc.dart';
 import '../../../bloc/momas_bloc/momas_bloc.dart';
 import '../../../bloc/momas_bloc/momas_event.dart';
 import '../../../bloc/momas_bloc/momas_state.dart';
@@ -41,7 +42,6 @@ import '../../../utils/receipt_builder.dart';
 import '../../../core/storage/shared_pref.dart';
 import '../../../utils/strings.dart';
 import '../../../utils/vat_calculator.dart';
-
 
 class MomasPaymentScreen extends StatefulWidget {
   final MomasPaymentType momasPaymentType;
@@ -96,8 +96,8 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
       setState(() => isLoading = true);
 
       bloc.add(MomasVerification(
-          meterNo: user!.meter!.meterNo!,
-          // estateId: user!.estateId!
+        meterNo: user!.meter!.meterNo!,
+        // estateId: user!.estateId!
       ));
     }
   }
@@ -131,45 +131,42 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                       ? Column(
                           children: [
                             Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.end,
-                                    children: [
-                                      Expanded(
-                                        flex: 3,
-                                        child: MoFormWidget(
-                                          controller: meterTextFormController,
-                                          keyboardType: TextInputType.number,
-                                          prefixIcon: const Icon(
-                                            Icons.electric_meter,
-                                            color: Colors.grey,
-                                          ),
-                                          title: "Meter Number",
-                                          onChange: (v) {
-                                            setState(() {
-                                              verificationResponse = null;
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: MoButton(
-                                          isLoading: state
-                                              is MomasVerificationLoading,
-                                          title: "VERIFY",
-                                          onTap: () {
-                                            verificationResponse = null;
-                                            bloc.add(MomasVerification(
-                                                meterNo:
-                                                    meterTextFormController
-                                                        .text,
-                                                // estateId: selectedEstate!.id
-                                                //     .toString()
-                                            ));
-                                          },
-                                        ),
-                                      )
-                                    ],
-                                  )
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Expanded(
+                                  flex: 3,
+                                  child: MoFormWidget(
+                                    controller: meterTextFormController,
+                                    keyboardType: TextInputType.number,
+                                    prefixIcon: const Icon(
+                                      Icons.electric_meter,
+                                      color: Colors.grey,
+                                    ),
+                                    title: "Meter Number",
+                                    onChange: (v) {
+                                      setState(() {
+                                        verificationResponse = null;
+                                      });
+                                    },
+                                  ),
+                                ),
+                                Expanded(
+                                  child: MoButton(
+                                    isLoading:
+                                        state is MomasVerificationLoading,
+                                    title: "VERIFY",
+                                    onTap: () {
+                                      verificationResponse = null;
+                                      bloc.add(MomasVerification(
+                                        meterNo: meterTextFormController.text,
+                                        // estateId: selectedEstate!.id
+                                        //     .toString()
+                                      ));
+                                    },
+                                  ),
+                                )
+                              ],
+                            )
                           ],
                         )
                       : Container(),
@@ -298,32 +295,32 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 // Header Row
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 0.0, vertical: 8.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "Items",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                      Text(
-                                        "Amount (NGN)",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                // const Padding(
+                                //   padding: EdgeInsets.symmetric(
+                                //       horizontal: 0.0, vertical: 8.0),
+                                //   child: Row(
+                                //     mainAxisAlignment:
+                                //         MainAxisAlignment.spaceBetween,
+                                //     children: [
+                                //       Text(
+                                //         "Items",
+                                //         style: TextStyle(
+                                //           fontSize: 14,
+                                //           fontWeight: FontWeight.bold,
+                                //           color: Colors.grey,
+                                //         ),
+                                //       ),
+                                //       Text(
+                                //         "Amount (NGN)",
+                                //         style: TextStyle(
+                                //           fontSize: 14,
+                                //           fontWeight: FontWeight.bold,
+                                //           color: Colors.grey,
+                                //         ),
+                                //       ),
+                                //     ],
+                                //   ),
+                                // ),
                                 const Divider(),
                                 // // Items Table
                                 // Table(
@@ -511,38 +508,68 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * .05,
                   ),
-
                   MoButton(
                     // isNotActive: state is MomasPaymentFailure,
                     isLoading: state is MomasPaymentLoading || isLoading,
                     title: "CONTINUE",
                     onTap: () {
-                        num totalPayableAmount = int.parse(amountFormController.text);
+                      num totalPayableAmount =
+                          int.parse(amountFormController.text);
 
-                        if (totalPayableAmount <= 0) {
-                          showErrorBottomSheet(
-                              context, "Payable amount can't be less or equal to zero");
-                          return;
-                        }
-                        widget.momasPaymentType == MomasPaymentType.self
-                            ? SizedBox() : handleOther();
+                      if (totalPayableAmount <= 0) {
+                        showErrorBottomSheet(context,
+                            "Payable amount can't be less or equal to zero");
+                        return;
+                      }
 
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (_)
-                          => EnergyCalculationScreen(
-                              momasPaymentType: widget.momasPaymentType,
-                              verificationResponse: verificationResponse!, 
-                              amount: amountFormController.text.trim(),
-                            tariff: selectedTariff,
-                              user: user,
-                            meterNo: meterTextFormController.text
-                          )));
-                      // widget.momasPaymentType == MomasPaymentType.self
-                      //     ? payForSelf()
-                      //     : payForOther();
+                      if (totalPayableAmount < minPurchase) {
+                        showErrorBottomSheet(context,
+                            "Payable amount can't be less than min purchase");
+                        return;
+                      }
+
+                      if (totalPayableAmount > maxPurchase) {
+                        showErrorBottomSheet(context,
+                            "Payable amount can't be more than the maximum purchase");
+                        return;
+                      }
+                      if (selectedTariff == null) {
+                        showErrorBottomSheet(
+                            context, "Vending type must be selected");
+                        return;
+                      }
+                      widget.momasPaymentType == MomasPaymentType.self
+                          ? SizedBox()
+                          : handleOther();
+
+                      if(selectedTariff?.id == null){
+                        showErrorBottomSheet(
+                            context, selectedTariff!.title.toString() +
+                            "tariff Id noe set. Please contact an admin");
+                        return;
+                      }
+
+                      bloc.add(EnergyCalculation(
+                        tariffId: selectedTariff!.id!.toInt(),
+                        amount: int.parse(amountFormController.text.trim()),
+                        receiver_meterNo: meterTextFormController.text.trim(),
+                      ));
+
+                      // Navigator.push(context, MaterialPageRoute(
+                      //     builder: (_)
+                      //     => EnergyCalculationScreen(
+                      //         momasPaymentType: widget.momasPaymentType,
+                      //         verificationResponse: verificationResponse!,
+                      //         amount: amountFormController.text.trim(),
+                      //       tariff: selectedTariff,
+                      //         user: user,
+                      //       meterNo: meterTextFormController.text
+                      //     )));
                     },
                   ),
-                  SizedBox(height: 100,)
+                  SizedBox(
+                    height: 100,
+                  )
                 ],
               ),
             ),
@@ -562,6 +589,22 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
             case MomasMeterVerificationState():
               verificationResponse = state.response;
               getForOtherVent(verificationResponse);
+            case EnergyCalcSuccess():
+              // setState(() {
+              //   energyResponse = state.response;
+              // });
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => EnergyCalculationScreen(
+                          momasPaymentType: widget.momasPaymentType,
+                          verificationResponse: verificationResponse!,
+                          amount: amountFormController.text.trim(),
+                          tariff: selectedTariff,
+                          user: user,
+                          meterNo: meterTextFormController.text,
+                          energyResponse: state.response)));
+              break;
             // case MomasPaymentSuccess():
             //   Navigator.push(
             //       context,
@@ -819,7 +862,6 @@ class _MomasPaymentScreenState extends State<MomasPaymentScreen> {
   // }
 }
 
-
 ///--------
 
 class EnergyCalculationScreen extends StatefulWidget {
@@ -829,26 +871,33 @@ class EnergyCalculationScreen extends StatefulWidget {
   final Tariff? tariff;
   final User? user;
   final String meterNo;
-  const EnergyCalculationScreen({super.key,
-    required this.momasPaymentType,
-    required this.verificationResponse,
-    required this.amount, this.tariff, this.user, required this.meterNo});
+  final TokenFeeCalculationResponse energyResponse;
+  const EnergyCalculationScreen(
+      {super.key,
+      required this.momasPaymentType,
+      required this.verificationResponse,
+      required this.amount,
+      this.tariff,
+      this.user,
+      required this.meterNo,
+      required this.energyResponse});
 
   @override
-  State<EnergyCalculationScreen> createState() => _EnergyCalculationScreenState();
+  State<EnergyCalculationScreen> createState() =>
+      _EnergyCalculationScreenState();
 }
 
 class _EnergyCalculationScreenState extends State<EnergyCalculationScreen> {
   late MomasPaymentBloc bloc;
   // late AccessTokenBloc accessTokenBloc;
-  TokenFeeCalculationResponse? energyResponse;
+  // TokenFeeCalculationResponse? energyResponse;
   bool editable = true;
   bool isLoading = false;
   MomasVerificationResponse? verificationResponse;
   final meterTextFormController = TextEditingController();
   final amountFormController = TextEditingController();
-  bool get hasEnergyData =>
-      energyResponse != null && energyResponse?.data != null;
+  // bool get hasEnergyData =>
+  //     energyResponse != null && energyResponse?.data != null;
   @override
   void initState() {
     super.initState();
@@ -861,82 +910,38 @@ class _EnergyCalculationScreenState extends State<EnergyCalculationScreen> {
       debugPrint("Tariff is null - cannot proceed");
       return;
     }
-    bloc.add(EnergyCalculation(
-        tariffId: widget.tariff!.id!.toInt(),
-        amount: int.parse(widget.amount))
-    );
+    // bloc.add(EnergyCalculation(
+    //     tariffId: widget.tariff!.id!.toInt(),
+    //     amount: int.parse(widget.amount),
+    //     receiver_meterNo: widget.meterNo,
+    // )
+    // );
   }
+
   @override
   Widget build(BuildContext context) {
     return StackScreenSkeleton(
-        heading: 'Energy calculation',
+        heading: 'Buy Credit Token',
         body: BlocConsumer<MomasPaymentBloc, MomasPaymentState>(
             bloc: bloc,
-            builder: (context, state){
-              if (!hasEnergyData) {
-                return const Center(
-                    child: SpinKitFadingCircle(
-                      color: MoColors.mainColor,
-                      size: 40.0,
-                    ));
-              }
-              final data = energyResponse!.data;
+            builder: (context, state) {
+              // if (!hasEnergyData) {
+              //   return const Center(
+              //       child: SpinKitFadingCircle(
+              //         color: MoColors.mainColor,
+              //         size: 40.0,
+              //       ));
+              // }
+              final data = widget.energyResponse!.data;
               return SingleChildScrollView(
                 child: Padding(
                   padding: context.isTablet
                       ? EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.width * 0.15)
+                          horizontal: MediaQuery.of(context).size.width * 0.15)
                       : const EdgeInsets.all(0.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // widget.momasPaymentType == MomasPaymentType.others
-                      //     ? Column(
-                      //   children: [
-                      //     Row(
-                      //       crossAxisAlignment:
-                      //       CrossAxisAlignment.end,
-                      //       children: [
-                      //         Expanded(
-                      //           flex: 3,
-                      //           child: MoFormWidget(
-                      //             controller: meterTextFormController,
-                      //             keyboardType: TextInputType.number,
-                      //             prefixIcon: const Icon(
-                      //               Icons.electric_meter,
-                      //               color: Colors.grey,
-                      //             ),
-                      //             title: "Meter Number",
-                      //             onChange: (v) {
-                      //               setState(() {
-                      //                 verificationResponse = null;
-                      //               });
-                      //             },
-                      //           ),
-                      //         ),
-                      //         Expanded(
-                      //           child: MoButton(
-                      //             isLoading: state
-                      //             is MomasVerificationLoading,
-                      //             title: "VERIFY",
-                      //             onTap: () {
-                      //               verificationResponse = null;
-                      //               bloc.add(MomasVerification(
-                      //                 meterNo:
-                      //                 meterTextFormController
-                      //                     .text,
-                      //                 // estateId: selectedEstate!.id
-                      //                 //     .toString()
-                      //               ));
-                      //             },
-                      //           ),
-                      //         )
-                      //       ],
-                      //     )
-                      //     // : Container(),
-                      //   ],
-                      // )
-                      //     : Container(),
                       const SizedBox(
                         height: 15,
                       ),
@@ -1003,7 +1008,7 @@ class _EnergyCalculationScreenState extends State<EnergyCalculationScreen> {
                                     horizontal: 0.0, vertical: 5.0),
                                 child: Row(
                                   mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       "Items",
@@ -1035,17 +1040,16 @@ class _EnergyCalculationScreenState extends State<EnergyCalculationScreen> {
                                   _row("Utilities",
                                       data.utilityAmount.toString()),
                                   _row("VAT", data.vat.toString()),
-                                  _row("VAT Amount",
-                                      data.vatAmount.toString()),
+                                  _row("VAT Amount", data.vatAmount.toString()),
                                   _row("Service fee",
                                       data.serviceFee.toString()),
                                   _row("Fixed charge",
                                       data.fixedCharge.toString()),
-                                  _row("Estate fee",
-                                      data.estateFee.toString()),
+                                  _row("Estate fee", data.estateFee.toString()),
                                   _row("Unit", data.unit.toString()),
                                   _row("Cost of Unit",
                                       data.vendingAmount.toString()),
+                                  _row("Panalty", data.utilityOwed.toString()),
                                 ],
                               ),
                               // Table(
@@ -1276,11 +1280,10 @@ class _EnergyCalculationScreenState extends State<EnergyCalculationScreen> {
                               const Divider(),
                               // Total Section
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 16.0),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16.0),
                                 child: Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     const Text(
                                       "Amount payable",
@@ -1291,8 +1294,7 @@ class _EnergyCalculationScreenState extends State<EnergyCalculationScreen> {
                                     ),
                                     Text(
                                       AmountFormatter.formatNaira(
-                                          double.parse(
-                                              widget.amount)),
+                                          double.parse(widget.amount)),
                                       style: const TextStyle(
                                         fontSize: 24,
                                         fontWeight: FontWeight.bold,
@@ -1306,7 +1308,7 @@ class _EnergyCalculationScreenState extends State<EnergyCalculationScreen> {
                           ),
                         ),
                       ),
-                          // : Container(),
+                      // : Container(),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * .02,
                       ),
@@ -1321,7 +1323,9 @@ class _EnergyCalculationScreenState extends State<EnergyCalculationScreen> {
                               : payForOther();
                         },
                       ),
-                      SizedBox(height: 100,)
+                      const SizedBox(
+                        height: 100,
+                      )
                     ],
                   ),
                 ),
@@ -1329,11 +1333,11 @@ class _EnergyCalculationScreenState extends State<EnergyCalculationScreen> {
             },
             listener: (BuildContext context, MomasPaymentState state) {
               switch (state) {
-                case EnergyCalcState():
-                  setState(() {
-                    energyResponse = state.response;
-                  });
-                  break;
+                // case EnergyCalcState():
+                //   setState(() {
+                //     energyResponse = state.response;
+                //   });
+                //   break;
                 case MomasPaymentLoading():
                   FocusScope.of(context).unfocus();
                 case MomasPaymentFailure():
@@ -1346,18 +1350,35 @@ class _EnergyCalculationScreenState extends State<EnergyCalculationScreen> {
                 // case MomasMeterVerificationState():
                 //   verificationResponse = state.response;
                 //   getForOtherVent(verificationResponse);
+
                 case MomasPaymentSuccess():
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (_) => BlocProvider.value(
+                  //       value: context.read<HesBloc>(),
+                  //       child: TransactionSuccessPage(
+                  //         details: ReceiptBuilder().meterPayment(
+                  //           state.momasPaymentResponse.data!.receipt!,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // );
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (builder) => TransactionSuccessPage(
-                            details: ReceiptBuilder().meterPayment(
-                                state.momasPaymentResponse.data!.receipt!),
-                          )));
+                                details: ReceiptBuilder().meterPayment(
+                                    state.momasPaymentResponse.data!.receipt!),
+                                meterNo: state.momasPaymentResponse.data!
+                                    .receipt!.meterNo,
+                                token: state
+                                    .momasPaymentResponse.data!.receipt!.token,
+                              )));
                 default:
               }
-            })
-    );
+            }));
   }
 
   TableRow _row(String title, String value) {
@@ -1372,54 +1393,59 @@ class _EnergyCalculationScreenState extends State<EnergyCalculationScreen> {
           child: Text(
             value,
             textAlign: TextAlign.right,
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
       ],
     );
-}
-  payForSelf() {
+  }
 
+  payForSelf() {
     showPaymentModal(context, widget.user!.meter!.meterNo!, () {
       MoBottomSheet().payment(context,
           amount: widget.amount.toString(),
-          serviceType: ServiceType.credit_token, onPayment: (String ref) {
-            bloc.add(MomasMeterPayment(
-                vatAmount: energyResponse!.data.vatAmount.toString(),
-                estateId:  widget.user!.estateId,
-                utilityAmount: energyResponse!.data.utilityAmount.toString(),
-                totalPaidAmount: widget.amount.toString(),
-                vendValueKWPerNaira: energyResponse!.data.unit.toString(),
-                tariffId: widget.tariff!.id.toString(),
-                vendingAmount: energyResponse!.data.vendingAmount.toString(),
-                meterNo:  widget.user!.meter!.meterNo!,
-                meterType:  widget.user!.meter!.meterType ?? "",
-                trxref: ref,
-                paymentType: MomasPaymentType.self));
-          });
+          serviceType: ServiceType.credit_token,
+          tariffId: widget.tariff!.id.toString(),
+          action: "momas_meter",
+          onPayment: (String ref) {
+        bloc.add(MomasMeterPayment(
+            vatAmount: widget.energyResponse!.data.vatAmount.toString(),
+            estateId: widget.user!.estateId,
+            utilityAmount: widget.energyResponse!.data.utilityAmount.toString(),
+            totalPaidAmount: widget.amount.toString(),
+            vendValueKWPerNaira: widget.energyResponse!.data.unit.toString(),
+            tariffId: widget.tariff!.id.toString(),
+            vendingAmount: widget.energyResponse!.data.vendingAmount.toString(),
+            meterNo: widget.user!.meter!.meterNo!,
+            meterType: widget.user!.meter!.meterType ?? "",
+            trxref: ref,
+            paymentType: MomasPaymentType.self));
+      });
     });
   }
 
   payForOther() {
-
     showPaymentModal(context, widget.user!.meter!.meterNo!, () {
       MoBottomSheet().payment(context,
           amount: widget.amount.toString(),
-          serviceType: ServiceType.credit_token, onPayment: (String ref) {
-            bloc.add(MomasMeterPayment(
-                vatAmount: energyResponse!.data.vatAmount.toString(),
-                utilityAmount: energyResponse!.data.utilityAmount.toString(),
-                totalPaidAmount: widget.amount.toString(),
-                vendValueKWPerNaira: energyResponse!.data.unit.toString(),
-                tariffId: widget.tariff!.id.toString(),
-                // selectedTariff!.id.toString(),
-                vendingAmount: energyResponse!.data.vendingAmount.toString(),
-                meterNo: widget.meterNo,
-                meterType: "",
-                trxref: ref,
-                // estateId: selectedEstate!.id.toString(),
-                paymentType: MomasPaymentType.others));
-          });
+          serviceType: ServiceType.credit_token,
+          tariffId: widget.tariff!.id.toString(),
+          action: "momas_meter",
+          onPayment: (String ref) {
+        bloc.add(MomasMeterPayment(
+            vatAmount: widget.energyResponse!.data.vatAmount.toString(),
+            utilityAmount: widget.energyResponse!.data.utilityAmount.toString(),
+            totalPaidAmount: widget.amount.toString(),
+            vendValueKWPerNaira: widget.energyResponse!.data.unit.toString(),
+            tariffId: widget.tariff!.id.toString(),
+            // selectedTariff!.id.toString(),
+            vendingAmount: widget.energyResponse!.data.vendingAmount.toString(),
+            meterNo: widget.meterNo,
+            meterType: "",
+            trxref: ref,
+            // estateId: selectedEstate!.id.toString(),
+            paymentType: MomasPaymentType.others));
+      });
     });
   }
 
@@ -1523,12 +1549,6 @@ class _EnergyCalculationScreenState extends State<EnergyCalculationScreen> {
     );
   }
 }
-
-
-
-
-
-
 
 //class MomasPaymentScreen extends StatefulWidget {
 //   final MomasPaymentType momasPaymentType;

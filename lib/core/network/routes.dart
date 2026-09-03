@@ -7,6 +7,9 @@ class Routes {
   // static const String _url = "https://unobstructed-kindredly-jeanmarie.ngrok-free.dev";
   static final String _url = AppConfig.baseUrl;
   static final String _baseURL = "$_url/api";
+  // static final String _hesUrl = 'https://sbctest.memmserve.com';
+  static final String _hesUrl = 'https://memmcolapps.memmserve.com';
+  static final String _hesBaseURL = "$_hesUrl/hes";
   static String login = "$_baseURL/login";
   static String buyAirtime = "$_baseURL/buy-airtime";
   static String buyData = "$_baseURL/buy-data";
@@ -29,6 +32,7 @@ class Routes {
   static String getEstate = "$_baseURL/get-all-estate";
   static String setDefault = "$_baseURL/set-default";
   static String generateToken = "$_baseURL/generate-token";
+  static String generateHesToken = "$_hesBaseURL/api/auth/token";
   static String getUser = "$_baseURL/getUser";
   static String saveComment = "$_baseURL/save-comment";
   static String getComment = "$_baseURL/get-comment";
@@ -40,6 +44,8 @@ class Routes {
   static String payMomasMeter = "$_baseURL/buy-meter";
   static String buyMeterOthers = "$_baseURL/buy-meter-others";
   static String reprintMeter = "$_baseURL/reprint-token";
+  static String failedTrx = "$_baseURL/failed-credit-token-transactions";
+  static String retryToken = "$_baseURL/retry-credit-token";
   static String deleteUser = "$_baseURL/delete-user";
   static String support = "$_baseURL/support";
   static String requestMeter = "$_baseURL/request-meter";
@@ -62,4 +68,8 @@ class Routes {
   static String getTransactionAnalysis = "$_baseURL/get-trx-chart";
   static String getUtilityMetrics = "$_baseURL/get-utility-metrics";
   static String getAccessTokenReport = "$_baseURL/get-token-report";
+
+  /// hes
+  static String loadToken = "$_hesBaseURL/api/dlms/setToken";
+  static String hesConnection = "$_hesBaseURL/api/meter-connection";
 }

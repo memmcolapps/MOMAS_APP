@@ -137,6 +137,9 @@ class SharedPreferenceHelper {
   static const String _keyUser = 'user';
   static const String _keyLogin = 'Login';
   static const String _token = 'TOKEN';
+  static const _hesToken = "hes_token";
+  static const _created = "hes_token_created";
+  static const _expires = "hes_token_expires";
   static const String _balance = 'balance_visible';
   static const String _unit = 'unit_visible';
   static const String _promoCache = 'promo_cache';
@@ -155,6 +158,7 @@ class SharedPreferenceHelper {
     // final _prefs = await SharedPreferences.getInstance();
     _prefs.remove(_keyUser);
     _prefs.remove(_token);
+    _prefs.remove(_hesToken);
     // _prefs.clear();
   }
 
@@ -167,6 +171,11 @@ class SharedPreferenceHelper {
     // final _prefs = await SharedPreferences.getInstance();
     await _prefs.setString(_token, token);
   }
+
+  // static Future<void> saveHesToken(String token) async {
+  //   // final _prefs = await SharedPreferences.getInstance();
+  //   await _prefs.setString(_hesToken, token);
+  // }
 
   static Future<User?> getUser() async {
     // final _prefs = await SharedPreferences.getInstance();
@@ -181,7 +190,11 @@ class SharedPreferenceHelper {
     var data = _prefs.getString(_token);
     return data;
   }
-
+  // static Future<String?> getHesToken() async {
+  //   // final _prefs = await SharedPreferences.getInstance();
+  //   var data = _prefs.getString(_token);
+  //   return data;
+  // }
   static Future<void> saveLogin(Map login) async {
     // final _prefs = await SharedPreferences.getInstance();
     await _prefs.setString(_keyLogin, json.encode(login));
@@ -254,5 +267,35 @@ class SharedPreferenceHelper {
     return data == null
         ? null
         : SupportData.fromJson(json.decode(data));
+  }
+
+  static Future<void> saveHesToken(String token) async {
+    final pref = await SharedPreferences.getInstance();
+    await pref.setString(_token, token);
+  }
+
+  static Future<String?> getHesToken() async {
+    final pref = await SharedPreferences.getInstance();
+    return pref.getString(_hesToken);
+  }
+
+  static Future<void> saveTokenCreatedTime(int time) async {
+    final pref = await SharedPreferences.getInstance();
+    await pref.setInt(_created, time);
+  }
+
+  static Future<int> getTokenCreatedTime() async {
+    final pref = await SharedPreferences.getInstance();
+    return pref.getInt(_created) ?? 0;
+  }
+
+  static Future<void> saveTokenExpiresIn(int seconds) async {
+    final pref = await SharedPreferences.getInstance();
+    await pref.setInt(_expires, seconds);
+  }
+
+  static Future<int> getTokenExpiresIn() async {
+    final pref = await SharedPreferences.getInstance();
+    return pref.getInt(_expires) ?? 0;
   }
 }

@@ -2,9 +2,10 @@ import 'package:equatable/equatable.dart';
 import 'package:momaspayplus/domain/data/response/token_fee_calc_response.dart';
 import 'package:momaspayplus/domain/data/response/vending_properties.dart';
 
-import '../../domain/data/request/momas_payent_response.dart';
+import '../../domain/data/response/momas_payent_response.dart';
 import '../../domain/data/response/meter_payment_response.dart';
 import '../../domain/data/response/momas_meter_response.dart';
+import '../../domain/data/response/trx_history_response.dart';
 
 abstract class MomasPaymentState extends Equatable {
   const MomasPaymentState();
@@ -27,10 +28,10 @@ class MomasMeterVerificationState extends MomasPaymentState {
   const MomasMeterVerificationState({required this.response});
 }
 
-class EnergyCalcState extends MomasPaymentState {
+class EnergyCalcSuccess extends MomasPaymentState {
   final TokenFeeCalculationResponse response;
 
-  const EnergyCalcState({required this.response});
+  const EnergyCalcSuccess({required this.response});
 }
 
 class MomasPaymentFailure extends MomasPaymentState {
@@ -67,4 +68,16 @@ class MomasVendingProperties extends MomasPaymentState {
 
   @override
   List<Object> get props => [vendingPropertiesData];
+}
+
+class MomasReprintTokenSuccess extends MomasPaymentState {
+  final MomasPaymentResponse response;
+
+  const MomasReprintTokenSuccess({required this.response});
+}
+
+class MomasFailedTransactionSuccess extends MomasPaymentState {
+  final TrxHistoryResponse response;
+
+  const MomasFailedTransactionSuccess({required this.response});
 }

@@ -122,6 +122,8 @@ class _CustomerArrearsPageState extends State<CustomerArrearsPage> {
 
   void payment(BuildContext context, String amount, int arrearsId, bool single,
       serviceType) {
+    print(ServiceType);
+    print(">>>>:"+ServiceType.admin_fee.toString());
     final ServiceType arrearsType = serviceType.contains("admin")
         ? ServiceType.admin_fee
         : ServiceType.utilities;
@@ -139,7 +141,7 @@ class _CustomerArrearsPageState extends State<CustomerArrearsPage> {
         } else {
           context.read<CustomerArrearsBloc>().add(PayAllArrears(ref));
         }
-      },
+      }, tariffId: '',
     );
   }
 }

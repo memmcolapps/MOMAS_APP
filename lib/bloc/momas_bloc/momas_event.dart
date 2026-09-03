@@ -25,14 +25,16 @@ class MomasVerification extends MomasPaymentEvent {
 class EnergyCalculation extends MomasPaymentEvent {
   final num tariffId;
   final num amount;
+  final String receiver_meterNo;
 
   const EnergyCalculation({
     required this.tariffId,
-    required this.amount
+    required this.amount,
+    required this.receiver_meterNo
   });
 
   @override
-  List<Object> get props => [tariffId, amount];
+  List<Object> get props => [tariffId, amount, receiver_meterNo];
 }
 
 class MomasMeterPayment extends MomasPaymentEvent {
@@ -71,4 +73,16 @@ class MomasPaymentHistory extends MomasPaymentEvent {
 
 class MomasGetVentingProperties extends MomasPaymentEvent {
   const MomasGetVentingProperties();
+}
+
+class MomasFailedTrxHistory extends MomasPaymentEvent {
+  const MomasFailedTrxHistory();
+}
+
+class MomasReprintToken extends MomasPaymentEvent {
+  final String trxId;
+  MomasReprintToken({ required this.trxId});
+
+  @override
+  List<Object> get props => [trxId];
 }

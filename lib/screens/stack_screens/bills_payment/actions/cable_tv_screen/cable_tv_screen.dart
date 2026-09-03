@@ -335,7 +335,7 @@ class _CableTvScreenState extends State<CableTvScreen> {
                                 variationCode: variantCode,
                               ),
                             );
-                          },
+                          }, tariffId: '',
                         );
                       },
                     );

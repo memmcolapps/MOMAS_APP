@@ -326,8 +326,11 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:lottie/lottie.dart';
 import 'package:momaspayplus/core/cubit/tab_cubit/tab_cubit.dart';
+import 'package:momaspayplus/domain/data/request/set_token_request.dart';
+import 'package:momaspayplus/domain/data/response/hes_connection_response.dart';
 import 'package:momaspayplus/utils/colors.dart';
 import 'package:momaspayplus/utils/navigation.dart';
 import 'package:pdf/pdf.dart';
@@ -336,22 +339,29 @@ import 'package:path_provider/path_provider.dart' as path;
 import 'package:share_plus/share_plus.dart';
 import 'package:screenshot/screenshot.dart';
 
+import '../bloc/hes_bloc/hes_bloc.dart';
+import '../bloc/hes_bloc/hes_event.dart';
+import '../bloc/hes_bloc/hes_state.dart';
 import '../domain/data/transaction_details.dart';
+import '../domain/repository/hes_repository.dart';
 import '../utils/images.dart';
 import '../utils/strings.dart';
+import 'app_error_display.dart';
+import 'error_modal.dart';
 
 class TransactionSuccessPage extends StatefulWidget {
   final String? successMessage;
   final String? receiptHeading;
   final List<TransactionDetail>? details;
   final bool failed;
-
+  final String? meterNo;
+  final String? token;
   const TransactionSuccessPage({
     super.key,
     this.successMessage,
     this.receiptHeading,
     this.details,
-    this.failed = false,
+    this.failed = false, this.meterNo, this.token,
   });
 
   @override
@@ -360,7 +370,18 @@ class TransactionSuccessPage extends StatefulWidget {
 
 class _TransactionSuccessPageState extends State<TransactionSuccessPage> {
   final ScreenshotController _screenshotController = ScreenshotController();
-  bool _isSharing = false;
+
+  late HesBloc hesBloc;
+  @override
+  void initState() {
+    super.initState();
+    hesBloc = HesBloc(repository: HesRepository());
+  }
+  // bool _isSharing = false;
+
+  bool _isSharingImage = false;
+  bool _isSharingPdf = false;
+  bool _isLoadingToken = false;
 
   void _goHome() {
     NavigationService.navigatorKey.currentState
@@ -502,7 +523,7 @@ class _TransactionSuccessPageState extends State<TransactionSuccessPage> {
   }
 
   Future<void> _shareAsPdf() async {
-    setState(() => _isSharing = true);
+    setState(() => _isSharingPdf = true);
     try {
       // capture the same screenshot used for image share
       final imageBytes = await _screenshotController.capture(
@@ -521,31 +542,12 @@ class _TransactionSuccessPageState extends State<TransactionSuccessPage> {
         );
       }
     } finally {
-      if (mounted) setState(() => _isSharing = false);
+      if (mounted) setState(() => _isSharingPdf = false);
     }
   }
 
-  // Future<void> _shareAsPdf() async {
-  //   setState(() => _isSharing = true);
-  //   try {
-  //     final pdfBytes = await _buildPdf();
-  //     final dir = await path.getApplicationDocumentsDirectory();
-  //     final file = File('${dir.path}/receipt.pdf');
-  //     await file.writeAsBytes(pdfBytes);
-  //     await Share.shareXFiles([XFile(file.path)]);
-  //   } catch (e) {
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(content: Text('Failed to share PDF: $e')),
-  //       );
-  //     }
-  //   } finally {
-  //     if (mounted) setState(() => _isSharing = false);
-  //   }
-  // }
-
   Future<void> _shareAsImage() async {
-    setState(() => _isSharing = true);
+    setState(() => _isSharingImage = true);
     try {
       final image = await _screenshotController.capture(
           delay: const Duration(milliseconds: 10));
@@ -562,145 +564,349 @@ class _TransactionSuccessPageState extends State<TransactionSuccessPage> {
         );
       }
     } finally {
-      if (mounted) setState(() => _isSharing = false);
+      if (mounted) setState(() => _isSharingImage = false);
     }
   }
 
+  Future<void> _loadToken() async {
+    setState(() => _isLoadingToken = true);
+
+    hesBloc.add(
+      HesMeter(
+        serial: widget.meterNo.toString(),
+      ),
+    );
+  }
+
+  // Future<void> _loadToken() async {
+  //   setState(() => _isLoadingToken = true);
+  //   hesBloc.add(
+  //     LoadToken(
+  //       serial: widget.meterNo.toString(),// "62226000909",//"62526003397", //widget.meterNo.toString(),//"62525004172",
+  //       token: widget.token.toString()//"20393820578721407070"// //"56502592455403497443",
+  //     ),
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: MoColors.mainColorLight,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // top bar
-            Padding(
-              padding:
-              const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              child: Row(
+    return BlocConsumer<HesBloc, HesState>(
+      bloc: hesBloc,
+        listener: (context, state) {
+
+          if (state is HesLoading) {
+            // setState(() => _isSharing = true);
+          }
+
+          if (state is HesConnectionSuccess) {
+            setState(() => _isLoadingToken = false);
+
+            _showMeterStatusDialog(state.response);
+          }
+
+          if (state is SetTokenSuccess) {
+            setState(() => _isLoadingToken = false);
+            showSuccessBottomSheet(context,"Token Loaded Successful");
+            // state.response.data!.status.toLowerCase().contains("success")
+            //     && state.response.data!.dlmsStatus.toLowerCase().contains("success")
+            //     && state.response.data!.tokenStatus!.toLowerCase().contains("success")
+            //     ? showSuccessBottomSheet(context,"Token Loaded Successful")
+            //     : AppErrorDisplay.show(context, "Invalid Meter or Token");
+          }
+
+          if (state is HesError) {
+
+            setState(() => _isLoadingToken = false);
+
+            AppErrorDisplay.show(context, state.error);
+          }
+
+        },
+
+        builder: (context, state) {
+
+          return Scaffold(
+            backgroundColor: MoColors.mainColorLight,
+            body: SafeArea(
+              child: Column(
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                        size: 18),
+                  // top bar
+                  Padding(
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                              size: 18),
+                        ),
+                        const Spacer(),
+                        TextButton.icon(
+                          onPressed: _goHome,
+                          icon: const Icon(Icons.home_outlined, size: 18),
+                          label: const Text("Home"),
+                          style: TextButton.styleFrom(
+                            foregroundColor: MoColors.mainColor,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  const Spacer(),
-                  TextButton.icon(
-                    onPressed: _goHome,
-                    icon: const Icon(Icons.home_outlined, size: 18),
-                    label: const Text("Home"),
-                    style: TextButton.styleFrom(
-                      foregroundColor: MoColors.mainColor,
+
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      child: Column(
+                        children: [
+                          // animation — outside Screenshot
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.12,
+                            child: widget.failed
+                                ? Lottie.asset(MoImage.error, repeat: true)
+                                : Lottie.asset(MoImage.lottieSuccess,
+                                repeat: true),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            widget.failed
+                                ? 'Payment Failed'
+                                : widget.successMessage ?? 'Payment Successful',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: widget.failed
+                                  ? Colors.red.shade400
+                                  : MoColors.mainColor,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            widget.failed
+                                ? 'Your payment could not be processed.'
+                                : 'Your transaction was completed successfully.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 13, color: Colors.grey.shade500),
+                          ),
+                          const SizedBox(height: 20),
+
+                          // Screenshot wraps only the receipt card
+                          Screenshot(
+                            controller: _screenshotController,
+                            child: _ReceiptCard(
+                              details: widget.details ?? [],
+                              receiptHeading: widget.receiptHeading,
+                              failed: widget.failed,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // bottom actions
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, -2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex:1,
+                            child: IconButton(
+                      onPressed: _isSharingImage ? null : _shareAsImage,
+                              icon: _isSharingImage
+                                  ? const Center(
+                                  child: SpinKitFadingCircle(
+                                    color: MoColors.mainColor,
+                                    size: 30.0,
+                                  )
+                              )
+                                  : const Icon(
+                                  Icons.share,
+                                  size: 18),//const Text("Share PDF"),
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: MoColors.mainColor,
+                                    side: BorderSide(color: MoColors.mainColor),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 14, horizontal: 0.0),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                            ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                            flex:1,
+                          child: IconButton(
+                              onPressed: _isSharingPdf ? null : _shareAsPdf,
+                            icon: _isSharingPdf
+                                ? const Center(
+                                child: SpinKitFadingCircle(
+                                  color: MoColors.mainColor,
+                                  size: 30.0,
+                                )
+                            )
+                                : const Icon(
+                                  Icons.download_outlined,
+                                  size: 18),//const Text("Share PDF"),
+                              style: ElevatedButton.styleFrom(
+                                // backgroundColor: MoColors.mainColor.withOpacity(0.2),
+                                foregroundColor: MoColors.mainColor,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 14, horizontal: 0.0),
+                                elevation: 0,
+                                side: BorderSide(color: MoColors.mainColor),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                          )
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          flex:2,
+                          child: ElevatedButton.icon(
+                            onPressed: _isLoadingToken ? null : _loadToken,
+                            icon: _isLoadingToken
+                                ? const Center(
+                                  child: SpinKitFadingCircle(
+                                    color: MoColors.mainColor,
+                                    size: 30.0,
+                                  )
+                            )
+                                : const Icon(
+                              Icons.token_outlined,
+                              size: 18,
+                            ),
+                            label: Text(
+                              _isLoadingToken ? "Loading..." : "Load Token",
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: MoColors.mainColor,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          )
+
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
+          );
 
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16, vertical: 8),
-                child: Column(
-                  children: [
-                    // animation — outside Screenshot
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.12,
-                      child: widget.failed
-                          ? Lottie.asset(MoImage.error, repeat: true)
-                          : Lottie.asset(MoImage.lottieSuccess,
-                          repeat: true),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      widget.failed
-                          ? 'Payment Failed'
-                          : widget.successMessage ?? 'Payment Successful',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: widget.failed
-                            ? Colors.red.shade400
-                            : MoColors.mainColor,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      widget.failed
-                          ? 'Your payment could not be processed.'
-                          : 'Your transaction was completed successfully.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 13, color: Colors.grey.shade500),
-                    ),
-                    const SizedBox(height: 20),
+        },
+    );
+  }
 
-                    // Screenshot wraps only the receipt card
-                    Screenshot(
-                      controller: _screenshotController,
-                      child: _ReceiptCard(
-                        details: widget.details ?? [],
-                        receiptHeading: widget.receiptHeading,
-                        failed: widget.failed,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                  ],
+  Future<void> _showMeterStatusDialog(
+      HesConnectionResponse response) async {
+
+    final isOnline = response.connectionType == "ONLINE";
+
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        return AlertDialog(
+          title: const Text("Meter Status", style: TextStyle(
+              fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold),),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+
+              Text("Meter number-"+widget.meterNo.toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 15),),
+              const SizedBox(height: 10,),
+              Text(
+                isOnline
+                    ? "The meter is online. Do you want to continue loading the token?"
+                    : "The meter is offline. Do you want to continue loading the token?",
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 15),
+              ),
+
+              Align(
+                alignment: AlignmentGeometry.topCenter,
+                child: Container(
+                  alignment: Alignment.topCenter,
+                  padding: const EdgeInsets.all(10),
+                  margin: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: isOnline ? MoColors.mainColorMid.withOpacity(0.5) : MoColors.brickRed.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(5)
+                  ),
+                  child:  isOnline
+                      ? Text(response.connectionType,  textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 15, color: MoColors.mainColorDark),)
+                      : Text(response.connectionType,  textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 15, color: MoColors.brickRed)),
                 ),
               ),
-            ),
-
-            // bottom actions
-            Container(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, -2),
-                  ),
-                ],
-              ),
-              child: _isSharing
-                  ? Center(
-                child: CircularProgressIndicator(
-                    color: MoColors.mainColor),
-              )
-                  : Row(
+            ],
+          ),
+          actions: [
+              Row(
                 children: [
                   Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: _shareAsImage,
-                      icon: const Icon(Icons.image_outlined,
-                          size: 18),
-                      label: const Text("Share Image"),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: MoColors.mainColor,
-                        side:
-                        BorderSide(color: MoColors.mainColor),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 14),
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text("Cancel"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: MoColors.brickRed,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 10,),
                   Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: _shareAsPdf,
-                      icon: const Icon(
-                          Icons.picture_as_pdf_outlined,
-                          size: 18),
-                      label: const Text("Share PDF"),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+
+                        setState(() {
+                          _isLoadingToken = true;
+                        });
+
+                        hesBloc.add(
+                          LoadToken(
+                            serial: widget.meterNo.toString(),
+                            token: widget.token.toString(),
+                          ),
+                        );
+                      },
+                      child: const Text("Continue"),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: MoColors.mainColor,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 14),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -710,10 +916,9 @@ class _TransactionSuccessPageState extends State<TransactionSuccessPage> {
                   ),
                 ],
               ),
-            ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 }

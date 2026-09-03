@@ -5,6 +5,7 @@ import 'package:momaspayplus/bloc/payment_bloc/payment_event.dart';
 import 'package:momaspayplus/bloc/payment_bloc/payment_state.dart';
 import 'package:momaspayplus/utils/strings.dart';
 
+import '../../domain/data/request/momas_payment_request.dart';
 import '../../domain/repository/payment_repository.dart';
 
 class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
@@ -37,10 +38,27 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     if (event is MakePayment) {
       emit(PaymentLoading());
       try {
-        final response = await repository.fudWallet(
-            event.amount, event.payType.name, event.serviceType.name);
+        // final MomasPaymentRequest request = MomasPaymentRequest(
+        //     pay_type: event.payType.name,
+        //     amount: event.amount,
+        //     service_type: event.serviceType.name,
+        //     action: event,
+        //     tariff_id: event.tariffId
+        //   // serviceId: event.serviceId,
+        //   // amount: event.amount,
+        //   // phone: event.phone,
+        //   // variationCode: event.variationCode,
+        //   // ref: event.ref,
+        // );
+        final response = await repository.fudWallet(event.momasPaymentRequest);
+        // final response = await repository.fudWallet(
+        //     event.amount, event.payType.name, event.serviceType.name, event.tariffId);
+
+        print("pay_type bloc:" +event.momasPaymentRequest.pay_type);
+        print("pay_type bloc:" +PaymentType.wallet.name);
+
         if (response.status == true) {
-          if (event.payType == PaymentType.wallet) {
+          if (event.momasPaymentRequest.pay_type == PaymentType.wallet.name) {
             emit(PaymentWalletSuccess(
                 message: "Wallet Payment was successful",
                 ref: response.ref ?? ""));
@@ -51,6 +69,18 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
         } else {
           emit(PaymentFailure(error: extractError(response.message)));
         }
+        // if (response.status == true) {
+        //   if (event.payType == PaymentType.wallet) {
+        //     emit(PaymentWalletSuccess(
+        //         message: "Wallet Payment was successful",
+        //         ref: response.ref ?? ""));
+        //     return;
+        //   } else {
+        //     emit(PaymentSuccess(url: response.url ?? ""));
+        //   }
+        // } else {
+        //   emit(PaymentFailure(error: extractError(response.message)));
+        // }
       } catch (e) {
         log('[PaymentBloc] payment error: $e');
         emit(PaymentFailure(error: e.toString()));

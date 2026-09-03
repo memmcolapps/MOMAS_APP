@@ -1,4 +1,4 @@
-import '../response/transaction_data_response.dart';
+import 'transaction_data_response.dart';
 
 class MomasPaymentResponse {
   bool? status;

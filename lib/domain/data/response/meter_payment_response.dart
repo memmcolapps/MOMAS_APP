@@ -37,6 +37,7 @@ class MeterData {
   String? createdAt;
   String? address;
   String? updatedAt;
+  String? meterNo;
 
   MeterData(
       {this.id,
@@ -47,7 +48,8 @@ class MeterData {
       this.status,
       this.createdAt,
       this.updatedAt,
-      this.address});
+      this.address,
+      this.meterNo});
 
   MeterData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -59,6 +61,7 @@ class MeterData {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     address = json['address'];
+    meterNo = json['meterNo'];
   }
 
   Map<String, dynamic> toJson() {
@@ -72,6 +75,7 @@ class MeterData {
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
     data['address'] = address;
+    data['meterNo'] = meterNo;
     return data;
   }
 }

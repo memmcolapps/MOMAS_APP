@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:momaspayplus/domain/data/request/momas_payment_request.dart';
 import 'package:momaspayplus/domain/repository/payment_repository.dart';
 import 'package:momaspayplus/utils/colors.dart';
 import 'package:momaspayplus/utils/images.dart';
@@ -25,11 +26,14 @@ import '../error_modal.dart';
 class PaymentBottomSheet extends StatefulWidget {
   final String amount;
   final ServiceType? service;
+  final String  tariffId;
+  final String action;
 
   final Function(String ref)? onPayment;
 
   const PaymentBottomSheet(
-      {super.key, required this.amount, this.onPayment, this.service});
+      {super.key, required this.amount, this.onPayment,
+        this.service, required this.tariffId, required this.action});
 
   @override
   State<PaymentBottomSheet> createState() => _PaymentBottomSheetState();
@@ -53,10 +57,24 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
     setState(() {
       isLoading = true;
     });
+    print("pay_type:" +type.name);
+    print("service:" +widget.service!.name);
     paymentBloc.add(
       MakePayment(
-          payType: type, amount: widget.amount, serviceType: widget.service!),
+          momasPaymentRequest: MomasPaymentRequest(
+              pay_type: type.name,
+              amount: widget.amount,
+              service_type: widget.service!.name,
+              action: ActionRequest(type: widget.action),
+              tariff_id: widget.tariffId.toString())),
     );
+    // paymentBloc.add(
+    //   MakePayment(
+    //       payType: type,
+    //       amount: widget.amount,
+    //       serviceType: widget.service!,
+    //       tariffId: widget.tariffId.toString()),
+    // );
   }
 
   void _onPaymentVerified(String ref) {

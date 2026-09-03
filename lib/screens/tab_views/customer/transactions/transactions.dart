@@ -156,6 +156,8 @@ class _TransactionsState extends State<Transactions> {
                     builder: (builder) => TransactionSuccessPage(
                           details: ReceiptBuilder().meterPayment(
                               state.momasPaymentResponse.data!.receipt!),
+                      meterNo: state.momasPaymentResponse.data!.receipt!.meterNo,
+                      token: state.momasPaymentResponse.data!.receipt!.token,
                         )));
           } else if (state is ViewMomasPaymentSuccess) {
             if (Navigator.of(context).canPop()) Navigator.of(context).pop();
@@ -168,6 +170,8 @@ class _TransactionsState extends State<Transactions> {
                               PaymentStatus.successful,
                           details: ReceiptBuilder().meterPayment(
                               state.momasPaymentResponse.data!.receipt!),
+                      meterNo: state.momasPaymentResponse.data!.receipt!.meterNo,
+                      token: state.momasPaymentResponse.data!.receipt!.token,
                         )));
           }
         },

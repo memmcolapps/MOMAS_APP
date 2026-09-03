@@ -8,12 +8,13 @@ import 'package:momaspayplus/screens/stack_screens/arrears/arrears_page.dart';
 
 import '../../core/network/routes.dart';
 import '../data/request/momas_meter_buy.dart';
-import '../data/request/momas_payent_response.dart';
+import '../data/response/momas_payent_response.dart';
 import '../data/response/cable_tv_response.dart';
 import '../data/response/cable_tv_verification_response.dart';
 import '../data/response/data_response.dart';
 import '../data/response/meter_payment_response.dart';
 import '../data/response/momas_meter_response.dart';
+import '../data/response/trx_history_response.dart';
 import '../data/response/vending_properties.dart';
 import '../../core/network/request.dart';
 
@@ -117,5 +118,17 @@ class BillRepository {
   Future<GenericResponse> payArrear(Map<String, String> map) async {
     var response = await _request.postData(path: Routes.payArrears, body: map);
     return GenericResponse.fromJson(response.data);
+  }
+
+  Future<MomasPaymentResponse> reprintToken(String trxId) async {
+    var response = await _request.postData(path: Routes.retryToken, body: {
+      "trx_id": trxId,
+    });
+    return MomasPaymentResponse.fromJson(response.data);
+  }
+
+  Future<TrxHistoryResponse> getFailedTransactions() async {
+    var response = await _request.getData(path: Routes.failedTrx);
+    return TrxHistoryResponse.fromJson(response.data);
   }
 }

@@ -15,7 +15,8 @@ class MoBottomSheet {
   Future payment(BuildContext context,
       {required String amount,
         required ServiceType serviceType,
-
+        required String tariffId,
+        action,
         Function(String ref)? onPayment,
         bool? showMonthlyFee = true}) {
     return showModalBottomSheet(
@@ -29,6 +30,8 @@ class MoBottomSheet {
           serviceType: serviceType,
           onPayment: onPayment,
           showMonthlyFee: showMonthlyFee,
+          tariffId: tariffId,
+            action ?? ""
         );
       },
     );
@@ -40,12 +43,14 @@ class _BottomSheetContent extends StatefulWidget {
   final ServiceType serviceType;
   final Function(String ref)? onPayment;
   final bool? showMonthlyFee;
+  final String tariffId;
+  final String action;
 
-  const _BottomSheetContent({
+  const _BottomSheetContent(this.action, {
     required this.amount,
     required this.serviceType,
     this.onPayment,
-    this.showMonthlyFee,
+    this.showMonthlyFee, required this.tariffId,
   });
 
   @override
@@ -143,6 +148,8 @@ class _BottomSheetContentState extends State<_BottomSheetContent> {
             amount: widget.amount,
             onPayment: widget.onPayment,
             service: widget.serviceType,
+            tariffId: widget.tariffId,
+              action: widget.action
           ),
         );
       },

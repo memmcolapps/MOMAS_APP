@@ -13,6 +13,7 @@ class MoImage{
 
   //dashboard
   static String momasPayment =  "$root/momos_payment.png";
+  static String reprint =  "$root/reprint_token.png";
   static String meterPayment =  "$root/meter_payment.png";
   static String reprintToken =  "$root/reprint_token.png";
   static String accessToken =  "$root/access_token.png";

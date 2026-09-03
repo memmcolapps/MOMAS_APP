@@ -20,6 +20,7 @@ import 'package:momaspayplus/utils/bio_metric_widget.dart';
 import 'package:momaspayplus/utils/colors.dart';
 import 'package:momaspayplus/core/storage/shared_pref.dart';
 import 'package:momaspayplus/utils/validators.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class LoginBody extends StatefulWidget {
   final TextEditingController emailController;
@@ -32,7 +33,7 @@ class LoginBody extends StatefulWidget {
 
 class _LoginBodyState extends State<LoginBody> {
   final TextEditingController passwordController = TextEditingController();
-
+  String version = "";
   @override
   void initState() {
     super.initState();
@@ -46,6 +47,7 @@ class _LoginBodyState extends State<LoginBody> {
         }
       });
     });
+    _loadVersion();
   }
 
   @override
@@ -163,7 +165,16 @@ class _LoginBodyState extends State<LoginBody> {
         const SizedBox(
           height: 15,
         ),
+        Text("v"+version),
       ],
     );
+  }
+
+  Future<void> _loadVersion() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+
+    setState(() {
+      version = "${packageInfo.version} (${packageInfo.buildNumber})";
+    });
   }
 }

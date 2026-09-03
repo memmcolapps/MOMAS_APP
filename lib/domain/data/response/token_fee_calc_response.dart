@@ -31,6 +31,8 @@ class TokenFeeData {
   final num vendingAmount;
   final num unit;
   final num utilityAmount;
+  final num utilityOwed;
+  final num afterUtility;
 
   TokenFeeData({
     required this.tariffAmount,
@@ -43,7 +45,9 @@ class TokenFeeData {
     required this.afterEstateFee,
     required this.vatAmount,
     required this.afterFixedCharge,
-    required this.utilityAmount
+    required this.utilityAmount,
+    required this.utilityOwed,
+    required this.afterUtility,
   });
 
   factory TokenFeeData.fromJson(Map<String, dynamic> json) {
@@ -59,6 +63,8 @@ class TokenFeeData {
       vendingAmount: json['vendingAmount'] ?? 0,
       unit: json['unit'] ?? 0,
       utilityAmount: json['utilityAmount'] ?? 0,
+      utilityOwed: json['utilityOwed'] ?? 0,
+      afterUtility: json['afterUtility'] ?? 0,
     );
   }
 }

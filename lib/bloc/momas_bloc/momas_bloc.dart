@@ -5,10 +5,11 @@ import 'package:momaspayplus/domain/data/response/vending_properties.dart';
 import 'package:momaspayplus/utils/strings.dart';
 
 import '../../domain/data/request/momas_meter_buy.dart';
-import '../../domain/data/request/momas_payent_response.dart';
+import '../../domain/data/response/momas_payent_response.dart';
 import '../../domain/data/response/meter_payment_response.dart';
 import '../../domain/data/response/momas_meter_response.dart';
 import '../../domain/data/response/token_fee_calc_response.dart';
+import '../../domain/data/response/trx_history_response.dart';
 import '../../domain/repository/bill_repository.dart';
 import 'momas_event.dart';
 import 'momas_state.dart';
@@ -34,29 +35,15 @@ class MomasPaymentBloc extends Bloc<MomasPaymentEvent, MomasPaymentState> {
     on<EnergyCalculation>((event, emit) async {
       await onEnergyCalculation(event, emit);
     });
+
+    on<MomasFailedTrxHistory>((event, emit) async {
+      await onMomasFailedTrxHistory(event, emit);
+    });
+
+    on<MomasReprintToken>((event, emit) async {
+      await onReprintToken(event, emit);
+    });
   }
-
-
-  // Future onEnergyCalculation(
-  //     EnergyCalculation event, Emitter<MomasPaymentState> emit) async {
-  //   emit(energyCalcLoading());
-  //   try {
-  //     final TokenFeeCalculationResponse response =
-  //     await repository.energyCalc(
-  //         event.tariffId,
-  //         event.amount
-  //     );
-  //     if (response.status == true) {
-  //       emit(EnergyCalcState(response: response));
-  //     } else {
-  //       emit(MomasPaymentFailure(
-  //           error: extractError(response.message)));
-  //     }
-  //   } catch (e) {
-  //     log('[MomasBloc] onCalculate error: $e');
-  //     emit(MomasPaymentFailure(error: e.toString()));
-  //   }
-  // }
 
   Future onVerify(
       MomasVerification event, Emitter<MomasPaymentState> emit) async {
@@ -128,6 +115,24 @@ class MomasPaymentBloc extends Bloc<MomasPaymentEvent, MomasPaymentState> {
     }
   }
 
+  // Future onPaymentHistory(
+  //     MomasPaymentHistory event, Emitter<MomasPaymentState> emit) async {
+  //   emit(MomasPaymentLoading());
+  //   try {
+  //     MeterPaymentResponse response = await repository.getMomasMeterHistory();
+  //
+  //     if (response.status == true) {
+  //       emit(MomasMeterSuccess(response));
+  //     } else {
+  //       emit(MomasPaymentFailure(
+  //           error: extractError(response.message)));
+  //     }
+  //   } catch (e) {
+  //     log('[MomasBloc] onPaymentHistory error: $e');
+  //     emit(MomasPaymentFailure(error: e.toString()));
+  //   }
+  // }
+
   Future onGetVendingProperties(
       MomasGetVentingProperties event, Emitter<MomasPaymentState> emit) async {
     emit(MomasPaymentLoading());
@@ -149,7 +154,8 @@ class MomasPaymentBloc extends Bloc<MomasPaymentEvent, MomasPaymentState> {
 
   Future onEnergyCalculation(
       EnergyCalculation event, Emitter<MomasPaymentState> emit) async {
-    emit(energyCalcLoading());
+    // emit(energyCalcLoading());
+    emit(MomasPaymentLoading());
     try {
       final TokenFeeCalculationResponse response =
       await repository.energyCalc(
@@ -157,13 +163,47 @@ class MomasPaymentBloc extends Bloc<MomasPaymentEvent, MomasPaymentState> {
           event.amount
       );
       if (response.status == true) {
-        emit(EnergyCalcState(response: response));
+        emit(EnergyCalcSuccess(response: response));
       } else {
         emit(MomasPaymentFailure(
             error: extractError(response.message)));
       }
     } catch (e) {
       log('[MomasBloc] onCalculate error: $e');
+      emit(MomasPaymentFailure(error: e.toString()));
+    }
+  }
+
+  Future onMomasFailedTrxHistory(MomasFailedTrxHistory event, Emitter<MomasPaymentState> emit) async {
+    emit(MomasPaymentLoading());
+    try {
+      final TrxHistoryResponse response = await repository.getFailedTransactions();
+      if (response.status == true) {
+        emit(MomasFailedTransactionSuccess(response: response));
+      } else {
+        emit(MomasPaymentFailure(
+            error: extractError(response.message)));
+      }
+    } catch (e) {
+      log('[MomasBloc] onFailedTrx error: $e');
+      emit(MomasPaymentFailure(error: e.toString()));
+    }
+  }
+
+  Future onReprintToken(MomasReprintToken event, Emitter<MomasPaymentState> emit) async {
+
+    emit(MomasPaymentLoading());
+    try {
+      final MomasPaymentResponse response = await repository.reprintToken(event.trxId);
+
+      if (response.status == true) {
+        emit(MomasReprintTokenSuccess(response: response));
+      } else {
+        emit(MomasPaymentFailure(
+            error: extractError(response.message)));
+      }
+    } catch (e) {
+      log('[MomasBloc] onReprintToken error: $e');
       emit(MomasPaymentFailure(error: e.toString()));
     }
   }

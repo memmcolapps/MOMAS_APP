@@ -10,6 +10,8 @@ import 'package:momaspayplus/utils/dashboard_builder.dart';
 import 'package:momaspayplus/utils/screen_utils.dart';
 import 'package:momaspayplus/utils/images.dart';
 
+import '../../../../reprint_token/reprint_token_screen.dart';
+
 class QuickWidgets extends StatelessWidget {
   const QuickWidgets({super.key});
 
@@ -35,14 +37,27 @@ class QuickWidgets extends StatelessWidget {
       ),
       child: Row(
         children: [
+          // _QuickButton(
+          //   title: "Buy Units",
+          //   image: MoImage.momasPayment,
+          //   active: buyUnitsActive,
+          //   onTap: buyUnitsActive
+          //       ? () => Navigator.push(context, MaterialPageRoute(
+          //     builder: (_) => const MomasPaymentScreen(
+          //       momasPaymentType: MomasPaymentType.self,
+          //     ),
+          //   ))
+          //       : null,
+          // ),
           _QuickButton(
-            title: "Buy Units",
-            image: MoImage.momasPayment,
+            title: "Reprint",
+            image: MoImage.reprint,
+            // image: MoImage.momasPayment,
             active: buyUnitsActive,
             onTap: buyUnitsActive
                 ? () => Navigator.push(context, MaterialPageRoute(
-              builder: (_) => const MomasPaymentScreen(
-                momasPaymentType: MomasPaymentType.self,
+              builder: (_) => ReprintTokenScreen(
+                // momasPaymentType: MomasPaymentType.self,
               ),
             ))
                 : null,

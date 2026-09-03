@@ -57,14 +57,29 @@ class ServerRequest {
           throw AppException.parse(e);
         }
       }
+      // final backendMsg =
+      //     response.statusCode < 500 ? _extractMessage(body) : null;
 
-      final backendMsg =
-          response.statusCode < 500 ? _extractMessage(body) : null;
+      // throw AppException(
+      //   message: backendMsg ?? 'Something went wrong. Please try again.',
+      //   type:
+      //       response.statusCode < 500 ? ErrorType.business : ErrorType.network,
+      //   statusCode: response.statusCode,
+      //   debugMessage: body.toString(),
+      // );
+
+      String? backendMsg = _extractMessage(body);
+      String? backendDetails = _extractDetails(body);
 
       throw AppException(
-        message: backendMsg ?? 'Something went wrong. Please try again.',
-        type:
-            response.statusCode < 500 ? ErrorType.business : ErrorType.network,
+        message: backendDetails?.isNotEmpty == true
+            ? backendDetails!
+            : (backendMsg?.isNotEmpty == true
+            ? backendMsg!
+            : 'Something went wrong. Please try again.'),
+        type: response.statusCode < 500
+            ? ErrorType.business
+            : ErrorType.network,
         statusCode: response.statusCode,
         debugMessage: body.toString(),
       );
@@ -89,6 +104,16 @@ class ServerRequest {
       log('$debugLabel ERROR: $e', name: 'HTTP');
       throw AppException.unknown(e);
     }
+  }
+
+  String? _extractDetails(dynamic body) {
+    if (body is Map<String, dynamic>) {
+      final details = body['details'];
+      if (details is String && details.trim().isNotEmpty) {
+        return details;
+      }
+    }
+    return null;
   }
 
   // ─── Public methods ───────────────────────────────────────────────────────
@@ -120,6 +145,92 @@ class ServerRequest {
       requestBody: encoded,
     );
   }
+
+  Future<HttpResponse> postHesData(
+      {String? path, Map? body, List<Map>? bodyII, required Map<String, String> headers}) async {
+    // final header = await getHeader();
+    final url = Uri.parse(path!);
+    final encoded = json.encode(body ?? bodyII);
+
+    return _safeCall(
+          () => http.post(url, body: encoded, headers: headers),
+          (data) => HttpData(data),
+      'POST $path',
+      requestBody: encoded,
+    );
+  }
+
+  Future<dynamic> postSetTokenData({
+    required String path,
+    Map<String, String>? queryParams,
+    Map? body,
+    List<Map>? bodyII, required Map<String, String> header,
+  }) async {
+
+    // final header = await getHesHeader();
+
+    final uri = Uri.parse(path).replace(
+      queryParameters: queryParams,
+    );
+
+    final encoded = body == null && bodyII == null
+        ? null
+        : jsonEncode(body ?? bodyII);
+
+    return _safeCall(
+          () => http.post(
+        uri,
+        headers: header,
+        body: encoded,
+      ),
+          (data) => HttpData(data),
+      'POST $uri',
+      requestBody: encoded,
+    );
+  }
+
+  Future<HttpResponse> getHesData({
+    required String path,
+    Map<String, String>? queryParams,
+    Map? body,
+    List<Map>? bodyII, required Map<String, String> header,
+  }) async {
+
+    // final header = await getHesHeader();
+
+    final uri = Uri.parse(path).replace(
+      queryParameters: queryParams,
+    );
+
+    final encoded = body == null && bodyII == null
+        ? null
+        : jsonEncode(body ?? bodyII);
+
+    return _safeCall(
+          () => http.get(
+        uri,
+        headers: header,
+        // body: encoded,
+      ),
+          (data) => HttpData(data),
+      'GET $uri',
+      requestBody: encoded,
+    );
+  }
+
+  // Future<dynamic> postSetTokenData({
+  //   required String path, Map? body, List<Map>? bodyII}) async {
+  //   final header = await getHeader();
+  //   final url = Uri.parse(path!);
+  //   final encoded = json.encode(body ?? bodyII);
+  //
+  //   return _safeCall(
+  //         () => http.post(url, body: encoded, headers: header),
+  //         (data) => HttpData(data),
+  //     'POST $path',
+  //     requestBody: encoded,
+  //   );
+  // }
 
   Future<HttpResponse> putData(
       {String? path, Map? body, List<Map>? bodyII}) async {

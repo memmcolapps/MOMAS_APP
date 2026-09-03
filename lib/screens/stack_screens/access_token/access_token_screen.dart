@@ -40,8 +40,7 @@ class _AccessTokenScreenState extends State<AccessTokenScreen> {
   late AccessTokenBloc accessTokenBloc;
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _flatNoController = TextEditingController();
-  final TextEditingController _expectedVisitorController =
-      TextEditingController();
+  final TextEditingController _expectedVisitorController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
 
   EstateData? selectedEstateData;
@@ -68,7 +67,7 @@ class _AccessTokenScreenState extends State<AccessTokenScreen> {
                 return SizedBox(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
-                  child: Center(
+                  child: const Center(
                     child: SpinKitFadingCircle(
                       color: MoColors.mainColor,
                       size: 30.0,
@@ -230,7 +229,7 @@ class _AccessTokenScreenState extends State<AccessTokenScreen> {
                               height: 20,
                             ),
                             const Text(
-                              'Easily create access token and  share with your visitor',
+                              'Easily create access token and share with your visitor',
                               style: TextStyle(fontSize: 16),
                             ),
                             const SizedBox(height: 20),
